@@ -9,6 +9,8 @@ export default defineConfig({
     preview: {
         host: true,
         allowedHosts: [
+            "padron-ia.es",
+            "www.padron-ia.es",
             "nuevo-web-padron-ia.3pkgp0.easypanel.host"
         ]
     }
