@@ -1,12 +1,12 @@
 import { useState } from "react";
 
 const navItems = [
-    { label: "Inicio", href: "#hero" },
-    { label: "Servicios", href: "#servicios" },
-    { label: "Playbooks", href: "#blueprint" },
-    { label: "Consultoria", href: "#consultoria" },
-    { label: "Portal", href: "#portal" },
-    { label: "Contacto", href: "#contacto" }
+    { label: "Inicio", href: "/#hero" },
+    { label: "Servicios", href: "/#servicios" },
+    { label: "Playbooks", href: "/#blueprint" },
+    { label: "Consultoria", href: "/#consultoria" },
+    { label: "Portal", href: "/portal/login" },
+    { label: "Contacto", href: "/#contacto" }
 ];
 
 function FloatingNavbar() {
@@ -17,7 +17,7 @@ function FloatingNavbar() {
     return (
         <header className="fixed inset-x-0 top-5 z-50 px-4 sm:px-6">
             <div className="mx-auto flex w-full max-w-6xl items-center justify-between rounded-2xl border border-white/25 bg-[rgba(230,222,228,0.10)] px-4 py-3 shadow-[0_10px_30px_rgba(15,23,42,0.08)] backdrop-blur-xl sm:px-6">
-                <a href="#hero" className="flex items-center gap-3" onClick={closeMenu}>
+                <a href="/" className="flex items-center gap-3" onClick={closeMenu}>
                     <img
                         src="/assets/logo-padron-ia-clean.png"
                         alt="Padron IA"
@@ -50,7 +50,7 @@ function FloatingNavbar() {
                 </button>
 
                 <a
-                    href="#consultoria"
+                    href="/#consultoria"
                     className="premium-button hidden rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-white md:inline-flex"
                 >
                     Consultoria
