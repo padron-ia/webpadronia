@@ -61,6 +61,14 @@ const adminNavItems = [
     { label: "Configuracion", href: "/portal/admin/configuracion" }
 ];
 
+const quickViews = [
+    { id: "all", label: "Todo" },
+    { id: "a_priority", label: "A prioridad" },
+    { id: "unassigned", label: "Sin asignar" },
+    { id: "stale_24h", label: "Sin contacto 24h" },
+    { id: "follow_up_today", label: "Follow-up hoy" }
+];
+
 const formatDate = (value) => {
     if (!value) return "-";
     return new Date(value).toLocaleString();
@@ -82,6 +90,11 @@ function PortalAdminPage() {
     const [gradeFilter, setGradeFilter] = useState("all");
     const [ownerFilter, setOwnerFilter] = useState("all");
     const [search, setSearch] = useState("");
+    const [activeQuickView, setActiveQuickView] = useState(() => localStorage.getItem("padron_admin_quick_view") || "all");
+    const [selectedLeadIds, setSelectedLeadIds] = useState([]);
+    const [bulkStatusChoice, setBulkStatusChoice] = useState("contacted");
+    const [bulkOwnerChoice, setBulkOwnerChoice] = useState("");
+    const [bulkScheduleChoice, setBulkScheduleChoice] = useState("24");
     const [selectedLead, setSelectedLead] = useState(null);
     const [notes, setNotes] = useState([]);
     const [noteDraft, setNoteDraft] = useState("");
@@ -98,6 +111,10 @@ function PortalAdminPage() {
 
     const rawSection = location.pathname.replace("/portal/admin", "").replace(/^\/+/, "") || "dashboard";
     const currentSection = sectionConfig[rawSection] ? rawSection : "dashboard";
+
+    useEffect(() => {
+        localStorage.setItem("padron_admin_quick_view", activeQuickView);
+    }, [activeQuickView]);
 
     useEffect(() => {
         if (!isSupabaseConfigured || !supabase) {
@@ -200,15 +217,33 @@ function PortalAdminPage() {
 
     const filteredLeads = useMemo(() => {
         const term = search.trim().toLowerCase();
+        const now = Date.now();
+        const dayMs = 24 * 60 * 60 * 1000;
+        const endOfToday = new Date();
+        endOfToday.setHours(23, 59, 59, 999);
 
         return leads.filter((lead) => {
             const byStatus = statusFilter === "all" || (lead.status || "new") === statusFilter;
             const byGrade = gradeFilter === "all" || (lead.lead_grade || "C") === gradeFilter;
             const byOwner = ownerFilter === "all" || (ownerFilter === "unassigned" ? !lead.assigned_to : lead.assigned_to === ownerFilter);
             const bySearch = !term || [lead.name, lead.company, lead.contact].filter(Boolean).some((value) => value.toLowerCase().includes(term));
-            return byStatus && byGrade && byOwner && bySearch;
+            const status = lead.status || "new";
+
+            let byQuickView = true;
+            if (activeQuickView === "a_priority") byQuickView = (lead.lead_grade || "C") === "A" && ["new", "contacted", "qualified"].includes(status);
+            if (activeQuickView === "unassigned") byQuickView = !lead.assigned_to;
+            if (activeQuickView === "stale_24h") byQuickView = ["new", "contacted"].includes(status) && !lead.last_contact_at && now - new Date(lead.created_at).getTime() > dayMs;
+            if (activeQuickView === "follow_up_today") {
+                byQuickView = Boolean(lead.next_action_at) && new Date(lead.next_action_at).getTime() <= endOfToday.getTime() && !["won", "lost"].includes(status);
+            }
+
+            return byStatus && byGrade && byOwner && bySearch && byQuickView;
         });
-    }, [gradeFilter, leads, ownerFilter, search, statusFilter]);
+    }, [activeQuickView, gradeFilter, leads, ownerFilter, search, statusFilter]);
+
+    useEffect(() => {
+        setSelectedLeadIds((current) => current.filter((leadId) => filteredLeads.some((lead) => lead.id === leadId)));
+    }, [filteredLeads]);
 
     const leadsByStatus = useMemo(() => {
         const groups = { new: [], contacted: [], qualified: [], proposal_sent: [], won: [], lost: [] };
@@ -285,6 +320,65 @@ function PortalAdminPage() {
             .sort((a, b) => b.count - a.count);
     }, [leads]);
 
+    const getSlaBadge = (lead) => {
+        const status = lead.status || "new";
+        if (["won", "lost"].includes(status)) {
+            return { label: "Cerrado", className: "border-emerald-200 bg-emerald-50 text-emerald-700" };
+        }
+
+        const reference = lead.last_contact_at || lead.created_at;
+        const hours = (Date.now() - new Date(reference).getTime()) / (1000 * 60 * 60);
+
+        if (hours > 48) return { label: ">48h", className: "border-red-200 bg-red-50 text-red-700" };
+        if (hours > 24) return { label: ">24h", className: "border-amber-200 bg-amber-50 text-amber-700" };
+        return { label: "En SLA", className: "border-slate-200 bg-slate-50 text-slate-700" };
+    };
+
+    const toggleLeadSelection = (leadId) => {
+        setSelectedLeadIds((current) => (current.includes(leadId) ? current.filter((id) => id !== leadId) : [...current, leadId]));
+    };
+
+    const toggleAllVisible = (visibleIds) => {
+        if (visibleIds.length === 0) return;
+        const allSelected = visibleIds.every((id) => selectedLeadIds.includes(id));
+        setSelectedLeadIds((current) => {
+            if (allSelected) return current.filter((id) => !visibleIds.includes(id));
+            return Array.from(new Set([...current, ...visibleIds]));
+        });
+    };
+
+    const bulkUpdateLeads = async (ids, patch) => {
+        if (!supabase || ids.length === 0) return;
+
+        setActionError("");
+        const updates = await Promise.all(ids.map((leadId) => supabase.from("leads").update(patch).eq("id", leadId)));
+        const failed = updates.find((result) => result.error);
+
+        if (failed?.error) {
+            setActionError(failed.error.message || "No se pudo aplicar accion masiva.");
+            return;
+        }
+
+        setLeads((current) => current.map((lead) => (ids.includes(lead.id) ? { ...lead, ...patch } : lead)));
+        setSelectedLeadIds([]);
+    };
+
+    const applyBulkStatus = async () => {
+        await bulkUpdateLeads(selectedLeadIds, { status: bulkStatusChoice, last_contact_at: new Date().toISOString() });
+    };
+
+    const applyBulkOwner = async () => {
+        if (!hasCrmColumns) return;
+        await bulkUpdateLeads(selectedLeadIds, { assigned_to: bulkOwnerChoice || null });
+    };
+
+    const applyBulkSchedule = async () => {
+        if (!hasCrmColumns) return;
+        const hours = Number(bulkScheduleChoice) || 24;
+        const nextAction = new Date(Date.now() + hours * 60 * 60 * 1000).toISOString();
+        await bulkUpdateLeads(selectedLeadIds, { next_action_at: nextAction });
+    };
+
     const updateLead = async (leadId, patch) => {
         if (!supabase) return;
         setActionError("");
@@ -347,40 +441,90 @@ function PortalAdminPage() {
     };
 
     const renderFilterBar = () => (
-        <div className="mt-6 flex flex-wrap items-center gap-3">
-            <p className="text-sm font-semibold text-slate-700">Filtros</p>
-            <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700">
-                {statusOptions.map((status) => (
-                    <option key={status} value={status}>
-                        {status === "all" ? "Estado: todos" : statusLabel[status]}
-                    </option>
+        <>
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+                <p className="mr-1 text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Vistas rapidas</p>
+                {quickViews.map((view) => (
+                    <button
+                        key={view.id}
+                        onClick={() => setActiveQuickView(view.id)}
+                        className={`rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.08em] ${
+                            activeQuickView === view.id ? "border-slate-900 bg-slate-900 text-white" : "border-slate-300 text-slate-600"
+                        }`}
+                    >
+                        {view.label}
+                    </button>
                 ))}
-            </select>
-            <select value={gradeFilter} onChange={(event) => setGradeFilter(event.target.value)} className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700">
-                {gradeOptions.map((grade) => (
-                    <option key={grade} value={grade}>
-                        {grade === "all" ? "Grade: todos" : `Grade ${grade}`}
-                    </option>
-                ))}
-            </select>
-            <select value={ownerFilter} onChange={(event) => setOwnerFilter(event.target.value)} className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700">
-                <option value="all">Responsable: todos</option>
-                <option value="unassigned">Sin asignar</option>
-                {assignableMembers.map((member) => (
-                    <option key={member.id} value={member.id}>
-                        {member.full_name || `${member.role} ${member.id.slice(0, 8)}`}
-                    </option>
-                ))}
-            </select>
-            <input
-                type="text"
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                placeholder="Buscar por nombre, empresa o contacto"
-                className="min-w-64 rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-slate-500"
-            />
-        </div>
+            </div>
+
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+                <p className="text-sm font-semibold text-slate-700">Filtros</p>
+                <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700">
+                    {statusOptions.map((status) => (
+                        <option key={status} value={status}>
+                            {status === "all" ? "Estado: todos" : statusLabel[status]}
+                        </option>
+                    ))}
+                </select>
+                <select value={gradeFilter} onChange={(event) => setGradeFilter(event.target.value)} className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700">
+                    {gradeOptions.map((grade) => (
+                        <option key={grade} value={grade}>
+                            {grade === "all" ? "Grade: todos" : `Grade ${grade}`}
+                        </option>
+                    ))}
+                </select>
+                <select value={ownerFilter} onChange={(event) => setOwnerFilter(event.target.value)} className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700">
+                    <option value="all">Responsable: todos</option>
+                    <option value="unassigned">Sin asignar</option>
+                    {assignableMembers.map((member) => (
+                        <option key={member.id} value={member.id}>
+                            {member.full_name || `${member.role} ${member.id.slice(0, 8)}`}
+                        </option>
+                    ))}
+                </select>
+                <input
+                    type="text"
+                    value={search}
+                    onChange={(event) => setSearch(event.target.value)}
+                    placeholder="Buscar por nombre, empresa o contacto"
+                    className="min-w-64 rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-slate-500"
+                />
+            </div>
+        </>
     );
+
+    const renderBulkBar = () => {
+        if (selectedLeadIds.length === 0) return null;
+
+        return (
+            <div className="mt-4 flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                <p className="text-sm font-semibold text-slate-700">{selectedLeadIds.length} seleccionados</p>
+                <select value={bulkStatusChoice} onChange={(event) => setBulkStatusChoice(event.target.value)} className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700">
+                    {statusOptions.filter((status) => status !== "all").map((status) => (
+                        <option key={`bulk-status-${status}`} value={status}>{statusLabel[status]}</option>
+                    ))}
+                </select>
+                <button onClick={applyBulkStatus} className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700">Cambiar estado</button>
+
+                <select value={bulkOwnerChoice} onChange={(event) => setBulkOwnerChoice(event.target.value)} disabled={!hasCrmColumns} className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700 disabled:opacity-50">
+                    <option value="">Sin asignar</option>
+                    {assignableMembers.map((member) => (
+                        <option key={`bulk-owner-${member.id}`} value={member.id}>{member.full_name || `${member.role} ${member.id.slice(0, 8)}`}</option>
+                    ))}
+                </select>
+                <button onClick={applyBulkOwner} disabled={!hasCrmColumns} className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700 disabled:opacity-50">Asignar owner</button>
+
+                <select value={bulkScheduleChoice} onChange={(event) => setBulkScheduleChoice(event.target.value)} disabled={!hasCrmColumns} className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700 disabled:opacity-50">
+                    <option value="24">+24h</option>
+                    <option value="48">+48h</option>
+                    <option value="72">+72h</option>
+                </select>
+                <button onClick={applyBulkSchedule} disabled={!hasCrmColumns} className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700 disabled:opacity-50">Planificar</button>
+
+                <button onClick={() => setSelectedLeadIds([])} className="ml-auto rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700">Limpiar</button>
+            </div>
+        );
+    };
 
     const renderDashboard = () => (
         <>
@@ -432,13 +576,22 @@ function PortalAdminPage() {
     const renderInbox = () => (
         <>
             {renderFilterBar()}
+            {renderBulkBar()}
             <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200">
                 <table className="w-full min-w-[860px] text-left text-sm">
                     <thead className="bg-slate-50 text-slate-600">
                         <tr>
+                            <th className="px-4 py-3">
+                                <input
+                                    type="checkbox"
+                                    checked={inboxLeads.length > 0 && inboxLeads.every((lead) => selectedLeadIds.includes(lead.id))}
+                                    onChange={() => toggleAllVisible(inboxLeads.map((lead) => lead.id))}
+                                />
+                            </th>
                             <th className="px-4 py-3">Fecha</th>
                             <th className="px-4 py-3">Lead</th>
                             <th className="px-4 py-3">Grade</th>
+                            <th className="px-4 py-3">SLA</th>
                             <th className="px-4 py-3">Estado</th>
                             <th className="px-4 py-3">Responsable</th>
                             <th className="px-4 py-3">Acciones</th>
@@ -447,6 +600,9 @@ function PortalAdminPage() {
                     <tbody>
                         {inboxLeads.map((lead) => (
                             <tr key={`inbox-${lead.id}`} className="border-t border-slate-200">
+                                <td className="px-4 py-3">
+                                    <input type="checkbox" checked={selectedLeadIds.includes(lead.id)} onChange={() => toggleLeadSelection(lead.id)} />
+                                </td>
                                 <td className="px-4 py-3 text-slate-500">{new Date(lead.created_at).toLocaleDateString()}</td>
                                 <td className="px-4 py-3">
                                     <button onClick={() => setSelectedLead(lead)} className="text-left">
@@ -455,6 +611,9 @@ function PortalAdminPage() {
                                     </button>
                                 </td>
                                 <td className="px-4 py-3 text-slate-700">{lead.lead_grade || "-"}</td>
+                                <td className="px-4 py-3">
+                                    <span className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold ${getSlaBadge(lead).className}`}>{getSlaBadge(lead).label}</span>
+                                </td>
                                 <td className="px-4 py-3">
                                     <select value={lead.status || "new"} onChange={(event) => updateStatus(lead.id, event.target.value)} className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700">
                                         {statusOptions.filter((status) => status !== "all").map((status) => (
@@ -493,15 +652,24 @@ function PortalAdminPage() {
     const renderLeadsTable = () => (
         <>
             {renderFilterBar()}
+            {renderBulkBar()}
             <div className="mt-4 overflow-x-auto rounded-2xl border border-slate-200">
                 <table className="w-full min-w-[1020px] text-left text-sm">
                     <thead className="bg-slate-50 text-slate-600">
                         <tr>
+                            <th className="px-4 py-3">
+                                <input
+                                    type="checkbox"
+                                    checked={filteredLeads.length > 0 && filteredLeads.every((lead) => selectedLeadIds.includes(lead.id))}
+                                    onChange={() => toggleAllVisible(filteredLeads.map((lead) => lead.id))}
+                                />
+                            </th>
                             <th className="px-4 py-3">Fecha</th>
                             <th className="px-4 py-3">Nombre</th>
                             <th className="px-4 py-3">Empresa</th>
                             <th className="px-4 py-3">Contacto</th>
                             <th className="px-4 py-3">Grade</th>
+                            <th className="px-4 py-3">SLA</th>
                             <th className="px-4 py-3">Urgencia</th>
                             <th className="px-4 py-3">Responsable</th>
                             <th className="px-4 py-3">Estado</th>
@@ -511,11 +679,17 @@ function PortalAdminPage() {
                     <tbody>
                         {filteredLeads.map((lead) => (
                             <tr key={`table-${lead.id}`} className="border-t border-slate-200">
+                                <td className="px-4 py-3">
+                                    <input type="checkbox" checked={selectedLeadIds.includes(lead.id)} onChange={() => toggleLeadSelection(lead.id)} />
+                                </td>
                                 <td className="px-4 py-3 text-slate-500">{new Date(lead.created_at).toLocaleDateString()}</td>
                                 <td className="px-4 py-3 text-slate-900">{lead.name || "-"}</td>
                                 <td className="px-4 py-3 text-slate-700">{lead.company || "-"}</td>
                                 <td className="px-4 py-3 text-slate-700">{lead.contact || "-"}</td>
                                 <td className="px-4 py-3 text-slate-700">{lead.lead_grade || "-"}</td>
+                                <td className="px-4 py-3">
+                                    <span className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold ${getSlaBadge(lead).className}`}>{getSlaBadge(lead).label}</span>
+                                </td>
                                 <td className="px-4 py-3 text-slate-700">{lead.urgency || "-"}</td>
                                 <td className="px-4 py-3">
                                     <select value={lead.assigned_to || ""} onChange={(event) => updateAssignee(lead.id, event.target.value)} disabled={!hasCrmColumns} className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700 disabled:opacity-50">
@@ -571,6 +745,7 @@ function PortalAdminPage() {
                                             ))}
                                         </select>
                                     </div>
+                                    <p className={`mt-1 inline-flex rounded-full border px-1.5 py-0.5 text-[10px] font-semibold ${getSlaBadge(lead).className}`}>{getSlaBadge(lead).label}</p>
                                     <p className="mt-1 text-[11px] text-slate-500">Owner: {memberMap[lead.assigned_to] || "Sin asignar"}</p>
                                 </article>
                             ))}
