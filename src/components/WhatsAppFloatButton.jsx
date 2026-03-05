@@ -5,7 +5,7 @@ import { trackLeadEvent } from "../lib/analytics";
 function WhatsAppFloatButton() {
     return (
         <a
-            href={buildWhatsAppUrl("Hola, quiero informacion sobre una consultoria.")}
+            href={buildWhatsAppUrl("Hola, tengo un negocio y creo que estoy perdiendo clientes por no responder a tiempo. ¿Podéis ayudarme?")}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => trackLeadEvent("lead_whatsapp_click", { placement: "floating_button" })}

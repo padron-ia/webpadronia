@@ -1,32 +1,40 @@
 import { useMemo, useState } from "react";
 import { BriefcaseBusiness, GraduationCap, Hospital, Building2, ShoppingCart, LifeBuoy } from "lucide-react";
 
+const stageLabels = {
+    Todos: "Todos",
+    Captacion: "Atraer clientes",
+    Conversion: "Cerrar ventas",
+    Nurturing: "Fidelizar",
+    Operacion: "Organizar"
+};
+
 const sectorPlaybooks = [
     {
         sector: "Servicios B2B",
         stage: "Conversion",
         type: "B2B",
         icon: BriefcaseBusiness,
-        focus: "Prospeccion asistida y seguimiento estructurado",
-        result: "Prospeccion mas inteligente y operacion comercial ordenada.",
-        kpis: ["Reuniones calificadas", "Win rate"]
+        focus: "Encontrar empresas interesadas y no perderlas por el camino",
+        result: "Más reuniones con clientes que de verdad quieren comprar.",
+        kpis: ["Reuniones conseguidas", "Ventas cerradas"]
     },
     {
-        sector: "Clinicas y estetica",
+        sector: "Clínicas y estética",
         stage: "Conversion",
         type: "Servicios",
         icon: Hospital,
-        focus: "Agenda inteligente y seguimiento",
-        result: "Mas citas asistidas y menos huecos perdidos.",
-        kpis: ["Tasa de agenda", "Asistencia", "Coste por cita"]
+        focus: "Que tu agenda se llene sola y los pacientes no falten",
+        result: "Menos huecos en agenda, más pacientes que vuelven.",
+        kpis: ["Citas confirmadas", "Pacientes que asisten", "Coste por paciente"]
     },
     {
         sector: "Inmobiliaria",
         stage: "Captacion",
         type: "Servicios",
         icon: Building2,
-        focus: "Cualificacion automatica y priorizacion",
-        result: "Agenda mas limpia y visitas con mejor probabilidad de cierre.",
+        focus: "Filtrar los que solo miran de los que quieren comprar",
+        result: "Menos visitas perdidas, más firmados.",
         kpis: ["Tiempo de respuesta", "Visitas agendadas", "Cierre"]
     },
     {
@@ -34,27 +42,27 @@ const sectorPlaybooks = [
         stage: "Captacion",
         type: "Ecommerce",
         icon: ShoppingCart,
-        focus: "WhatsApp comercial y recuperacion de oportunidades",
-        result: "Mas conversaciones de compra y mejor rendimiento de campanas.",
-        kpis: ["CTR", "Conversion conversacion-venta", "ROAS"]
+        focus: "WhatsApp comercial y recuperación de oportunidades",
+        result: "Más conversaciones de compra y mejor rendimiento de campañas.",
+        kpis: ["Clics que compran", "Conversaciones que venden", "Rentabilidad de campañas"]
     },
     {
-        sector: "Infoproducto y educacion",
+        sector: "Infoproducto y educación",
         stage: "Nurturing",
         type: "Info",
         icon: GraduationCap,
-        focus: "Captacion continua y nurturing automatico",
-        result: "Pipeline continuo de leads con nurturing automatico.",
-        kpis: ["CPL", "Asistencia", "Conversion"]
+        focus: "Atraer interesados y convertirlos en alumnos sin perseguirlos",
+        result: "Más inscripciones con seguimiento automático.",
+        kpis: ["Coste por interesado", "Asistencia", "Ventas"]
     },
     {
         sector: "Soporte y operaciones",
         stage: "Operacion",
         type: "Operaciones",
         icon: LifeBuoy,
-        focus: "Ticketing inteligente con escalado hibrido",
-        result: "Menor carga operativa y mejor SLA.",
-        kpis: ["Tiempo de resolucion", "Tickets reabiertos"]
+        focus: "Gestión de incidencias inteligente con escalado automático",
+        result: "Menor carga operativa y mejor tiempo de respuesta.",
+        kpis: ["Tiempo de resolución", "Incidencias reabiertas"]
     }
 ];
 
@@ -68,32 +76,32 @@ const stageStyles = {
 const stageFilters = ["Todos", "Captacion", "Conversion", "Nurturing", "Operacion"];
 
 const discoveryScript = [
-    "Objetivo de negocio en 90 dias y canal principal.",
-    "Bloqueo principal: captacion, respuesta, cierre o seguimiento.",
-    "Stack actual y tareas manuales que mas tiempo consumen.",
-    "Criterios de lead cualificado, ticket medio y margen.",
-    "Restricciones reales: presupuesto, equipo y aprobacion.",
-    "Cierre: roadmap por fases con KPI y proxima accion."
+    "Nos cuentas qué quieres conseguir en los próximos 3 meses.",
+    "Identificamos dónde se te escapan clientes hoy.",
+    "Vemos qué herramientas usas y qué tareas te comen el día.",
+    "Entendemos tu cliente ideal y cómo facturas.",
+    "Hablamos de lo que puedes invertir y quién decide.",
+    "Te proponemos un plan por fases con resultados medibles."
 ];
 
 const offers = [
     {
-        name: "Starter Conversion",
+        name: "Empieza a responder rápido",
         timeline: "2-3 semanas",
-        idealFor: "Negocios que necesitan responder y convertir leads rapido.",
-        outcomes: ["Canal de entrada ordenado", "Seguimiento inicial automatico", "Visibilidad basica de conversion"]
+        idealFor: "Para negocios que pierden clientes porque tardan en contestar.",
+        outcomes: ["Mensajes centralizados", "Respuesta automática", "Sabes quién te escribe"]
     },
     {
-        name: "Growth Comercial",
+        name: "Vende más sin más esfuerzo",
         timeline: "4-6 semanas",
-        idealFor: "Equipos con volumen de leads medio-alto que buscan escalar cierres.",
-        outcomes: ["Cualificacion automatica", "Agenda comercial limpia", "Nurturing y reportes semanales"]
+        idealFor: "Para equipos que reciben muchas consultas pero cierran pocas.",
+        outcomes: ["Filtro automático de interesados", "Agenda comercial limpia", "Seguimiento + informes semanales"]
     },
     {
-        name: "Scale Operativo",
+        name: "Tu negocio funciona solo",
         timeline: "8-12 semanas",
-        idealFor: "Empresas con operaciones complejas y necesidad de trazabilidad total.",
-        outcomes: ["Operacion multicanal integrada", "Automatizacion de soporte y procesos", "Control de costes y mejora continua"]
+        idealFor: "Para empresas que necesitan que todo esté conectado y controlado.",
+        outcomes: ["Todo integrado en un sistema", "Soporte y procesos automáticos", "Control de costes y mejora continua"]
     }
 ];
 
@@ -106,16 +114,16 @@ function SolutionsBlueprint() {
     }, [activeFilter]);
 
     return (
-        <section id="blueprint" className="premium-gradient-rose relative overflow-hidden px-6 py-20 sm:px-10 lg:px-16">
+        <section id="sectores" className="premium-gradient-rose relative overflow-hidden px-6 py-20 sm:px-10 lg:px-16">
             <div className="premium-parallax-layer premium-parallax-layer-soft" aria-hidden="true" />
             <div className="relative z-10 mx-auto w-full max-w-6xl space-y-14">
                 <div className="max-w-4xl">
-                    <p data-reveal className="fade-in-section text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">Blueprint comercial</p>
+                    <p data-reveal className="fade-in-section text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">Soluciones por sector</p>
                     <h2 data-reveal className="fade-in-section mt-4 text-3xl text-slate-900 sm:text-4xl lg:text-5xl">
-                        Catalogo modular de flujos por sector
+                        Cada negocio tiene su forma de perder clientes. Nosotros tenemos una solución para cada una.
                     </h2>
                     <p data-reveal className="fade-in-section mt-5 text-slate-600">
-                        Estructuramos cada proyecto en captacion, cualificacion, conversion, operacion y optimizacion para acelerar resultados sin rehacer todo desde cero.
+                        Hemos diseñado sistemas probados para los sectores donde más impacto generamos. Busca el tuyo.
                     </p>
                 </div>
 
@@ -127,13 +135,12 @@ function SolutionsBlueprint() {
                                 key={filter}
                                 type="button"
                                 onClick={() => setActiveFilter(filter)}
-                                className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] transition ${
-                                    isActive
+                                className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] transition ${isActive
                                         ? "border-slate-900 bg-slate-900 text-white"
                                         : "border-slate-300 bg-white/80 text-slate-700 hover:border-slate-400"
-                                }`}
+                                    }`}
                             >
-                                {filter}
+                                {stageLabels[filter] || filter}
                             </button>
                         );
                     })}
@@ -145,36 +152,36 @@ function SolutionsBlueprint() {
                         const badgeClass = stageStyles[item.stage] || "border-slate-300 bg-slate-50 text-slate-700";
 
                         return (
-                        <article key={item.sector} data-reveal className="fade-in-section glow-card rounded-2xl border border-slate-200 bg-white/90 p-6">
-                            <div className="flex items-center justify-between gap-3">
-                                <div className="inline-flex h-10 min-w-10 items-center justify-center rounded-xl bg-slate-900 text-white">
-                                    <Icon size={18} />
-                                </div>
-                                <span className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] ${badgeClass}`}>
-                                    {item.stage}
-                                </span>
-                            </div>
-                            <h3 className="mt-4 text-xl text-slate-900">{item.sector}</h3>
-                            <p className="mt-2 text-sm font-medium text-slate-500">Enfoque: {item.focus}</p>
-                            <p className="mt-3 text-slate-700">{item.result}</p>
-                            <div className="mt-4 flex flex-wrap gap-2">
-                                {item.kpis.map((kpi) => (
-                                    <span
-                                        key={kpi}
-                                        className="rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-medium text-slate-700"
-                                    >
-                                        {kpi}
+                            <article key={item.sector} data-reveal className="fade-in-section glow-card rounded-2xl border border-slate-200 bg-white/90 p-6">
+                                <div className="flex items-center justify-between gap-3">
+                                    <div className="inline-flex h-10 min-w-10 items-center justify-center rounded-xl bg-slate-900 text-white">
+                                        <Icon size={18} />
+                                    </div>
+                                    <span className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] ${badgeClass}`}>
+                                        {stageLabels[item.stage] || item.stage}
                                     </span>
-                                ))}
-                            </div>
-                        </article>
-                    );
+                                </div>
+                                <h3 className="mt-4 text-xl text-slate-900">{item.sector}</h3>
+                                <p className="mt-2 text-sm font-medium text-slate-500">{item.focus}</p>
+                                <p className="mt-3 text-slate-700">{item.result}</p>
+                                <div className="mt-4 flex flex-wrap gap-2">
+                                    {item.kpis.map((kpi) => (
+                                        <span
+                                            key={kpi}
+                                            className="rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-medium text-slate-700"
+                                        >
+                                            {kpi}
+                                        </span>
+                                    ))}
+                                </div>
+                            </article>
+                        );
                     })}
                 </div>
 
                 <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
                     <div data-reveal className="fade-in-section rounded-3xl border border-slate-200 bg-white/95 p-7 shadow-[0_14px_45px_rgba(15,23,42,0.07)]">
-                        <h3 className="text-2xl text-slate-900">Guion discovery (15 min)</h3>
+                        <h3 className="text-2xl text-slate-900">Así funciona la primera conversación (15 min)</h3>
                         <ul className="mt-5 space-y-3 text-slate-700">
                             {discoveryScript.map((step, idx) => (
                                 <li key={step} className="flex gap-3">
@@ -199,7 +206,7 @@ function SolutionsBlueprint() {
                                     ))}
                                 </div>
                                 <a href="#consultoria" className="premium-button mt-5 inline-flex rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-white">
-                                    Ver si encaja
+                                    Quiero saber si es para mí
                                 </a>
                             </article>
                         ))}

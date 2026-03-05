@@ -39,7 +39,7 @@ const scoreLead = (data) => {
 
 const createWhatsAppMessage = (data, score) => {
     const lines = [
-        "Hola, quiero solicitar una consultoria con Padron IA.",
+        "Hola, quiero solicitar una consultoría con Padrón IA.",
         `Nombre: ${data.nombre || "-"}`,
         `Empresa: ${data.empresa || "-"}`,
         `Contacto: ${data.contacto || "-"}`,
@@ -47,8 +47,8 @@ const createWhatsAppMessage = (data, score) => {
         `Objetivo: ${data.objetivo || "-"}`,
         `Urgencia: ${data.urgencia || "-"}`,
         `Presupuesto: ${data.presupuesto || "-"}`,
-        `Volumen de leads: ${data.volumen || "-"}`,
-        `Decision: ${data.decisor || "-"}`,
+        `Consultas mensuales: ${data.volumen || "-"}`,
+        `Decisión: ${data.decisor || "-"}`,
         `Necesidad: ${data.mensaje || "-"}`,
         `Prioridad estimada: ${score.grade} (${score.points})`
     ];
@@ -61,21 +61,27 @@ function ConsultForm() {
     const [status, setStatus] = useState("idle");
     const [submitMessage, setSubmitMessage] = useState("");
     const [leadScore, setLeadScore] = useState(null);
+    const [step, setStep] = useState(1);
 
     const computedScore = useMemo(() => scoreLead(formData), [formData]);
     const whatsappUrl = useMemo(() => buildWhatsAppUrl(createWhatsAppMessage(formData, computedScore)), [formData, computedScore]);
 
-    const validate = () => {
+    const validateStep1 = () => {
         const next = {};
         if (!formData.nombre.trim()) next.nombre = "Indica tu nombre.";
         if (!formData.empresa.trim()) next.empresa = "Indica tu empresa.";
         if (!formData.contacto.trim()) next.contacto = "Indica tu email o WhatsApp.";
         if (!formData.sector) next.sector = "Selecciona tu sector.";
+        if (!formData.mensaje.trim()) next.mensaje = "Describe tu necesidad principal.";
+        return next;
+    };
+
+    const validateStep2 = () => {
+        const next = {};
         if (!formData.objetivo) next.objetivo = "Selecciona tu objetivo principal.";
         if (!formData.urgencia) next.urgencia = "Indica tu urgencia.";
-        if (!formData.presupuesto) next.presupuesto = "Selecciona un rango de inversion.";
-        if (!formData.decisor) next.decisor = "Indica si participas en la decision.";
-        if (!formData.mensaje.trim()) next.mensaje = "Describe tu necesidad principal.";
+        if (!formData.presupuesto) next.presupuesto = "Selecciona una opción.";
+        if (!formData.decisor) next.decisor = "Indica quién toma la decisión.";
         return next;
     };
 
@@ -85,12 +91,22 @@ function ConsultForm() {
         if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
     };
 
+    const goToStep2 = () => {
+        const validation = validateStep1();
+        if (Object.keys(validation).length > 0) {
+            setErrors(validation);
+            return;
+        }
+        setErrors({});
+        setStep(2);
+    };
+
     const onSubmit = async (event) => {
         event.preventDefault();
         const hiddenField = event.currentTarget.website?.value;
         if (hiddenField) return;
 
-        const validation = validate();
+        const validation = validateStep2();
         if (Object.keys(validation).length > 0) {
             setErrors(validation);
             return;
@@ -107,18 +123,19 @@ function ConsultForm() {
 
             if (result.storage === "supabase") {
                 setStatus("success");
-                setSubmitMessage("Solicitud recibida en CRM. Te contactamos en breve.");
+                setSubmitMessage("Solicitud recibida. Te contactamos en breve.");
             } else {
                 setStatus("warning");
-                setSubmitMessage("Guardado en modo local. Revisa la conexion con Supabase para no perder leads.");
+                setSubmitMessage("Guardado en modo local. Revisa la conexión con Supabase para no perder leads.");
             }
 
             setFormData(initialState);
             setErrors({});
+            setStep(1);
         } catch (error) {
             if (error?.fallbackSaved) {
                 setStatus("warning");
-                setSubmitMessage("No se pudo guardar en Supabase. Se guardo en local como respaldo.");
+                setSubmitMessage("No se pudo guardar en Supabase. Se guardó en local como respaldo.");
             } else {
                 setStatus("error");
                 setSubmitMessage(error?.message || "No pudimos enviar el formulario.");
@@ -126,14 +143,17 @@ function ConsultForm() {
         }
     };
 
+    const inputClass = "w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-slate-500";
+    const selectClass = "w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-slate-500";
+
     return (
         <section id="consultoria" className="px-6 py-20 sm:px-10 lg:px-16">
             <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
                 <div data-reveal className="fade-in-section">
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">Consultoria inicial</p>
-                    <h2 className="mt-4 text-3xl text-slate-900 sm:text-4xl lg:text-5xl">Cuéntanos tu contexto y priorizamos tu solicitud</h2>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">Da el primer paso</p>
+                    <h2 className="mt-4 text-3xl text-slate-900 sm:text-4xl lg:text-5xl">Cuéntanos tu situación y te decimos si podemos ayudarte</h2>
                     <p className="mt-5 max-w-xl text-slate-600">
-                        Te pedimos algunos datos de negocio para darte una respuesta util y evitar propuestas genericas. Si prefieres, puedes ir directo por WhatsApp.
+                        Con estos datos preparamos una respuesta personalizada para tu negocio. No hacemos propuestas genéricas. Si prefieres hablar directamente, usa WhatsApp.
                     </p>
 
                     <a
@@ -147,190 +167,142 @@ function ConsultForm() {
                     </a>
 
                     <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
-                        <p className="font-semibold text-slate-900">Como priorizamos respuestas</p>
-                        <p className="mt-2">Priorizamos implementaciones con urgencia clara, presupuesto definido y capacidad de decision.</p>
+                        <p className="font-semibold text-slate-900">¿Cómo funciona?</p>
+                        <p className="mt-2">Respondemos primero a negocios con una necesidad clara y listos para empezar. Si tu caso encaja, te contactamos en menos de 24 horas.</p>
                     </div>
                 </div>
 
                 <form onSubmit={onSubmit} className="fade-in-section rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_14px_45px_rgba(15,23,42,0.07)] sm:p-8" data-reveal>
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <div>
-                            <input
-                                type="text"
-                                name="nombre"
-                                value={formData.nombre}
-                                onChange={onChange}
-                                placeholder="Nombre y apellido"
-                                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-slate-500"
-                            />
-                            {errors.nombre && <p className="mt-1 text-sm text-red-600">{errors.nombre}</p>}
-                        </div>
-
-                        <div>
-                            <input
-                                type="text"
-                                name="empresa"
-                                value={formData.empresa}
-                                onChange={onChange}
-                                placeholder="Empresa"
-                                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-slate-500"
-                            />
-                            {errors.empresa && <p className="mt-1 text-sm text-red-600">{errors.empresa}</p>}
-                        </div>
-
-                        <div>
-                            <input
-                                type="text"
-                                name="contacto"
-                                value={formData.contacto}
-                                onChange={onChange}
-                                placeholder="Email o WhatsApp"
-                                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-slate-500"
-                            />
-                            {errors.contacto && <p className="mt-1 text-sm text-red-600">{errors.contacto}</p>}
-                        </div>
-
-                        <div>
-                            <select
-                                name="sector"
-                                value={formData.sector}
-                                onChange={onChange}
-                                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-slate-500"
-                            >
-                                <option value="">Sector</option>
-                                <option value="servicios_b2b">Servicios B2B</option>
-                                <option value="clinica_estetica">Clinicas y estetica</option>
-                                <option value="inmobiliaria">Inmobiliaria</option>
-                                <option value="ecommerce">Ecommerce</option>
-                                <option value="educacion">Infoproducto y educacion</option>
-                                <option value="operaciones">Soporte y operaciones</option>
-                                <option value="otro">Otro</option>
-                            </select>
-                            {errors.sector && <p className="mt-1 text-sm text-red-600">{errors.sector}</p>}
-                        </div>
-
-                        <div>
-                            <select
-                                name="objetivo"
-                                value={formData.objetivo}
-                                onChange={onChange}
-                                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-slate-500"
-                            >
-                                <option value="">Objetivo principal</option>
-                                <option value="captar_mas_leads">Captar mas leads</option>
-                                <option value="cerrar_mas_ventas">Cerrar mas ventas</option>
-                                <option value="mejorar_soporte">Mejorar soporte</option>
-                                <option value="optimizar_operaciones">Optimizar operaciones</option>
-                            </select>
-                            {errors.objetivo && <p className="mt-1 text-sm text-red-600">{errors.objetivo}</p>}
-                        </div>
-
-                        <div>
-                            <select
-                                name="urgencia"
-                                value={formData.urgencia}
-                                onChange={onChange}
-                                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-slate-500"
-                            >
-                                <option value="">Urgencia</option>
-                                <option value="esta_semana">Esta semana</option>
-                                <option value="este_mes">Este mes</option>
-                                <option value="uno_tres_meses">1-3 meses</option>
-                                <option value="explorando">Solo explorando</option>
-                            </select>
-                            {errors.urgencia && <p className="mt-1 text-sm text-red-600">{errors.urgencia}</p>}
-                        </div>
-
-                        <div>
-                            <select
-                                name="presupuesto"
-                                value={formData.presupuesto}
-                                onChange={onChange}
-                                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-slate-500"
-                            >
-                                <option value="">Inversion mensual estimada</option>
-                                <option value="menos_500">Menos de 500 EUR</option>
-                                <option value="500_1500">500-1.500 EUR</option>
-                                <option value="1500_3000">1.500-3.000 EUR</option>
-                                <option value="mas_3000">Mas de 3.000 EUR</option>
-                                <option value="no_seguro">No estoy seguro</option>
-                            </select>
-                            {errors.presupuesto && <p className="mt-1 text-sm text-red-600">{errors.presupuesto}</p>}
-                        </div>
-
-                        <div>
-                            <select
-                                name="volumen"
-                                value={formData.volumen}
-                                onChange={onChange}
-                                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-slate-500"
-                            >
-                                <option value="">Volumen de leads mensual</option>
-                                <option value="menos_20">Menos de 20</option>
-                                <option value="20_50">20-50</option>
-                                <option value="mas_50">Mas de 50</option>
-                                <option value="no_aplica">No aplica</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <select
-                                name="decisor"
-                                value={formData.decisor}
-                                onChange={onChange}
-                                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-slate-500"
-                            >
-                                <option value="">Decision</option>
-                                <option value="si">Soy quien decide</option>
-                                <option value="con_equipo">Lo reviso con mi equipo</option>
-                                <option value="no">No soy decisor final</option>
-                            </select>
-                            {errors.decisor && <p className="mt-1 text-sm text-red-600">{errors.decisor}</p>}
-                        </div>
-
-                        <div className="md:col-span-2">
-                            <textarea
-                                name="mensaje"
-                                value={formData.mensaje}
-                                onChange={onChange}
-                                rows={4}
-                                placeholder="¿Que proceso te esta costando mas tiempo o dinero hoy?"
-                                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-slate-500"
-                            />
-                            {errors.mensaje && <p className="mt-1 text-sm text-red-600">{errors.mensaje}</p>}
-                        </div>
-
-                        <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" />
-
-                        <div className="md:col-span-2">
-                            <button
-                                type="submit"
-                                disabled={status === "loading"}
-                                className="premium-button mt-2 w-full rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white disabled:opacity-60"
-                            >
-                                {status === "loading" ? "Enviando..." : "Enviar solicitud"}
-                            </button>
-                        </div>
-
-                        {status === "success" && (
-                            <p className="md:col-span-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-                                {submitMessage || "Solicitud recibida."}
-                                {leadScore?.grade === "A" ? " Priorizamos tu caso para respuesta rapida." : " Te respondemos con siguientes pasos segun prioridad."}
-                            </p>
-                        )}
-
-                        {status === "warning" && (
-                            <p className="md:col-span-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
-                                {submitMessage || "Guardado en modo local. Revisa la configuracion de Supabase."}
-                            </p>
-                        )}
-
-                        {status === "error" && (
-                            <p className="md:col-span-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
-                                {submitMessage || "No pudimos enviar el formulario. Usa WhatsApp para contacto inmediato."}
-                            </p>
-                        )}
+                    {/* Step indicator */}
+                    <div className="mb-6 flex items-center gap-3">
+                        <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition ${step >= 1 ? "bg-slate-900 text-white" : "border border-slate-300 text-slate-500"}`}>1</div>
+                        <div className={`h-px flex-1 transition ${step >= 2 ? "bg-slate-900" : "bg-slate-200"}`} />
+                        <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition ${step >= 2 ? "bg-slate-900 text-white" : "border border-slate-300 text-slate-500"}`}>2</div>
                     </div>
+
+                    {step === 1 && (
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div>
+                                <input type="text" name="nombre" value={formData.nombre} onChange={onChange} placeholder="Nombre y apellido" className={inputClass} />
+                                {errors.nombre && <p className="mt-1 text-sm text-red-600">{errors.nombre}</p>}
+                            </div>
+                            <div>
+                                <input type="text" name="empresa" value={formData.empresa} onChange={onChange} placeholder="Empresa" className={inputClass} />
+                                {errors.empresa && <p className="mt-1 text-sm text-red-600">{errors.empresa}</p>}
+                            </div>
+                            <div>
+                                <input type="text" name="contacto" value={formData.contacto} onChange={onChange} placeholder="Email o WhatsApp" className={inputClass} />
+                                {errors.contacto && <p className="mt-1 text-sm text-red-600">{errors.contacto}</p>}
+                            </div>
+                            <div>
+                                <select name="sector" value={formData.sector} onChange={onChange} className={selectClass}>
+                                    <option value="">Sector</option>
+                                    <option value="servicios_b2b">Servicios a empresas</option>
+                                    <option value="clinica_estetica">Clínicas y estética</option>
+                                    <option value="inmobiliaria">Inmobiliaria</option>
+                                    <option value="ecommerce">Tienda online</option>
+                                    <option value="educacion">Formación y cursos</option>
+                                    <option value="operaciones">Soporte y operaciones</option>
+                                    <option value="otro">Otro</option>
+                                </select>
+                                {errors.sector && <p className="mt-1 text-sm text-red-600">{errors.sector}</p>}
+                            </div>
+                            <div className="md:col-span-2">
+                                <textarea name="mensaje" value={formData.mensaje} onChange={onChange} rows={4} placeholder="¿Qué proceso te está costando más tiempo o dinero hoy?" className={inputClass} />
+                                {errors.mensaje && <p className="mt-1 text-sm text-red-600">{errors.mensaje}</p>}
+                            </div>
+                            <div className="md:col-span-2">
+                                <button type="button" onClick={goToStep2} className="premium-button mt-2 w-full rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white">
+                                    Siguiente →
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {step === 2 && (
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <p className="md:col-span-2 text-sm text-slate-600">Estos datos nos ayudan a preparar una respuesta útil para ti.</p>
+                            <div>
+                                <select name="objetivo" value={formData.objetivo} onChange={onChange} className={selectClass}>
+                                    <option value="">¿Qué necesitas mejorar?</option>
+                                    <option value="captar_mas_leads">Captar más clientes</option>
+                                    <option value="cerrar_mas_ventas">Cerrar más ventas</option>
+                                    <option value="mejorar_soporte">Mejorar la atención al cliente</option>
+                                    <option value="optimizar_operaciones">Organizar mejor mi operación</option>
+                                </select>
+                                {errors.objetivo && <p className="mt-1 text-sm text-red-600">{errors.objetivo}</p>}
+                            </div>
+                            <div>
+                                <select name="urgencia" value={formData.urgencia} onChange={onChange} className={selectClass}>
+                                    <option value="">¿Cuándo quieres empezar?</option>
+                                    <option value="esta_semana">Esta semana</option>
+                                    <option value="este_mes">Este mes</option>
+                                    <option value="uno_tres_meses">En 1-3 meses</option>
+                                    <option value="explorando">Solo estoy mirando</option>
+                                </select>
+                                {errors.urgencia && <p className="mt-1 text-sm text-red-600">{errors.urgencia}</p>}
+                            </div>
+                            <div>
+                                <select name="presupuesto" value={formData.presupuesto} onChange={onChange} className={selectClass}>
+                                    <option value="">¿Tienes presupuesto asignado?</option>
+                                    <option value="menos_500">Menos de 500 €</option>
+                                    <option value="500_1500">500 – 1.500 €</option>
+                                    <option value="1500_3000">1.500 – 3.000 €</option>
+                                    <option value="mas_3000">Más de 3.000 €</option>
+                                    <option value="no_seguro">Aún no lo tengo claro</option>
+                                </select>
+                                {errors.presupuesto && <p className="mt-1 text-sm text-red-600">{errors.presupuesto}</p>}
+                            </div>
+                            <div>
+                                <select name="volumen" value={formData.volumen} onChange={onChange} className={selectClass}>
+                                    <option value="">¿Cuántas consultas recibes al mes?</option>
+                                    <option value="menos_20">Menos de 20</option>
+                                    <option value="20_50">Entre 20 y 50</option>
+                                    <option value="mas_50">Más de 50</option>
+                                    <option value="no_aplica">No lo sé</option>
+                                </select>
+                            </div>
+                            <div>
+                                <select name="decisor" value={formData.decisor} onChange={onChange} className={selectClass}>
+                                    <option value="">¿Quién toma la decisión?</option>
+                                    <option value="si">Yo decido</option>
+                                    <option value="con_equipo">Lo decido con mi equipo</option>
+                                    <option value="no">No soy quien decide</option>
+                                </select>
+                                {errors.decisor && <p className="mt-1 text-sm text-red-600">{errors.decisor}</p>}
+                            </div>
+
+                            <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" />
+
+                            <div className="flex gap-3 md:col-span-2">
+                                <button type="button" onClick={() => setStep(1)} className="mt-2 rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700">
+                                    ← Volver
+                                </button>
+                                <button type="submit" disabled={status === "loading"} className="premium-button mt-2 flex-1 rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white disabled:opacity-60">
+                                    {status === "loading" ? "Enviando..." : "Enviar solicitud"}
+                                </button>
+                            </div>
+
+                            {status === "success" && (
+                                <p className="md:col-span-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                                    {submitMessage || "Solicitud recibida."}
+                                    {leadScore?.grade === "A" ? " Priorizamos tu caso para respuesta rápida." : " Te respondemos con siguientes pasos según prioridad."}
+                                </p>
+                            )}
+
+                            {status === "warning" && (
+                                <p className="md:col-span-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+                                    {submitMessage || "Guardado en modo local. Revisa la configuración de Supabase."}
+                                </p>
+                            )}
+
+                            {status === "error" && (
+                                <p className="md:col-span-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+                                    {submitMessage || "No pudimos enviar el formulario. Usa WhatsApp para contacto inmediato."}
+                                </p>
+                            )}
+                        </div>
+                    )}
                 </form>
             </div>
         </section>

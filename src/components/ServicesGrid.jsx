@@ -1,27 +1,27 @@
 const services = [
     {
-        title: "Captura Multicanal",
-        description: "Unificamos formularios, WhatsApp y correo en un flujo centralizado para no perder oportunidades."
+        title: "Todo en un mismo sitio",
+        description: "Tus mensajes de WhatsApp, formularios web y correos llegan a un solo lugar. Nada se pierde, nadie se olvida."
     },
     {
-        title: "Seguimiento Comercial",
-        description: "Disparamos recordatorios y tareas automáticas para mejorar tiempos de respuesta y cierre."
+        title: "Seguimiento que no depende de ti",
+        description: "El sistema recuerda por ti: envía mensajes, crea tareas y avisa a tu equipo si un cliente lleva días sin respuesta."
     },
     {
-        title: "Postventa y Soporte",
-        description: "Priorizamos incidencias y respuestas repetitivas con automatizaciones guiadas por estado."
+        title: "Clientes contentos sin esfuerzo extra",
+        description: "Las preguntas repetidas se contestan solas. Las urgencias se escalan al instante. Tu equipo solo interviene cuando de verdad hace falta."
     },
     {
-        title: "Operaciones Internas",
-        description: "Estandarizamos aprobaciones y solicitudes entre equipos con trazabilidad completa."
+        title: "Menos papeleo entre equipos",
+        description: "Aprobaciones, solicitudes y procesos internos funcionan solos, con registro de quién hizo qué y cuándo."
     },
     {
-        title: "Integraciones",
-        description: "Conectamos herramientas como CRM, email y hojas de cálculo sin rehacer tu stack."
+        title: "Conectamos lo que ya usas",
+        description: "Tus hojas de cálculo, tu email, tu calendario y tus herramientas actuales trabajan juntos sin que tengas que cambiar nada."
     },
     {
-        title: "Optimización Continua",
-        description: "Medimos resultados y mejoramos procesos por fases para sostener impacto real."
+        title: "Mejoramos cada mes",
+        description: "Revisamos qué funciona, qué no, y lo ajustamos. No te dejamos con algo montado y nos vamos."
     }
 ];
 
@@ -32,7 +32,7 @@ function ServicesGrid() {
             <div className="relative z-10 mx-auto w-full max-w-6xl">
                 <div className="max-w-3xl">
                     <p data-reveal className="fade-in-section text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">Servicios</p>
-                    <h2 data-reveal className="fade-in-section mt-4 text-3xl text-slate-900 sm:text-4xl lg:text-5xl">Automatización diseñada para escalar</h2>
+                    <h2 data-reveal className="fade-in-section mt-4 text-3xl text-slate-900 sm:text-4xl lg:text-5xl">Automatización diseñada para que tu negocio crezca</h2>
                 </div>
 
                 <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
