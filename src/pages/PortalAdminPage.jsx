@@ -439,8 +439,8 @@ function PortalAdminPage() {
                         {filteredLeads.length === 0 ? <p className="px-4 py-5 text-sm text-slate-500">No hay leads para este filtro.</p> : null}
                     </div>
                 ) : (
-                    <div className="mt-4 overflow-x-auto">
-                        <div className="grid min-w-[1160px] grid-cols-6 gap-4">
+                    <div className="mt-4">
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
                             {statusOptions
                                 .filter((status) => status !== "all")
                                 .map((status) => (

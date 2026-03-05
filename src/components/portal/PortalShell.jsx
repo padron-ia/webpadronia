@@ -27,7 +27,7 @@ function PortalShell({ email, role, title, subtitle, onLogout, children }) {
                     </button>
                 </aside>
 
-                <section className="w-full rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_12px_35px_rgba(15,23,42,0.06)] sm:p-8">
+                <section className="min-w-0 w-full rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_12px_35px_rgba(15,23,42,0.06)] sm:p-8">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                         <div>
                             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Padron IA CRM</p>
