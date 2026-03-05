@@ -23,7 +23,7 @@ function PortalIndexPage() {
             }
 
             const role = await resolveRole(session.user);
-            setTarget(role === "admin" ? "/portal/admin" : "/portal/cliente");
+            setTarget(role === "admin" ? "/portal/admin/dashboard" : "/portal/cliente");
         };
 
         routeBySession();

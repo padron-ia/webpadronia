@@ -10,7 +10,7 @@ function App() {
         <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/portal/login" element={<PortalLoginPage />} />
-            <Route path="/portal/admin" element={<PortalAdminPage />} />
+            <Route path="/portal/admin/*" element={<PortalAdminPage />} />
             <Route path="/portal/cliente" element={<PortalClientPage />} />
             <Route path="/portal" element={<PortalIndexPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />

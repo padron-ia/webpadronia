@@ -20,7 +20,7 @@ function PortalLoginPage() {
 
             if (!session?.user) return;
             const role = await resolveRole(session.user);
-            navigate(role === "admin" ? "/portal/admin" : "/portal/cliente", { replace: true });
+            navigate(role === "admin" ? "/portal/admin/dashboard" : "/portal/cliente", { replace: true });
         };
 
         checkSession();
@@ -43,7 +43,7 @@ function PortalLoginPage() {
 
         const role = await resolveRole(data.user);
         setStatus("success");
-        navigate(role === "admin" ? "/portal/admin" : "/portal/cliente", { replace: true });
+        navigate(role === "admin" ? "/portal/admin/dashboard" : "/portal/cliente", { replace: true });
     };
 
     return (

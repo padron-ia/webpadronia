@@ -87,7 +87,7 @@ function PortalClientPage() {
     }
 
     if (!loading && !session) return <Navigate to="/portal/login" replace />;
-    if (!loading && role === "admin") return <Navigate to="/portal/admin" replace />;
+    if (!loading && role === "admin") return <Navigate to="/portal/admin/dashboard" replace />;
 
     return (
         <PortalShell
