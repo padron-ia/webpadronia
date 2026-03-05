@@ -40,7 +40,7 @@ export const submitLead = async (payload) => {
         created_by: user?.id ?? null
     };
 
-    const { data, error } = await supabase.from("leads").insert(dbPayload).select().single();
+    const { error } = await supabase.from("leads").insert(dbPayload);
 
     if (error) {
         saveLocalFallback(baseLead);
@@ -51,5 +51,5 @@ export const submitLead = async (payload) => {
         throw fallbackError;
     }
 
-    return { ...data, storage: "supabase" };
+    return { ...baseLead, storage: "supabase" };
 };
