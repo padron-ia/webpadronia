@@ -67,32 +67,32 @@ const stageStyles = {
 const stageFilters = ["Todos", "Captacion", "Conversion", "Nurturing", "Operacion"];
 
 const discoveryScript = [
-    "Nos cuentas qué quieres conseguir en los próximos 3 meses.",
-    "Identificamos dónde se te escapan clientes hoy.",
-    "Vemos qué herramientas usas y qué tareas te comen el día.",
-    "Entendemos tu cliente ideal y cómo facturas.",
-    "Hablamos de lo que puedes invertir y quién decide.",
-    "Te proponemos un plan por fases con resultados medibles."
+    "Dime tu objetivo de facturación para los próximos 3 meses.",
+    "Encontramos la fuga de dinero exacta en tu proceso actual.",
+    "Diseñamos el 'Asistente IA' que hará el trabajo pesado por ti.",
+    "Analizamos cómo recuperar tus horas libres de gestión.",
+    "Trazamos el plan para que no tengas que picar una sola línea de código.",
+    "Te mostramos cómo el sistema se paga solo en menos de 30 días."
 ];
 
 const offers = [
     {
-        name: "Empieza a responder rápido",
-        timeline: "2-3 semanas",
-        idealFor: "Para negocios que pierden clientes porque tardan en contestar.",
-        outcomes: ["Mensajes centralizados", "Respuesta automática", "Sabes quién te escribe"]
+        name: "Quick-Win: Tu WhatsApp funcionando solo",
+        timeline: "7 días o es gratis",
+        idealFor: "Para negocios que necesitan dejar de perder clientes HOY mismo.",
+        outcomes: ["Configuración llave en mano", "Atención 24/7 sin que tú hagas nada", "Garantía: Si no ahorras 10h la 1ª semana, trabajamos gratis"]
     },
     {
-        name: "Vende más sin más esfuerzo",
-        timeline: "4-6 semanas",
-        idealFor: "Para equipos que reciben muchas consultas pero cierran pocas.",
-        outcomes: ["Filtro automático de interesados", "Agenda comercial limpia", "Seguimiento + informes semanales"]
+        name: "Escalado: Tu Agenda llena en automático",
+        timeline: "14-21 días",
+        idealFor: "Para negocios que quieren duplicar sus ventas sin contratar más personal.",
+        outcomes: ["Filtro de clientes cualificados", "Citas agendadas y confirmadas", "Sin captación manual: la IA vende por ti"]
     },
     {
-        name: "Tu negocio funciona solo",
-        timeline: "8-12 semanas",
-        idealFor: "Para empresas que necesitan que todo esté conectado y controlado.",
-        outcomes: ["Todo integrado en un sistema", "Soporte y procesos automáticos", "Control de costes y mejora continua"]
+        name: "Soberanía: Tu Negocio en Piloto Automático",
+        timeline: "30-60 días",
+        idealFor: "Para empresas que quieren el control total y costes operativos mínimos.",
+        outcomes: ["Sistemas 100% integrados", "Reportes de beneficios en tiempo real", "Garantía de éxito: Solo pagas el proyecto final si cumple tus KPIs"]
     }
 ];
 

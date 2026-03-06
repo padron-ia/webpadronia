@@ -13,15 +13,16 @@ function LandingEntrenadores() {
                 {/* Aquí irán los componentes específicos de Entrenadores */}
                 <section className="premium-gradient-plum py-40 px-6 sm:px-10 lg:px-16 text-center">
                     <h1 className="text-5xl lg:text-7xl text-slate-900 leading-[0.92]">
-                        Escala tus asesorías online <br /> sin esclavizarte a WhatsApp
+                        Duplica tus alumnos de asesoría <br /> sin pasar un minuto más en WhatsApp
                     </h1>
                     <p className="mt-6 text-xl text-slate-700 max-w-2xl mx-auto">
-                        Automatizamos la captación, el seguimiento y las dudas de tus alumnos para que tú solo te preocupes de entrenar.
+                        Instalamos tu sistema de ventas e información 24/7 en 7 días. <strong>Tú entrenas, la IA gestiona todos tus mensajes y cobros.</strong>
                     </p>
-                    <div className="mt-10">
-                        <a href="#consultoria" className="premium-button bg-slate-900 text-white px-8 py-4 rounded-full font-bold">
-                            Quiero automatizar mi negocio
+                    <div className="mt-10 flex flex-col items-center gap-4">
+                        <a href="#consultoria" className="premium-button bg-slate-900 text-white px-8 py-4 rounded-full font-bold text-lg">
+                            Quiero mi sistema llave en mano
                         </a>
+                        <p className="text-sm font-medium text-slate-500">Garantía: Si no ahorras 10 horas la primera semana, no pagas nada.</p>
                     </div>
                 </section>
                 <SolutionsBlueprint />
