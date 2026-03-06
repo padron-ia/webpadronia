@@ -11,22 +11,31 @@ const stageLabels = {
 
 const sectorPlaybooks = [
     {
-        sector: "Servicios B2B",
+        sector: "Entrenadores Personales",
         stage: "Conversion",
-        type: "B2B",
+        type: "Fitness",
         icon: BriefcaseBusiness,
-        focus: "Encontrar empresas interesadas y no perderlas por el camino",
-        result: "Más reuniones con clientes que de verdad quieren comprar.",
-        kpis: ["Reuniones conseguidas", "Ventas cerradas"]
+        focus: "Escala tus asesorías online y deja de vivir pegado a WhatsApp",
+        result: "Más alumnos, agenda organizada y cobros automáticos.",
+        kpis: ["Alumnos activos", "Tiempo libre ganado", "Ventas automáticas"]
     },
     {
-        sector: "Clínicas y estética",
-        stage: "Conversion",
+        sector: "Restaurantes y Hostelería",
+        stage: "Captacion",
         type: "Servicios",
-        icon: Hospital,
-        focus: "Que tu agenda se llene sola y los pacientes no falten",
-        result: "Menos huecos en agenda, más pacientes que vuelven.",
-        kpis: ["Citas confirmadas", "Pacientes que asisten", "Coste por paciente"]
+        icon: Building2,
+        focus: "IA que gestiona tus reservas y envía la carta por ti",
+        result: "Menos llamadas perdidas, más mesas llenas y cero 'no-shows'.",
+        kpis: ["Reservas por IA", "Reducción de cancelaciones", "Carga telefónica"]
+    },
+    {
+        sector: "Gestorías y Despachos",
+        stage: "Operacion",
+        type: "B2B",
+        icon: BriefcaseBusiness,
+        focus: "Clasificación automática de facturas y respuesta fiscal 24/7",
+        result: "Adiós al caos de documentos y clientes siempre informados.",
+        kpis: ["Documentos procesados", "Consultas resueltas", "Horas de oficina"]
     },
     {
         sector: "Inmobiliaria",
@@ -45,24 +54,6 @@ const sectorPlaybooks = [
         focus: "WhatsApp comercial y recuperación de oportunidades",
         result: "Más conversaciones de compra y mejor rendimiento de campañas.",
         kpis: ["Clics que compran", "Conversaciones que venden", "Rentabilidad de campañas"]
-    },
-    {
-        sector: "Infoproducto y educación",
-        stage: "Nurturing",
-        type: "Info",
-        icon: GraduationCap,
-        focus: "Atraer interesados y convertirlos en alumnos sin perseguirlos",
-        result: "Más inscripciones con seguimiento automático.",
-        kpis: ["Coste por interesado", "Asistencia", "Ventas"]
-    },
-    {
-        sector: "Soporte y operaciones",
-        stage: "Operacion",
-        type: "Operaciones",
-        icon: LifeBuoy,
-        focus: "Gestión de incidencias inteligente con escalado automático",
-        result: "Menor carga operativa y mejor tiempo de respuesta.",
-        kpis: ["Tiempo de resolución", "Incidencias reabiertas"]
     }
 ];
 
@@ -136,8 +127,8 @@ function SolutionsBlueprint() {
                                 type="button"
                                 onClick={() => setActiveFilter(filter)}
                                 className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] transition ${isActive
-                                        ? "border-slate-900 bg-slate-900 text-white"
-                                        : "border-slate-300 bg-white/80 text-slate-700 hover:border-slate-400"
+                                    ? "border-slate-900 bg-slate-900 text-white"
+                                    : "border-slate-300 bg-white/80 text-slate-700 hover:border-slate-400"
                                     }`}
                             >
                                 {stageLabels[filter] || filter}
