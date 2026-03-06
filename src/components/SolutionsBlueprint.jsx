@@ -67,20 +67,20 @@ const stageStyles = {
 const stageFilters = ["Todos", "Captacion", "Conversion", "Nurturing", "Operacion"];
 
 const discoveryScript = [
-    "Dime tu objetivo de facturación para los próximos 3 meses.",
-    "Encontramos la fuga de dinero exacta en tu proceso actual.",
-    "Diseñamos el proceso que hará el trabajo pesado por ti.",
-    "Analizamos cómo recuperar tus horas libres de gestión.",
-    "Trazamos el plan para que no tengas que picar una sola línea de código.",
-    "Te mostramos cómo el sistema se paga solo en menos de 30 días."
+    "Identificamos tu 'cuello de botella' actual en 15 minutos.",
+    "Buscamos un Quick-Win: algo que podamos arreglar en menos de 7 días.",
+    "Lo implementamos nosotros: no tienes que mover un dedo.",
+    "Validamos que funciona y te genera dinero o tiempo libre.",
+    "Una vez ves que el sistema pequeño funciona, escalamos al grande.",
+    "Garantía total: Si el Quick-Win no te da resultados, no seguimos."
 ];
 
 const offers = [
     {
-        name: "Quick-Win: Tu WhatsApp funcionando solo",
-        timeline: "7 días o es gratis",
-        idealFor: "Para negocios que necesitan dejar de perder clientes HOY mismo.",
-        outcomes: ["Configuración llave en mano", "Atención 24/7 sin que tú hagas nada", "Garantía: Si no ahorras 10h la 1ª semana, trabajamos gratis"]
+        name: "Quick-Win: Resultados en 7 días",
+        timeline: "7 días máximo",
+        idealFor: "Para probar que el sistema funciona sin riesgos.",
+        outcomes: ["Implementación ultra-rápida", "Cero esfuerzo por tu parte", "No pagas hasta que esté funcionando"]
     },
     {
         name: "Escalado: Tu Agenda llena en automático",
