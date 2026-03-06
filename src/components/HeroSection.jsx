@@ -10,10 +10,10 @@ function HeroSection() {
             <div className="relative z-10 mx-auto w-full max-w-6xl">
                 <p data-reveal className="fade-in-section text-xs font-semibold uppercase tracking-[0.22em] text-slate-600">Para negocios que quieren crecer sin contratar más</p>
                 <h1 data-reveal className="fade-in-section mt-5 max-w-4xl text-5xl leading-[0.92] text-slate-900 sm:text-6xl lg:text-7xl">
-                    Multiplica tus ventas y recupera tu tiempo con Inteligencia Artificial
+                    Multiplica tus ventas y recupera tu tiempo con sistemas automáticos
                 </h1>
                 <p data-reveal className="fade-in-section mt-6 max-w-2xl text-base leading-relaxed text-slate-700 sm:text-lg">
-                    Construimos el sistema que atiende, cualifica y agenda a tus clientes 24/7. <strong>Tú no haces nada, la IA hace el trabajo pesado.</strong> Instalación en 7 días con garantía de resultados.
+                    Construimos la estructura que atiende, cualifica y agenda a tus clientes 24/7. <strong>Tú no haces nada, tu sistema digital trabaja por ti.</strong> Instalación en 7 días con garantía de resultados.
                 </p>
 
                 <div data-reveal className="fade-in-section mt-10">

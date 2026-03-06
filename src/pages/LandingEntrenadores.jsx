@@ -16,7 +16,7 @@ function LandingEntrenadores() {
                         Duplica tus alumnos de asesoría <br /> sin pasar un minuto más en WhatsApp
                     </h1>
                     <p className="mt-6 text-xl text-slate-700 max-w-2xl mx-auto">
-                        Instalamos tu sistema de ventas e información 24/7 en 7 días. <strong>Tú entrenas, la IA gestiona todos tus mensajes y cobros.</strong>
+                        Instalamos tu sistema de ventas e información 24/7 en 7 días. <strong>Tú entrenas, tus procesos gestionan todos tus mensajes y cobros.</strong>
                     </p>
                     <div className="mt-10 flex flex-col items-center gap-4">
                         <a href="#consultoria" className="premium-button bg-slate-900 text-white px-8 py-4 rounded-full font-bold text-lg">

@@ -15,7 +15,7 @@ function LandingGestorias() {
                         Digitaliza tu despacho en 14 días <br /> y despídete del caos de facturas
                     </h1>
                     <p className="mt-6 text-xl text-slate-700 max-w-2xl mx-auto">
-                        Asistentes de IA que clasifican documentos y responden dudas fiscales al instante. <strong>Recupera 20 horas de gestión técnica a la semana.</strong>
+                        Sistemas específicos que clasifican documentos y responden dudas fiscales al instante. <strong>Recupera 20 horas de gestión técnica a la semana.</strong>
                     </p>
                     <div className="mt-10 flex flex-col items-center gap-4">
                         <a href="#consultoria" className="premium-button bg-slate-900 text-white px-8 py-4 rounded-full font-bold text-lg">

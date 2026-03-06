@@ -24,9 +24,9 @@ const sectorPlaybooks = [
         stage: "Captacion",
         type: "Servicios",
         icon: Building2,
-        focus: "IA que gestiona tus reservas y envía la carta por ti",
+        focus: "Gestión desatendida de tus reservas y envío de carta automático",
         result: "Menos llamadas perdidas, más mesas llenas y cero 'no-shows'.",
-        kpis: ["Reservas por IA", "Reducción de cancelaciones", "Carga telefónica"]
+        kpis: ["Reservas automáticas", "Reducción de cancelaciones", "Carga telefónica"]
     },
     {
         sector: "Gestorías y Despachos",
@@ -69,7 +69,7 @@ const stageFilters = ["Todos", "Captacion", "Conversion", "Nurturing", "Operacio
 const discoveryScript = [
     "Dime tu objetivo de facturación para los próximos 3 meses.",
     "Encontramos la fuga de dinero exacta en tu proceso actual.",
-    "Diseñamos el 'Asistente IA' que hará el trabajo pesado por ti.",
+    "Diseñamos el proceso que hará el trabajo pesado por ti.",
     "Analizamos cómo recuperar tus horas libres de gestión.",
     "Trazamos el plan para que no tengas que picar una sola línea de código.",
     "Te mostramos cómo el sistema se paga solo en menos de 30 días."
@@ -86,7 +86,7 @@ const offers = [
         name: "Escalado: Tu Agenda llena en automático",
         timeline: "14-21 días",
         idealFor: "Para negocios que quieren duplicar sus ventas sin contratar más personal.",
-        outcomes: ["Filtro de clientes cualificados", "Citas agendadas y confirmadas", "Sin captación manual: la IA vende por ti"]
+        outcomes: ["Filtro de clientes cualificados", "Citas agendadas y confirmadas", "Sin captación manual: tus ventas escalan solas"]
     },
     {
         name: "Soberanía: Tu Negocio en Piloto Automático",

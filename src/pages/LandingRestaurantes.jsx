@@ -15,7 +15,7 @@ function LandingRestaurantes() {
                         Llena tu restaurante cada noche <br /> sin que suene el teléfono
                     </h1>
                     <p className="mt-6 text-xl text-slate-700 max-w-2xl mx-auto">
-                        IA que gestiona reservas 24/7 y reduce los 'no-shows' al mínimo. <strong>Aumenta tu facturación sin que tu equipo desvíe la mirada del servicio.</strong>
+                        Sistema que gestiona reservas 24/7 y reduce los 'no-shows' al mínimo. <strong>Aumenta tu facturación sin que tu equipo desvíe la mirada del servicio.</strong>
                     </p>
                     <div className="mt-10 flex flex-col items-center gap-4">
                         <a href="#consultoria" className="premium-button bg-slate-900 text-white px-8 py-4 rounded-full font-bold text-lg">
