@@ -137,13 +137,13 @@ function PortalSection() {
                     <p className="fade-in-section text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">Acceso privado</p>
                     <h2 className="fade-in-section mt-4 text-3xl text-slate-900 sm:text-4xl lg:text-5xl">Portal Admin y Clientes</h2>
                     <p className="fade-in-section mt-4 text-slate-600">
-                        Accede con tu usuario para revisar leads y preparar el area de clientes. El rol se gestiona desde Supabase.
+                        Accede con tu usuario para revisar leads y preparar el área de clientes. El rol se gestiona desde Supabase.
                     </p>
                 </div>
 
                 {!isSupabaseConfigured && (
                     <div className="mt-8 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-700">
-                        Supabase no esta configurado. Crea un archivo `.env` con `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY`.
+                        Supabase no está configurado. Crea un archivo `.env` con `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY`.
                     </div>
                 )}
 
@@ -170,7 +170,7 @@ function PortalSection() {
 
                         <div className="flex flex-wrap gap-3">
                             <button type="submit" className="premium-button rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white" disabled={status === "loading"}>
-                                {status === "loading" ? "Accediendo..." : "Iniciar sesion"}
+                                {status === "loading" ? "Accediendo..." : "Iniciar sesión"}
                             </button>
                             <button
                                 type="button"
@@ -195,14 +195,14 @@ function PortalSection() {
                                 <p className="mt-1 text-xs uppercase tracking-[0.08em] text-slate-500">Rol: {role}</p>
                             </div>
                             <button onClick={handleLogout} className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700">
-                                Cerrar sesion
+                                Cerrar sesión
                             </button>
                         </div>
 
                         <div className="mt-6">
                             <h3 className="text-xl text-slate-900">{role === "admin" ? "Leads recientes" : "Tus registros"}</h3>
                             {leads.length === 0 ? (
-                                <p className="mt-3 text-sm text-slate-500">No hay datos todavia para mostrar en este rol.</p>
+                                <p className="mt-3 text-sm text-slate-500">No hay datos todavía para mostrar en este rol.</p>
                             ) : (
                                 <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200">
                                     <table className="w-full text-left text-sm">

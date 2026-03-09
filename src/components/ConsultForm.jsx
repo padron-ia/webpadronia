@@ -151,9 +151,9 @@ function ConsultForm() {
             <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
                 <div data-reveal className="fade-in-section">
                     <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">Da el primer paso</p>
-                    <h2 className="mt-4 text-3xl text-slate-900 sm:text-4xl lg:text-5xl">Cuéntanos tu situación y te decimos si podemos ayudarte</h2>
+                    <h2 className="mt-4 text-3xl text-slate-900 sm:text-4xl lg:text-5xl">Cuéntanos dónde se te están escapando ventas y te diremos cómo corregirlo</h2>
                     <p className="mt-5 max-w-xl text-slate-600">
-                        Con estos datos preparamos una respuesta personalizada para tu negocio. No hacemos propuestas genéricas. Si prefieres hablar directamente, usa WhatsApp.
+                        Con estos datos preparamos una propuesta específica para tu negocio. Sin plantillas genéricas. Si prefieres ir al grano, escríbenos por WhatsApp.
                     </p>
 
                     <a
@@ -168,12 +168,11 @@ function ConsultForm() {
 
                     <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
                         <p className="font-semibold text-slate-900">¿Cómo funciona?</p>
-                        <p className="mt-2">Respondemos primero a negocios con una necesidad clara y listos para empezar. Si tu caso encaja, te contactamos en menos de 24 horas.</p>
+                        <p className="mt-2">Priorizamos empresas con necesidad clara y capacidad de implementación. Si tu caso encaja, te respondemos en menos de 24 horas.</p>
                     </div>
                 </div>
 
                 <form onSubmit={onSubmit} className="fade-in-section rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_14px_45px_rgba(15,23,42,0.07)] sm:p-8" data-reveal>
-                    {/* Step indicator */}
                     <div className="mb-6 flex items-center gap-3">
                         <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition ${step >= 1 ? "bg-slate-900 text-white" : "border border-slate-300 text-slate-500"}`}>1</div>
                         <div className={`h-px flex-1 transition ${step >= 2 ? "bg-slate-900" : "bg-slate-200"}`} />
@@ -225,7 +224,7 @@ function ConsultForm() {
                             <div>
                                 <select name="objetivo" value={formData.objetivo} onChange={onChange} className={selectClass}>
                                     <option value="">¿Qué necesitas mejorar?</option>
-                                    <option value="captar_mas_leads">Captar más clientes</option>
+                                    <option value="captar_mas_leads">Captar más oportunidades</option>
                                     <option value="cerrar_mas_ventas">Cerrar más ventas</option>
                                     <option value="mejorar_soporte">Mejorar la atención al cliente</option>
                                     <option value="optimizar_operaciones">Organizar mejor mi operación</option>
@@ -286,7 +285,7 @@ function ConsultForm() {
                             {status === "success" && (
                                 <p className="md:col-span-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
                                     {submitMessage || "Solicitud recibida."}
-                                    {leadScore?.grade === "A" ? " Priorizamos tu caso para respuesta rápida." : " Te respondemos con siguientes pasos según prioridad."}
+                                    {leadScore?.grade === "A" ? " Priorizamos tu caso para responder rápido." : " Te escribimos con los siguientes pasos según prioridad."}
                                 </p>
                             )}
 

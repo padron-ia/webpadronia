@@ -6,9 +6,9 @@ function Footer() {
         <footer id="contacto" className="border-t border-slate-200 bg-white px-6 py-12 sm:px-10 lg:px-16">
             <div className="mx-auto flex w-full max-w-6xl flex-col items-start justify-between gap-6 md:flex-row md:items-center">
                 <div data-reveal className="fade-in-section">
-                    <img src="/assets/logo-padron-ia-clean.png" alt="Padron IA" className="h-14 w-auto object-contain" />
+                    <img src="/assets/logo-padron-ia-clean.png" alt="Padrón IA" className="h-14 w-auto object-contain" />
                     <p className="mt-3 text-sm text-slate-600">
-                        Automatización orientada a resultados para pequeñas y medianas empresas.
+                        Automatización comercial enfocada en aumentar ventas y reducir carga operativa.
                     </p>
                 </div>
 
@@ -30,7 +30,7 @@ function Footer() {
                         <a href="#" className="premium-link">Privacidad</a>
                         <a href="#" className="premium-link">Cookies</a>
                     </p>
-                    <p className="mt-2">© 2026 Padron IA. Todos los derechos reservados.</p>
+                    <p className="mt-2">© 2026 Padrón IA. Todos los derechos reservados.</p>
                 </div>
             </div>
         </footer>

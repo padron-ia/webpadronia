@@ -6,7 +6,7 @@ function PortalShell({ email, role, title, subtitle, onLogout, navItems = [], ch
             <div className="mx-auto flex w-full max-w-7xl gap-6">
                 <aside className="hidden w-64 shrink-0 rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_12px_35px_rgba(15,23,42,0.06)] lg:block">
                     <Link to="/" className="inline-flex items-center gap-2 text-slate-900">
-                        <img src="/assets/logo-padron-ia-clean.png" alt="Padron IA" className="h-10 w-auto object-contain" />
+                        <img src="/assets/logo-padron-ia-clean.png" alt="Padrón IA" className="h-10 w-auto object-contain" />
                     </Link>
 
                     <div className="mt-8 space-y-2">
@@ -27,25 +27,25 @@ function PortalShell({ email, role, title, subtitle, onLogout, navItems = [], ch
                     </div>
 
                     <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
-                        <p className="font-semibold text-slate-900">Sesion</p>
+                        <p className="font-semibold text-slate-900">Sesión</p>
                         <p className="mt-1 break-all">{email}</p>
                         <p className="mt-1 uppercase tracking-[0.08em]">Rol: {role}</p>
                     </div>
 
                     <button onClick={onLogout} className="mt-4 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700">
-                        Cerrar sesion
+                        Cerrar sesión
                     </button>
                 </aside>
 
                 <section className="min-w-0 w-full rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_12px_35px_rgba(15,23,42,0.06)] sm:p-8">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                         <div>
-                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Padron IA CRM</p>
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Padrón IA CRM</p>
                             <h1 className="mt-2 text-2xl text-slate-900 sm:text-3xl">{title}</h1>
                             {subtitle ? <p className="mt-2 text-sm text-slate-600 sm:text-base">{subtitle}</p> : null}
                         </div>
                         <button onClick={onLogout} className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 lg:hidden">
-                            Cerrar sesion
+                            Cerrar sesión
                         </button>
                     </div>
 

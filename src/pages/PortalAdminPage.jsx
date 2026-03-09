@@ -443,7 +443,7 @@ function PortalAdminPage() {
     const renderFilterBar = () => (
         <>
             <div className="mt-4 flex flex-wrap items-center gap-2">
-                <p className="mr-1 text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Vistas rapidas</p>
+                <p className="mr-1 text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Vistas rápidas</p>
                 {quickViews.map((view) => (
                     <button
                         key={view.id}
@@ -530,7 +530,7 @@ function PortalAdminPage() {
         <>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
                 <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><p className="text-xs uppercase tracking-[0.14em] text-slate-500">Nuevos hoy</p><p className="mt-2 text-3xl font-semibold text-slate-900">{kpis.createdToday}</p></div>
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><p className="text-xs uppercase tracking-[0.14em] text-slate-500">Nuevos 7 dias</p><p className="mt-2 text-3xl font-semibold text-slate-900">{kpis.created7Days}</p></div>
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><p className="text-xs uppercase tracking-[0.14em] text-slate-500">Nuevos 7 días</p><p className="mt-2 text-3xl font-semibold text-slate-900">{kpis.created7Days}</p></div>
                 <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><p className="text-xs uppercase tracking-[0.14em] text-slate-500">Leads grado A</p><p className="mt-2 text-3xl font-semibold text-slate-900">{kpis.gradeA}</p></div>
                 <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><p className="text-xs uppercase tracking-[0.14em] text-slate-500">Pendientes</p><p className="mt-2 text-3xl font-semibold text-slate-900">{kpis.pending}</p></div>
             </div>
@@ -827,7 +827,7 @@ function PortalAdminPage() {
                             <span className="font-semibold text-slate-900">{item.count}</span>
                         </div>
                     ))}
-                    {ownerStats.length === 0 ? <p className="text-sm text-slate-500">Sin datos de responsables todavia.</p> : null}
+                    {ownerStats.length === 0 ? <p className="text-sm text-slate-500">Sin datos de responsables todavía.</p> : null}
                 </div>
             </div>
         </div>
@@ -851,10 +851,10 @@ function PortalAdminPage() {
             <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                 <p className="text-xs uppercase tracking-[0.14em] text-slate-500">Checklist de escalabilidad</p>
                 <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-700">
-                    <li>Definir SLA de primer contacto: 24h maximo.</li>
+                    <li>Definir SLA de primer contacto: 24h máximo.</li>
                     <li>Asignar owner en todo lead A o urgente.</li>
-                    <li>Revisar Inbox dos veces al dia.</li>
-                    <li>Actualizar estado y proxima accion en cada toque.</li>
+                    <li>Revisar Inbox dos veces al día.</li>
+                    <li>Actualizar estado y próxima acción en cada toque.</li>
                     <li>Correr `supabase/schema.sql` para habilitar todas las funciones CRM.</li>
                 </ul>
             </div>
@@ -865,7 +865,7 @@ function PortalAdminPage() {
         return (
             <main className="min-h-screen bg-slate-100 px-6 py-10">
                 <div className="mx-auto w-full max-w-3xl rounded-2xl border border-amber-200 bg-amber-50 p-6 text-amber-700">
-                    Supabase no esta configurado para el portal.
+                    Supabase no está configurado para el portal.
                 </div>
             </main>
         );
@@ -973,7 +973,7 @@ function PortalAdminPage() {
 
                                 <div className="mt-3 max-h-56 space-y-2 overflow-auto pr-1">
                                     {notesLoading ? <p className="text-sm text-slate-500">Cargando notas...</p> : null}
-                                    {!notesLoading && notes.length === 0 ? <p className="text-sm text-slate-500">Sin notas internas todavia.</p> : null}
+                                    {!notesLoading && notes.length === 0 ? <p className="text-sm text-slate-500">Sin notas internas todavía.</p> : null}
                                     {notes.map((note) => (
                                         <article key={note.id} className="rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-700"><p className="whitespace-pre-wrap">{note.note}</p><p className="mt-1 text-xs text-slate-500">{formatDate(note.created_at)}</p></article>
                                     ))}

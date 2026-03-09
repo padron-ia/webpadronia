@@ -3,10 +3,10 @@ import { BriefcaseBusiness, GraduationCap, Hospital, Building2, ShoppingCart, Li
 
 const stageLabels = {
     Todos: "Todos",
-    Captacion: "Atraer clientes",
-    Conversion: "Cerrar ventas",
+    Captacion: "Captar clientes",
+    Conversion: "Convertir oportunidades",
     Nurturing: "Fidelizar",
-    Operacion: "Organizar"
+    Operacion: "Operar mejor"
 };
 
 const sectorPlaybooks = [
@@ -15,45 +15,45 @@ const sectorPlaybooks = [
         stage: "Conversion",
         type: "Fitness",
         icon: BriefcaseBusiness,
-        focus: "Escala tus asesorías online y deja de vivir pegado a WhatsApp",
-        result: "Más alumnos, agenda organizada y cobros automáticos.",
-        kpis: ["Alumnos activos", "Tiempo libre ganado", "Ventas automáticas"]
+        focus: "Evita que los interesados se enfríen entre mensajes y seguimientos manuales",
+        result: "Más entrevistas cerradas, agenda ordenada y mejor ratio de alta.",
+        kpis: ["Entrevistas cerradas", "Tasa de respuesta", "Altas semanales"]
     },
     {
         sector: "Restaurantes y Hostelería",
         stage: "Captacion",
         type: "Servicios",
         icon: Building2,
-        focus: "Gestión desatendida de tus reservas y envío de carta automático",
-        result: "Menos llamadas perdidas, más mesas llenas y cero 'no-shows'.",
-        kpis: ["Reservas automáticas", "Reducción de cancelaciones", "Carga telefónica"]
+        focus: "Gestiona reservas y confirmaciones sin saturar al equipo en horas punta",
+        result: "Más reservas confirmadas y menos cancelaciones de última hora.",
+        kpis: ["Reservas confirmadas", "Cancelaciones", "Carga telefónica"]
     },
     {
         sector: "Gestorías y Despachos",
         stage: "Operacion",
         type: "B2B",
         icon: BriefcaseBusiness,
-        focus: "Clasificación automática de facturas y respuesta fiscal 24/7",
-        result: "Adiós al caos de documentos y clientes siempre informados.",
-        kpis: ["Documentos procesados", "Consultas resueltas", "Horas de oficina"]
+        focus: "Ordena entradas de documentación y reduce consultas repetidas de clientes",
+        result: "Menos tiempo en tareas administrativas y más capacidad para trabajo de valor.",
+        kpis: ["Documentos procesados", "Tiempo de gestión", "Consultas resueltas"]
     },
     {
         sector: "Inmobiliaria",
         stage: "Captacion",
         type: "Servicios",
         icon: Building2,
-        focus: "Filtrar los que solo miran de los que quieren comprar",
-        result: "Menos visitas perdidas, más firmados.",
-        kpis: ["Tiempo de respuesta", "Visitas agendadas", "Cierre"]
+        focus: "Filtra contactos con intención real para priorizar visitas con potencial",
+        result: "Menos visitas improductivas y más oportunidades bien calificadas.",
+        kpis: ["Tiempo de respuesta", "Visitas útiles", "Tasa de cierre"]
     },
     {
         sector: "Ecommerce",
         stage: "Captacion",
         type: "Ecommerce",
         icon: ShoppingCart,
-        focus: "WhatsApp comercial y recuperación de oportunidades",
-        result: "Más conversaciones de compra y mejor rendimiento de campañas.",
-        kpis: ["Clics que compran", "Conversaciones que venden", "Rentabilidad de campañas"]
+        focus: "Activa seguimiento comercial para recuperar carritos y dudas de compra",
+        result: "Más conversaciones con intención y mayor conversión en campañas.",
+        kpis: ["Recuperación de carritos", "Conversaciones de venta", "Conversión"]
     }
 ];
 
@@ -67,32 +67,32 @@ const stageStyles = {
 const stageFilters = ["Todos", "Captacion", "Conversion", "Nurturing", "Operacion"];
 
 const discoveryScript = [
-    "Identificamos tu 'cuello de botella' actual en 15 minutos.",
-    "Buscamos un Quick-Win: algo que podamos arreglar en menos de 7 días.",
-    "Lo implementamos nosotros: no tienes que mover un dedo.",
-    "Validamos que funciona y te genera dinero o tiempo libre.",
-    "Una vez ves que el sistema pequeño funciona, escalamos al grande.",
-    "Garantía total: Si el Quick-Win no te da resultados, no seguimos."
+    "Detectamos en 15 minutos dónde se están cayendo tus ventas.",
+    "Priorizamos un primer cambio de alto impacto para ejecutar de inmediato.",
+    "Implementamos el flujo contigo y conectamos tus canales actuales.",
+    "Medimos respuesta, oportunidades y avance comercial desde la primera semana.",
+    "Ajustamos mensajes y reglas con datos reales, no con suposiciones.",
+    "Si no hay avance claro, redefinimos el plan antes de escalar."
 ];
 
 const offers = [
     {
-        name: "Quick-Win: Resultados en 7 días",
-        timeline: "7 días máximo",
-        idealFor: "Para probar que el sistema funciona sin riesgos.",
-        outcomes: ["Implementación ultra-rápida", "Cero esfuerzo por tu parte", "No pagas hasta que esté funcionando"]
+        name: "Sprint de arranque",
+        timeline: "7-10 días",
+        idealFor: "Para resolver el mayor cuello de botella comercial con rapidez.",
+        outcomes: ["Diagnóstico enfocado", "Primer flujo en producción", "Métricas iniciales de impacto"]
     },
     {
-        name: "Escalado: Tu Agenda llena en automático",
-        timeline: "14-21 días",
-        idealFor: "Para negocios que quieren duplicar sus ventas sin contratar más personal.",
-        outcomes: ["Filtro de clientes cualificados", "Citas agendadas y confirmadas", "Sin captación manual: tus ventas escalan solas"]
+        name: "Sistema comercial",
+        timeline: "2-4 semanas",
+        idealFor: "Para negocios que quieren captar y cerrar más sin ampliar estructura.",
+        outcomes: ["Calificación de oportunidades", "Seguimiento automatizado", "Pipeline más predecible"]
     },
     {
-        name: "Soberanía: Tu Negocio en Piloto Automático",
-        timeline: "30-60 días",
-        idealFor: "Para empresas que quieren el control total y costes operativos mínimos.",
-        outcomes: ["Sistemas 100% integrados", "Reportes de beneficios en tiempo real", "Garantía de éxito: Solo pagas el proyecto final si cumple tus KPIs"]
+        name: "Escalado operativo y de ventas",
+        timeline: "1-2 meses",
+        idealFor: "Para equipos que necesitan estandarizar operación y sostener crecimiento.",
+        outcomes: ["Integración de procesos clave", "Tablero de seguimiento", "Mejora continua mensual"]
     }
 ];
 
@@ -111,10 +111,10 @@ function SolutionsBlueprint() {
                 <div className="max-w-4xl">
                     <p data-reveal className="fade-in-section text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">Soluciones por sector</p>
                     <h2 data-reveal className="fade-in-section mt-4 text-3xl text-slate-900 sm:text-4xl lg:text-5xl">
-                        Cada negocio tiene su forma de perder clientes. Nosotros tenemos una solución para cada una.
+                        Cada sector pierde ventas por motivos distintos. Diseñamos el sistema según tu realidad.
                     </h2>
                     <p data-reveal className="fade-in-section mt-5 text-slate-600">
-                        Hemos diseñado sistemas probados para los sectores donde más impacto generamos. Busca el tuyo.
+                        Aplicamos playbooks prácticos para que mejores respuesta, seguimiento y cierre sin complicar a tu equipo.
                     </p>
                 </div>
 
@@ -197,7 +197,7 @@ function SolutionsBlueprint() {
                                     ))}
                                 </div>
                                 <a href="#consultoria" className="premium-button mt-5 inline-flex rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-white">
-                                    Quiero saber si es para mí
+                                    Quiero evaluar mi caso
                                 </a>
                             </article>
                         ))}

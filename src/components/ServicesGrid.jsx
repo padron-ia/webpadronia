@@ -1,27 +1,27 @@
 const services = [
     {
-        title: "Todo en un mismo sitio",
-        description: "Tus mensajes de WhatsApp, formularios web y correos llegan a un solo lugar. Nada se pierde, nadie se olvida."
+        title: "Todos tus contactos en un solo flujo",
+        description: "WhatsApp, formularios y correo entran en el mismo sistema para que ningún lead se quede sin respuesta."
     },
     {
-        title: "Seguimiento que no depende de ti",
-        description: "El sistema recuerda por ti: envía mensajes, crea tareas y avisa a tu equipo si un cliente lleva días sin respuesta."
+        title: "Seguimiento automático de oportunidades",
+        description: "El sistema envía recordatorios, crea tareas y avisa al equipo cuando una oportunidad se enfría."
     },
     {
-        title: "Clientes contentos sin esfuerzo extra",
-        description: "Las preguntas repetidas se contestan solas. Las urgencias se escalan al instante. Tu equipo solo interviene cuando de verdad hace falta."
+        title: "Atención rápida incluso fuera de horario",
+        description: "Respondemos preguntas frecuentes al instante y escalamos casos clave para que no pierdas ventas por demora."
     },
     {
-        title: "Menos papeleo entre equipos",
-        description: "Aprobaciones, solicitudes y procesos internos funcionan solos, con registro de quién hizo qué y cuándo."
+        title: "Procesos internos sin cuellos de botella",
+        description: "Automatizamos aprobaciones y tareas repetitivas con trazabilidad para que el equipo trabaje con foco comercial."
     },
     {
         title: "Conectamos lo que ya usas",
-        description: "Tus hojas de cálculo, tu email, tu calendario y tus herramientas actuales trabajan juntos sin que tengas que cambiar nada."
+        description: "Integramos CRM, calendario, hojas de cálculo y herramientas actuales para evitar trabajo duplicado."
     },
     {
-        title: "Mejoramos cada mes",
-        description: "Revisamos qué funciona, qué no, y lo ajustamos. No te dejamos con algo montado y nos vamos."
+        title: "Mejora continua con foco en ventas",
+        description: "Medimos qué mensajes y procesos convierten mejor, y ajustamos cada mes para seguir escalando resultados."
     }
 ];
 
@@ -32,7 +32,7 @@ function ServicesGrid() {
             <div className="relative z-10 mx-auto w-full max-w-6xl">
                 <div className="max-w-3xl">
                     <p data-reveal className="fade-in-section text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">Servicios</p>
-                    <h2 data-reveal className="fade-in-section mt-4 text-3xl text-slate-900 sm:text-4xl lg:text-5xl">Automatización diseñada para que tu negocio crezca</h2>
+                    <h2 data-reveal className="fade-in-section mt-4 text-3xl text-slate-900 sm:text-4xl lg:text-5xl">Automatización comercial para captar, responder y cerrar más</h2>
                 </div>
 
                 <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">

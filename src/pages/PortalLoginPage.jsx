@@ -50,16 +50,16 @@ function PortalLoginPage() {
         <main className="min-h-screen bg-slate-100 px-4 py-10 sm:px-8">
             <div className="mx-auto w-full max-w-xl rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_14px_45px_rgba(15,23,42,0.07)] sm:p-8">
                 <Link to="/" className="inline-flex items-center gap-2 text-slate-700">
-                    <img src="/assets/logo-padron-ia-clean.png" alt="Padron IA" className="h-11 w-auto object-contain" />
+                    <img src="/assets/logo-padron-ia-clean.png" alt="Padrón IA" className="h-11 w-auto object-contain" />
                 </Link>
 
                 <p className="mt-6 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Portal interno</p>
                 <h1 className="mt-2 text-3xl text-slate-900">Acceso CRM</h1>
-                <p className="mt-3 text-slate-600">Inicia sesion para entrar al panel de gestion de leads y seguimiento de clientes.</p>
+                <p className="mt-3 text-slate-600">Inicia sesión para entrar al panel de gestión de leads y seguimiento de clientes.</p>
 
                 {!isSupabaseConfigured && (
                     <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
-                        Supabase no esta configurado. Define `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY`.
+                        Supabase no está configurado. Define `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY`.
                     </div>
                 )}
 
@@ -74,7 +74,7 @@ function PortalLoginPage() {
                     />
                     <input
                         type="password"
-                        placeholder="Password"
+                        placeholder="Contraseña"
                         value={password}
                         onChange={(event) => setPassword(event.target.value)}
                         className="rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-slate-500"

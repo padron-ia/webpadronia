@@ -4,7 +4,7 @@ const navItems = [
     { label: "Inicio", href: "/#hero" },
     { label: "Servicios", href: "/#servicios" },
     { label: "Sectores", href: "/#sectores" },
-    { label: "Consultoria", href: "/#consultoria" },
+    { label: "Consultoría", href: "/#consultoria" },
     { label: "Portal", href: "/portal/login" },
     { label: "Contacto", href: "/#contacto" }
 ];
@@ -20,7 +20,7 @@ function FloatingNavbar() {
                 <a href="/" className="flex items-center gap-3" onClick={closeMenu}>
                     <img
                         src="/assets/logo-padron-ia-clean.png"
-                        alt="Padron IA"
+                        alt="Padrón IA"
                         className="h-14 w-auto object-contain"
                         loading="eager"
                     />
@@ -46,14 +46,14 @@ function FloatingNavbar() {
                     aria-expanded={isOpen}
                     aria-controls="mobile-nav"
                 >
-                    Menu
+                    Menú
                 </button>
 
                 <a
                     href="/#consultoria"
                     className="premium-button hidden rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-white md:inline-flex"
                 >
-                    Consultoria
+                    Consultoría
                 </a>
             </div>
 
