@@ -67,32 +67,32 @@ const stageStyles = {
 const stageFilters = ["Todos", "Captacion", "Conversion", "Nurturing", "Operacion"];
 
 const discoveryScript = [
-    "Detectamos en 15 minutos dónde se están cayendo tus ventas.",
-    "Priorizamos un primer cambio de alto impacto para ejecutar de inmediato.",
-    "Implementamos el flujo contigo y conectamos tus canales actuales.",
-    "Medimos respuesta, oportunidades y avance comercial desde la primera semana.",
-    "Ajustamos mensajes y reglas con datos reales, no con suposiciones.",
-    "Si no hay avance claro, redefinimos el plan antes de escalar."
+    "Detectamos dónde estás perdiendo ventas, tiempo y margen.",
+    "Definimos el cambio con mayor impacto económico inmediato.",
+    "Lo ponemos en marcha sin frenar la operación diaria.",
+    "Medimos resultados reales en respuesta, conversión y carga del equipo.",
+    "Ajustamos hasta que el proceso sea estable y rentable.",
+    "Cuando funciona, lo escalamos sin aumentar complejidad innecesaria."
 ];
 
 const offers = [
     {
         name: "Sprint de arranque",
         timeline: "7-10 días",
-        idealFor: "Para resolver el mayor cuello de botella comercial con rapidez.",
-        outcomes: ["Diagnóstico enfocado", "Primer flujo en producción", "Métricas iniciales de impacto"]
+        idealFor: "Para salir del modo urgencia y recuperar control rápido.",
+        outcomes: ["Cuello de botella identificado", "Primer cambio aplicado", "Impacto inicial medible"]
     },
     {
         name: "Sistema comercial",
         timeline: "2-4 semanas",
-        idealFor: "Para negocios que quieren captar y cerrar más sin ampliar estructura.",
-        outcomes: ["Calificación de oportunidades", "Seguimiento automatizado", "Pipeline más predecible"]
+        idealFor: "Para vender más sin que tu equipo viva saturado.",
+        outcomes: ["Mejor seguimiento", "Más oportunidades cerradas", "Proceso comercial predecible"]
     },
     {
         name: "Escalado operativo y de ventas",
         timeline: "1-2 meses",
-        idealFor: "Para equipos que necesitan estandarizar operación y sostener crecimiento.",
-        outcomes: ["Integración de procesos clave", "Tablero de seguimiento", "Mejora continua mensual"]
+        idealFor: "Para crecer con orden y sin depender de más horas del dueño.",
+        outcomes: ["Operación estandarizada", "Visibilidad de indicadores", "Mejora continua del margen"]
     }
 ];
 
@@ -111,10 +111,10 @@ function SolutionsBlueprint() {
                 <div className="max-w-4xl">
                     <p data-reveal className="fade-in-section text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">Soluciones por sector</p>
                     <h2 data-reveal className="fade-in-section mt-4 text-3xl text-slate-900 sm:text-4xl lg:text-5xl">
-                        Cada sector pierde ventas por motivos distintos. Diseñamos el sistema según tu realidad.
+                        Cada sector pierde dinero de una forma distinta. Lo resolvemos según tu realidad.
                     </h2>
                     <p data-reveal className="fade-in-section mt-5 text-slate-600">
-                        Aplicamos playbooks prácticos para que mejores respuesta, seguimiento y cierre sin complicar a tu equipo.
+                        El objetivo es el mismo en todos los casos: más ingresos, menos carga y una operación que no dependa de apagar fuegos.
                     </p>
                 </div>
 

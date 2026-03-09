@@ -1,27 +1,27 @@
 const services = [
     {
-        title: "Todos tus contactos en un solo flujo",
-        description: "WhatsApp, formularios y correo entran en el mismo sistema para que ningún lead se quede sin respuesta."
+        title: "Más oportunidades atendidas",
+        description: "Cada contacto recibe respuesta y seguimiento para que no se enfríe antes de comprar."
     },
     {
-        title: "Seguimiento automático de oportunidades",
-        description: "El sistema envía recordatorios, crea tareas y avisa al equipo cuando una oportunidad se enfría."
+        title: "Más cierres, menos persecución manual",
+        description: "Tu equipo deja de perseguir chats y se centra en conversaciones con intención real de compra."
     },
     {
-        title: "Atención rápida incluso fuera de horario",
-        description: "Respondemos preguntas frecuentes al instante y escalamos casos clave para que no pierdas ventas por demora."
+        title: "Clientes mejor atendidos",
+        description: "Respuestas rápidas y flujo claro para que el cliente avance sin bloqueos ni esperas eternas."
     },
     {
-        title: "Procesos internos sin cuellos de botella",
-        description: "Automatizamos aprobaciones y tareas repetitivas con trazabilidad para que el equipo trabaje con foco comercial."
+        title: "Menos caos interno",
+        description: "Procesos ordenados y tareas claras para dejar de apagar fuegos todos los días."
     },
     {
-        title: "Conectamos lo que ya usas",
-        description: "Integramos CRM, calendario, hojas de cálculo y herramientas actuales para evitar trabajo duplicado."
+        title: "Menos gasto por ineficiencias",
+        description: "Reducimos trabajo duplicado y errores operativos que hoy te cuestan tiempo y margen."
     },
     {
-        title: "Mejora continua con foco en ventas",
-        description: "Medimos qué mensajes y procesos convierten mejor, y ajustamos cada mes para seguir escalando resultados."
+        title: "Crecimiento con control",
+        description: "Mejoras continuas para escalar sin perder calidad ni depender de más horas tuyas."
     }
 ];
 
@@ -32,7 +32,7 @@ function ServicesGrid() {
             <div className="relative z-10 mx-auto w-full max-w-6xl">
                 <div className="max-w-3xl">
                     <p data-reveal className="fade-in-section text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">Servicios</p>
-                    <h2 data-reveal className="fade-in-section mt-4 text-3xl text-slate-900 sm:text-4xl lg:text-5xl">Automatización comercial para captar, responder y cerrar más</h2>
+                    <h2 data-reveal className="fade-in-section mt-4 text-3xl text-slate-900 sm:text-4xl lg:text-5xl">Lo que gana tu negocio: más ventas, más tiempo y menos costes</h2>
                 </div>
 
                 <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">

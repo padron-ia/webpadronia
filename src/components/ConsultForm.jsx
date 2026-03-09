@@ -151,9 +151,9 @@ function ConsultForm() {
             <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
                 <div data-reveal className="fade-in-section">
                     <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">Da el primer paso</p>
-                    <h2 className="mt-4 text-3xl text-slate-900 sm:text-4xl lg:text-5xl">Cuéntanos dónde se te están escapando ventas y te diremos cómo corregirlo</h2>
+                    <h2 className="mt-4 text-3xl text-slate-900 sm:text-4xl lg:text-5xl">Cuéntanos qué te está quitando tiempo y dinero, y te diremos cómo solucionarlo</h2>
                     <p className="mt-5 max-w-xl text-slate-600">
-                        Con estos datos preparamos una propuesta específica para tu negocio. Sin plantillas genéricas. Si prefieres ir al grano, escríbenos por WhatsApp.
+                        Con estos datos te damos un plan concreto para vender más y operar con menos fricción. Sin plantillas genéricas. Si prefieres ir al grano, escríbenos por WhatsApp.
                     </p>
 
                     <a
