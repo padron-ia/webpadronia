@@ -114,7 +114,7 @@ function SolutionsBlueprint() {
                         Cada sector pierde dinero de una forma distinta. Lo resolvemos según tu realidad.
                     </h2>
                     <p data-reveal className="fade-in-section mt-5 text-slate-600">
-                        El objetivo es el mismo en todos los casos: más ingresos, menos carga y una operación que no dependa de apagar fuegos.
+                        Si hoy vives apagando fuegos, aquí empieza el cambio: menos caos, más ventas y más calma para tu equipo.
                     </p>
                 </div>
 
