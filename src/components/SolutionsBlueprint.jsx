@@ -11,6 +11,15 @@ const stageLabels = {
 
 const sectorPlaybooks = [
     {
+        sector: "Gimnasios y Centros Deportivos",
+        stage: "Captacion",
+        type: "Fitness",
+        icon: LifeBuoy,
+        focus: "Capta leads desde todos los canales, reactiva inactivos y reduce bajas antes de que ocurran",
+        result: "Más altas, menos bajas y un sistema de retención que funciona sin intervención manual.",
+        kpis: ["Leads captados", "Socios reactivados", "Tasa de retención"]
+    },
+    {
         sector: "Entrenadores Personales",
         stage: "Conversion",
         type: "Fitness",

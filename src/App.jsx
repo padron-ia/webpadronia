@@ -3,6 +3,7 @@ import LandingPage from "./pages/LandingPage";
 import LandingEntrenadores from "./pages/LandingEntrenadores";
 import LandingRestaurantes from "./pages/LandingRestaurantes";
 import LandingGestorias from "./pages/LandingGestorias";
+import LandingGimnasios from "./pages/LandingGimnasios";
 import PortalAdminPage from "./pages/PortalAdminPage";
 import PortalClientPage from "./pages/PortalClientPage";
 import PortalIndexPage from "./pages/PortalIndexPage";
@@ -15,6 +16,7 @@ function App() {
             <Route path="/entrenadores" element={<LandingEntrenadores />} />
             <Route path="/restaurantes" element={<LandingRestaurantes />} />
             <Route path="/gestorias" element={<LandingGestorias />} />
+            <Route path="/gimnasios" element={<LandingGimnasios />} />
             <Route path="/portal/login" element={<PortalLoginPage />} />
             <Route path="/portal/admin/*" element={<PortalAdminPage />} />
             <Route path="/portal/cliente" element={<PortalClientPage />} />

@@ -19,8 +19,11 @@ function HeroSection() {
                 <div data-reveal className="fade-in-section mt-10">
                     <p className="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-4">Elige tu tipo de negocio:</p>
                     <div className="flex flex-wrap gap-3">
+                        <a href="/gimnasios" className="premium-button inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-900 hover:border-slate-900 transition-all">
+                            🏋️ Gimnasios
+                        </a>
                         <a href="/entrenadores" className="premium-button inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-900 hover:border-slate-900 transition-all">
-                            🏋️ Entrenadores
+                            🤸 Entrenadores
                         </a>
                         <a href="/restaurantes" className="premium-button inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-900 hover:border-slate-900 transition-all">
                             🍽️ Restaurantes

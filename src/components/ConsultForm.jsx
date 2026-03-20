@@ -196,6 +196,7 @@ function ConsultForm() {
                             <div>
                                 <select name="sector" value={formData.sector} onChange={onChange} className={selectClass}>
                                     <option value="">Sector</option>
+                                    <option value="gimnasio_centro_deportivo">Gimnasios y centros deportivos</option>
                                     <option value="servicios_b2b">Servicios a empresas</option>
                                     <option value="clinica_estetica">Clínicas y estética</option>
                                     <option value="inmobiliaria">Inmobiliaria</option>
