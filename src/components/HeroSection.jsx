@@ -2,22 +2,22 @@ import { buildWhatsAppUrl } from "../lib/contact";
 import { trackLeadEvent } from "../lib/analytics";
 
 function HeroSection() {
-    const quickMessage = "Hola, tengo un negocio y creo que estoy perdiendo ventas por no responder a tiempo. ¿Podéis ayudarme?";
+    const quickMessage = "Hola, quiero facturar más sin meter más horas. ¿Podemos hablar?";
 
     return (
         <section id="hero" className="premium-gradient-plum relative overflow-hidden px-6 pb-20 pt-40 sm:px-10 lg:px-16">
             <div className="premium-parallax-layer" aria-hidden="true" />
             <div className="relative z-10 mx-auto w-full max-w-6xl">
-                <p data-reveal className="fade-in-section text-xs font-semibold uppercase tracking-[0.22em] text-slate-600">Para dueños de pymes que quieren más ingresos y más tiempo</p>
+                <p data-reveal className="fade-in-section text-xs font-semibold uppercase tracking-[0.22em] text-slate-600">Para dueños de negocios que quieren resultados, no promesas</p>
                 <h1 data-reveal className="fade-in-section mt-5 max-w-4xl text-5xl leading-[0.92] text-slate-900 sm:text-6xl lg:text-7xl">
-                    Más ventas, más tiempo y menos coste operativo.
+                    Cada hora que pierdes en tareas repetitivas es dinero que no facturas.
                 </h1>
                 <p data-reveal className="fade-in-section mt-6 max-w-2xl text-base leading-relaxed text-slate-700 sm:text-lg">
-                    Si hoy vives apagando fuegos, estás perdiendo dinero cada semana. <strong>Te ayudamos a ordenar tu negocio para que entren mejores oportunidades, se atiendan a tiempo y tu equipo produzca más sin contratar más personal.</strong>
+                    Tu competencia ya responde en 2 minutos. Tú tardas 3 horas y pierdes al cliente. <strong>Hacemos que tu negocio capte más clientes, retenga a los que ya tiene y funcione sin que tú estés encima de todo.</strong>
                 </p>
 
                 <div data-reveal className="fade-in-section mt-10">
-                    <p className="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-4">Elige tu tipo de negocio:</p>
+                    <p className="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-4">¿Qué tipo de negocio tienes?</p>
                     <div className="flex flex-wrap gap-3">
                         <a href="/gimnasios" className="premium-button inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-900 hover:border-slate-900 transition-all">
                             🏋️ Gimnasios

@@ -8,7 +8,7 @@ function Footer() {
                 <div data-reveal className="fade-in-section">
                     <img src="/assets/logo-padron-ia-clean.png" alt="Padrón IA" className="h-14 w-auto object-contain" />
                     <p className="mt-3 text-sm text-slate-600">
-                        Automatización comercial enfocada en aumentar ventas y reducir carga operativa.
+                        Más clientes, menos trabajo repetitivo, más dinero en tu bolsillo.
                     </p>
                 </div>
 
@@ -17,7 +17,7 @@ function Footer() {
                         WhatsApp:{" "}
                         <a
                             className="premium-link font-semibold text-slate-900"
-                            href={buildWhatsAppUrl("Hola, tengo un negocio y me gustaría saber si podéis ayudarme a automatizar parte de mi operación. ¿Podemos hablar?")}
+                            href={buildWhatsAppUrl("Hola, quiero facturar más sin meter más horas. ¿Podemos hablar?")}
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={() => trackLeadEvent("lead_whatsapp_click", { placement: "footer" })}

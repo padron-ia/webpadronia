@@ -15,54 +15,54 @@ const sectorPlaybooks = [
         stage: "Captacion",
         type: "Fitness",
         icon: LifeBuoy,
-        focus: "Capta leads desde todos los canales, reactiva inactivos y reduce bajas antes de que ocurran",
-        result: "Más altas, menos bajas y un sistema de retención que funciona sin intervención manual.",
-        kpis: ["Leads captados", "Socios reactivados", "Tasa de retención"]
+        focus: "Pierdes socios cada mes porque nadie les hace seguimiento. Mientras tanto, los leads que te escriben se van a la competencia",
+        result: "Más altas, menos bajas y clientes que se quedan meses, no semanas.",
+        kpis: ["+30% retención", "Leads respondidos en <2 min", "Bajas reducidas"]
     },
     {
         sector: "Entrenadores Personales",
         stage: "Conversion",
         type: "Fitness",
         icon: BriefcaseBusiness,
-        focus: "Evita que los interesados se enfríen entre mensajes y seguimientos manuales",
-        result: "Más entrevistas cerradas, agenda ordenada y mejor ratio de alta.",
-        kpis: ["Entrevistas cerradas", "Tasa de respuesta", "Altas semanales"]
+        focus: "Te escriben 20 interesados al mes pero solo cierras 3 porque tardas en contestar y se te olvida hacer seguimiento",
+        result: "Más alumnos con la misma inversión en publicidad. Sin perseguir a nadie.",
+        kpis: ["x2 tasa de cierre", "0 leads perdidos", "Agenda llena"]
     },
     {
         sector: "Restaurantes y Hostelería",
         stage: "Captacion",
         type: "Servicios",
         icon: Building2,
-        focus: "Gestiona reservas y confirmaciones sin saturar al equipo en horas punta",
-        result: "Más reservas confirmadas y menos cancelaciones de última hora.",
-        kpis: ["Reservas confirmadas", "Cancelaciones", "Carga telefónica"]
+        focus: "Mesas vacías por cancelaciones, teléfono que nadie coge en hora punta y reservas que se pierden por WhatsApp",
+        result: "Más mesas llenas, menos cancelaciones y tu equipo centrado en servir, no en contestar.",
+        kpis: ["-40% cancelaciones", "+25% reservas", "0 llamadas perdidas"]
     },
     {
         sector: "Gestorías y Despachos",
         stage: "Operacion",
         type: "B2B",
         icon: BriefcaseBusiness,
-        focus: "Ordena entradas de documentación y reduce consultas repetidas de clientes",
-        result: "Menos tiempo en tareas administrativas y más capacidad para trabajo de valor.",
-        kpis: ["Documentos procesados", "Tiempo de gestión", "Consultas resueltas"]
+        focus: "Tu equipo pierde 3 horas al día contestando las mismas preguntas y persiguiendo documentación que no llega",
+        result: "Menos trabajo de secretaría, más capacidad para facturar sin contratar.",
+        kpis: ["-60% consultas repetidas", "Docs recibidos a tiempo", "+20% capacidad"]
     },
     {
         sector: "Inmobiliaria",
         stage: "Captacion",
         type: "Servicios",
         icon: Building2,
-        focus: "Filtra contactos con intención real para priorizar visitas con potencial",
-        result: "Menos visitas improductivas y más oportunidades bien calificadas.",
-        kpis: ["Tiempo de respuesta", "Visitas útiles", "Tasa de cierre"]
+        focus: "Haces 15 visitas a la semana pero solo 2 tienen intención real. El resto te ha hecho perder la mañana",
+        result: "Solo visitas a gente cualificada. Más cierres con menos kilómetros.",
+        kpis: ["-70% visitas inútiles", "Leads filtrados", "+30% cierres"]
     },
     {
         sector: "Ecommerce",
         stage: "Captacion",
         type: "Ecommerce",
         icon: ShoppingCart,
-        focus: "Activa seguimiento comercial para recuperar carritos y dudas de compra",
-        result: "Más conversaciones con intención y mayor conversión en campañas.",
-        kpis: ["Recuperación de carritos", "Conversaciones de venta", "Conversión"]
+        focus: "El 70% de tus carritos se abandonan y no haces nada al respecto. Ese dinero se va cada día",
+        result: "Recuperas ventas que hoy pierdes sin mover un dedo.",
+        kpis: ["+15% carritos recuperados", "Seguimiento 24/7", "+20% facturación"]
     }
 ];
 
@@ -76,32 +76,32 @@ const stageStyles = {
 const stageFilters = ["Todos", "Captacion", "Conversion", "Nurturing", "Operacion"];
 
 const discoveryScript = [
-    "Detectamos dónde estás perdiendo ventas, tiempo y margen.",
-    "Definimos el cambio con mayor impacto económico inmediato.",
-    "Lo ponemos en marcha sin frenar la operación diaria.",
-    "Medimos resultados reales en respuesta, conversión y carga del equipo.",
-    "Ajustamos hasta que el proceso sea estable y rentable.",
-    "Cuando funciona, lo escalamos sin aumentar complejidad innecesaria."
+    "Nos cuentas qué te quita más tiempo y dinero cada semana.",
+    "Identificamos dónde estás dejando dinero en la mesa ahora mismo.",
+    "Te decimos exactamente qué cambiar primero para notar resultados rápido.",
+    "Lo montamos sin que pares tu negocio ni un día.",
+    "Medimos: ¿estás ganando más? ¿Trabajando menos? Si no, ajustamos.",
+    "Cuando funciona, lo ampliamos. Sin complicarte la vida."
 ];
 
 const offers = [
     {
-        name: "Sprint de arranque",
+        name: "Resultado rápido",
         timeline: "7-10 días",
-        idealFor: "Para salir del modo urgencia y recuperar control rápido.",
-        outcomes: ["Cuello de botella identificado", "Primer cambio aplicado", "Impacto inicial medible"]
+        idealFor: "Para dejar de perder dinero esta misma semana en lo que más te duele.",
+        outcomes: ["Problema principal resuelto", "Primeros resultados medibles", "Sin parar tu negocio"]
     },
     {
-        name: "Sistema comercial",
+        name: "Máquina de clientes",
         timeline: "2-4 semanas",
-        idealFor: "Para vender más sin que tu equipo viva saturado.",
-        outcomes: ["Mejor seguimiento", "Más oportunidades cerradas", "Proceso comercial predecible"]
+        idealFor: "Para que te entren clientes sin que tú tengas que perseguirlos.",
+        outcomes: ["Más clientes cerrados", "Seguimiento que no se te escapa", "Ingresos predecibles"]
     },
     {
-        name: "Escalado operativo y de ventas",
+        name: "Negocio que funciona sin ti",
         timeline: "1-2 meses",
-        idealFor: "Para crecer con orden y sin depender de más horas del dueño.",
-        outcomes: ["Operación estandarizada", "Visibilidad de indicadores", "Mejora continua del margen"]
+        idealFor: "Para facturar más trabajando menos horas. Sin contratar a nadie.",
+        outcomes: ["Operación en piloto automático", "Tú decides dónde poner tu tiempo", "Crecimiento sin más carga"]
     }
 ];
 
@@ -118,12 +118,12 @@ function SolutionsBlueprint() {
             <div className="premium-parallax-layer premium-parallax-layer-soft" aria-hidden="true" />
             <div className="relative z-10 mx-auto w-full max-w-6xl space-y-14">
                 <div className="max-w-4xl">
-                    <p data-reveal className="fade-in-section text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">Soluciones por sector</p>
+                    <p data-reveal className="fade-in-section text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">Tu sector</p>
                     <h2 data-reveal className="fade-in-section mt-4 text-3xl text-slate-900 sm:text-4xl lg:text-5xl">
-                        Cada sector pierde dinero de una forma distinta. Lo resolvemos según tu realidad.
+                        ¿Dónde está perdiendo dinero tu negocio ahora mismo?
                     </h2>
                     <p data-reveal className="fade-in-section mt-5 text-slate-600">
-                        Si hoy vives apagando fuegos, aquí empieza el cambio: menos caos, más ventas y más calma para tu equipo.
+                        Cada sector sangra por un sitio distinto. Encuentra el tuyo y mira qué resultados puedes esperar.
                     </p>
                 </div>
 
@@ -181,7 +181,7 @@ function SolutionsBlueprint() {
 
                 <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
                     <div data-reveal className="fade-in-section rounded-3xl border border-slate-200 bg-white/95 p-7 shadow-[0_14px_45px_rgba(15,23,42,0.07)]">
-                        <h3 className="text-2xl text-slate-900">Así funciona la primera conversación (15 min)</h3>
+                        <h3 className="text-2xl text-slate-900">15 minutos para saber cuánto dinero estás perdiendo</h3>
                         <ul className="mt-5 space-y-3 text-slate-700">
                             {discoveryScript.map((step, idx) => (
                                 <li key={step} className="flex gap-3">
@@ -206,7 +206,7 @@ function SolutionsBlueprint() {
                                     ))}
                                 </div>
                                 <a href="#consultoria" className="premium-button mt-5 inline-flex rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-white">
-                                    Quiero evaluar mi caso
+                                    Quiero saber cuánto estoy perdiendo
                                 </a>
                             </article>
                         ))}

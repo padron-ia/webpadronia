@@ -150,10 +150,10 @@ function ConsultForm() {
         <section id="consultoria" className="px-6 py-20 sm:px-10 lg:px-16">
             <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
                 <div data-reveal className="fade-in-section">
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">Da el primer paso</p>
-                    <h2 className="mt-4 text-3xl text-slate-900 sm:text-4xl lg:text-5xl">Cuéntanos qué te está quitando tiempo y dinero, y te diremos cómo solucionarlo</h2>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">Empieza aquí</p>
+                    <h2 className="mt-4 text-3xl text-slate-900 sm:text-4xl lg:text-5xl">Cuéntanos qué te come las horas y te diremos cómo recuperarlas</h2>
                     <p className="mt-5 max-w-xl text-slate-600">
-                        Con estos datos te damos un plan concreto para vender más y operar con menos fricción. Sin plantillas genéricas. Si prefieres ir al grano, escríbenos por WhatsApp.
+                        Sin humo ni promesas genéricas. Nos cuentas tu problema real y te decimos exactamente qué podemos hacer, cuánto cuesta y en cuánto tiempo lo notas. Si prefieres ir directo, WhatsApp.
                     </p>
 
                     <a
@@ -163,12 +163,12 @@ function ConsultForm() {
                         onClick={() => trackLeadEvent("lead_whatsapp_click", { placement: "consultoria" })}
                         className="premium-button mt-8 inline-flex items-center justify-center rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white"
                     >
-                        Consultar por WhatsApp
+                        Ir al grano por WhatsApp
                     </a>
 
                     <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
-                        <p className="font-semibold text-slate-900">¿Cómo funciona?</p>
-                        <p className="mt-2">Priorizamos empresas con necesidad clara y capacidad de implementación. Si tu caso encaja, te respondemos en menos de 24 horas.</p>
+                        <p className="font-semibold text-slate-900">Sin compromiso</p>
+                        <p className="mt-2">Nos cuentas tu situación, te decimos si podemos ayudarte y cuánto. Si no encaja, te lo decimos. Respuesta en menos de 24 horas.</p>
                     </div>
                 </div>
 
@@ -208,7 +208,7 @@ function ConsultForm() {
                                 {errors.sector && <p className="mt-1 text-sm text-red-600">{errors.sector}</p>}
                             </div>
                             <div className="md:col-span-2">
-                                <textarea name="mensaje" value={formData.mensaje} onChange={onChange} rows={4} placeholder="¿Qué proceso te está costando más tiempo o dinero hoy?" className={inputClass} />
+                                <textarea name="mensaje" value={formData.mensaje} onChange={onChange} rows={4} placeholder="¿Qué te quita más tiempo o dinero cada semana?" className={inputClass} />
                                 {errors.mensaje && <p className="mt-1 text-sm text-red-600">{errors.mensaje}</p>}
                             </div>
                             <div className="md:col-span-2">

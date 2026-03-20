@@ -11,16 +11,16 @@ function LandingEntrenadores() {
             <main>
                 <section className="premium-gradient-plum py-40 px-6 sm:px-10 lg:px-16 text-center">
                     <h1 className="text-5xl lg:text-7xl text-slate-900 leading-[0.92]">
-                        Más alumnos, menos chats sin cerrar <br /> y una agenda comercial ordenada
+                        Te escriben 20 interesados al mes. <br /> ¿Cuántos se te escapan por no contestar a tiempo?
                     </h1>
                     <p className="mt-6 text-xl text-slate-700 max-w-2xl mx-auto">
-                        Automatizamos captación, calificación y seguimiento por WhatsApp para que no se enfríen tus oportunidades. <strong>Tú te centras en entrenar y vender; el sistema hace el resto operativo.</strong>
+                        Estás entrenando a un cliente y te llegan 3 mensajes. Cuando contestas, 2 ya han preguntado en otro sitio. <strong>Hacemos que cada interesado reciba respuesta en segundos, seguimiento hasta que cierre y tú no pierdas ni un minuto en perseguir a nadie.</strong>
                     </p>
                     <div className="mt-10 flex flex-col items-center gap-4">
                         <a href="#consultoria" className="premium-button bg-slate-900 text-white px-8 py-4 rounded-full font-bold text-lg">
-                            Quiero mi sistema llave en mano
+                            Quiero llenar mi agenda sin perseguir a nadie
                         </a>
-                        <p className="text-sm font-medium text-slate-500">En la primera fase medimos tiempo de respuesta, entrevistas cerradas y altas para validar avance real.</p>
+                        <p className="text-sm font-medium text-slate-500">En el primer mes medimos: respuestas en tiempo, entrevistas cerradas y altas nuevas. Si no mejora, algo estamos haciendo mal.</p>
                     </div>
                 </section>
                 <SolutionsBlueprint />
