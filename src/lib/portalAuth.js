@@ -25,3 +25,32 @@ export const resolveRole = async (user) => {
     const adminEmails = getAdminEmails();
     return adminEmails.includes((user.email || "").toLowerCase()) ? "admin" : "client";
 };
+
+/**
+ * Devuelve las empresas vinculadas al usuario actual (vía client_users).
+ * Usado para renderizar el área de cliente y filtrar proyectos.
+ */
+export const resolveUserCompanies = async (userId) => {
+    if (!supabase || !userId) return [];
+    const { data, error } = await supabase
+        .from("client_users")
+        .select(`
+            id, user_id, company_id, contact_id, access_level, accepted_at,
+            company:company_id (id, legal_name, commercial_name, logo_url, lifecycle_stage)
+        `)
+        .eq("user_id", userId);
+    if (error) return [];
+    return (data || []).map((row) => ({
+        ...row,
+        company: row.company
+    }));
+};
+
+/**
+ * Devuelve la empresa "activa" del usuario cliente.
+ * En el MVP, simplemente la primera; en el futuro permitir elegir si tiene varias.
+ */
+export const resolvePrimaryCompany = async (userId) => {
+    const companies = await resolveUserCompanies(userId);
+    return companies[0] || null;
+};
