@@ -3,6 +3,8 @@ import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import PortalShell from "../components/portal/PortalShell";
 import { resolveRole } from "../lib/portalAuth";
 import { isSupabaseConfigured, supabase } from "../lib/supabaseClient";
+import CompaniesList from "../components/admin/CompaniesList";
+import CompanyDetail from "../components/admin/CompanyDetail";
 
 const statusOptions = ["all", "new", "contacted", "qualified", "proposal_sent", "won", "lost"];
 const gradeOptions = ["all", "A", "B", "C"];
@@ -48,6 +50,10 @@ const sectionConfig = {
     configuracion: {
         title: "Configuracion",
         subtitle: "Equipo, criterios operativos y checklist del sistema"
+    },
+    empresas: {
+        title: "Empresas",
+        subtitle: "Clientes, prospects, partners — ficha completa con contactos y proyectos"
     }
 };
 
@@ -58,7 +64,8 @@ const adminNavItems = [
     { label: "Pipeline", href: "/portal/admin/pipeline" },
     { label: "Actividades", href: "/portal/admin/actividades" },
     { label: "Reportes", href: "/portal/admin/reportes" },
-    { label: "Configuracion", href: "/portal/admin/configuracion" }
+    { label: "Configuracion", href: "/portal/admin/configuracion" },
+    { label: "Empresas", href: "/portal/admin/empresas" }
 ];
 
 const quickViews = [
@@ -96,6 +103,7 @@ function PortalAdminPage() {
     const [bulkOwnerChoice, setBulkOwnerChoice] = useState("");
     const [bulkScheduleChoice, setBulkScheduleChoice] = useState("24");
     const [selectedLead, setSelectedLead] = useState(null);
+    const [selectedCompanyId, setSelectedCompanyId] = useState(null);
     const [notes, setNotes] = useState([]);
     const [noteDraft, setNoteDraft] = useState("");
     const [nextActionDraft, setNextActionDraft] = useState("");
@@ -902,6 +910,11 @@ function PortalAdminPage() {
                 {currentSection === "actividades" ? renderActivities() : null}
                 {currentSection === "reportes" ? renderReportes() : null}
                 {currentSection === "configuracion" ? renderConfig() : null}
+                {currentSection === "empresas" ? (
+                    selectedCompanyId
+                        ? <CompanyDetail companyId={selectedCompanyId} onBack={() => setSelectedCompanyId(null)} />
+                        : <CompaniesList onSelectCompany={(c) => setSelectedCompanyId(c.id)} />
+                ) : null}
             </PortalShell>
 
             {selectedLead ? (
