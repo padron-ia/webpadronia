@@ -4,6 +4,7 @@ import { listDeliverablesByProject } from "../../lib/deliverablesService";
 import { listClientVisibleActivity } from "../../lib/activityService";
 import { listMilestones } from "../../lib/projectOperationsService";
 import { listTasks } from "../../lib/projectOperationsService";
+import { listContracts } from "../../lib/contractsService";
 import DeliverableViewer from "../../content/DeliverableViewer";
 
 const HEALTH_ICON = { on_track: "🟢", at_risk: "🟡", off_track: "🔴" };
@@ -14,6 +15,7 @@ const TYPE_LABEL = { audit: "Auditoría", report: "Informe", prototype: "Prototi
 
 const TABS = [
     { id: "entregables", label: "Entregables", icon: "📦" },
+    { id: "contrato", label: "Contrato", icon: "📋" },
     { id: "progreso", label: "Progreso", icon: "📈" },
     { id: "actividad", label: "Actividad", icon: "🔔" }
 ];
@@ -24,6 +26,7 @@ export default function ClientProjectView({ projectId, onBack }) {
     const [milestones, setMilestones] = useState([]);
     const [tasks, setTasks] = useState([]);
     const [activity, setActivity] = useState([]);
+    const [contracts, setContracts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [tab, setTab] = useState("entregables");
     const [selectedDeliverable, setSelectedDeliverable] = useState(null);
@@ -32,18 +35,20 @@ export default function ClientProjectView({ projectId, onBack }) {
         const load = async () => {
             setLoading(true);
             try {
-                const [p, d, m, t, a] = await Promise.all([
+                const [p, d, m, t, a, c] = await Promise.all([
                     getProject(projectId),
                     listDeliverablesByProject(projectId, { onlyPublished: true, onlyClientVisible: true }),
                     listMilestones(projectId).catch(() => []),
                     listTasks({ projectId, clientVisibleOnly: true }).catch(() => []),
-                    listClientVisibleActivity({ projectId }).catch(() => [])
+                    listClientVisibleActivity({ projectId }).catch(() => []),
+                    listContracts({ projectId }).catch(() => [])
                 ]);
                 setProject(p);
                 setDeliverables(d);
                 setMilestones(m);
                 setTasks(t);
                 setActivity(a);
+                setContracts(c);
             } catch (err) {
                 console.error("Error cargando proyecto:", err);
             } finally {
@@ -138,6 +143,67 @@ export default function ClientProjectView({ projectId, onBack }) {
                             </div>
                         </div>
                     ))}
+                </div>
+            ) : null}
+
+            {tab === "contrato" ? (
+                <div className="grid gap-3">
+                    {contracts.length === 0 ? (
+                        <EmptyState icon="📋" text="La informacion de tu contrato aparecera aqui cuando este disponible." />
+                    ) : contracts.map((c) => (
+                        <div key={c.id} className="rounded-3xl bg-white border border-stone-200/60 p-6 shadow-sm">
+                            <div className="flex items-start justify-between gap-3 flex-wrap">
+                                <div>
+                                    <h3 className="text-lg font-bold text-stone-900">{c.title}</h3>
+                                    <div className="mt-2 flex items-center gap-2 flex-wrap">
+                                        <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${c.status === "active" ? "bg-emerald-100 text-emerald-800" : "bg-stone-100 text-stone-600"}`}>
+                                            {c.status === "active" ? "Activo" : c.status === "completed" ? "Completado" : c.status}
+                                        </span>
+                                        <span className="rounded-full bg-stone-100 px-2.5 py-0.5 text-xs font-semibold text-stone-600">
+                                            {c.type === "fixed_fee" ? "Precio cerrado" : c.type === "hourly" ? "Por horas" : c.type === "retainer" ? "Retainer" : c.type}
+                                        </span>
+                                    </div>
+                                </div>
+                                {c.document_url ? (
+                                    <a href={c.document_url} target="_blank" rel="noopener"
+                                        className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-white shadow-sm"
+                                        style={{ backgroundColor: "#2E4036" }}>
+                                        📄 Ver documento
+                                    </a>
+                                ) : null}
+                            </div>
+                            <div className="mt-5 grid grid-cols-2 gap-4 md:grid-cols-4">
+                                <div>
+                                    <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-stone-400">Valor</p>
+                                    <p className="mt-1 text-lg font-bold text-stone-900">{c.total_amount ? `${Number(c.total_amount).toLocaleString("es")} ${c.currency || "EUR"}` : "—"}</p>
+                                </div>
+                                <div>
+                                    <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-stone-400">Inicio</p>
+                                    <p className="mt-1 text-sm font-semibold text-stone-800">{c.start_date || "—"}</p>
+                                </div>
+                                <div>
+                                    <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-stone-400">Fin</p>
+                                    <p className="mt-1 text-sm font-semibold text-stone-800">{c.end_date || "—"}</p>
+                                </div>
+                                <div>
+                                    <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-stone-400">Firmado</p>
+                                    <p className="mt-1 text-sm font-semibold text-stone-800">{c.signed_at ? new Date(c.signed_at).toLocaleDateString("es-ES") : "Pendiente"}</p>
+                                </div>
+                            </div>
+                            {c.notes ? <p className="mt-4 text-sm text-stone-500 border-t border-stone-100 pt-4">{c.notes}</p> : null}
+                        </div>
+                    ))}
+                    {/* Contacto del proyecto */}
+                    {project.primary_contact ? (
+                        <div className="rounded-3xl bg-white border border-stone-200/60 p-6 shadow-sm">
+                            <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-stone-400">Tu contacto en el proyecto</p>
+                            <p className="mt-2 text-base font-bold text-stone-900">{project.primary_contact.full_name}</p>
+                            <div className="mt-2 flex gap-4 flex-wrap">
+                                {project.primary_contact.email ? <a href={`mailto:${project.primary_contact.email}`} className="text-sm font-semibold hover:underline" style={{ color: "#2E4036" }}>{project.primary_contact.email}</a> : null}
+                                {project.primary_contact.phone_mobile ? <a href={`tel:${project.primary_contact.phone_mobile}`} className="text-sm font-semibold hover:underline" style={{ color: "#2E4036" }}>{project.primary_contact.phone_mobile}</a> : null}
+                            </div>
+                        </div>
+                    ) : null}
                 </div>
             ) : null}
 

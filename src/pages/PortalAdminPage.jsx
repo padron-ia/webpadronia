@@ -7,6 +7,7 @@ import CompaniesList from "../components/admin/CompaniesList";
 import CompanyDetail from "../components/admin/CompanyDetail";
 import ProjectDetail from "../components/admin/ProjectDetail";
 import { listProjects } from "../lib/projectsService";
+import { getExpirationAlerts } from "../lib/projectHubService";
 
 const statusOptions = ["all", "new", "contacted", "qualified", "proposal_sent", "won", "lost"];
 const gradeOptions = ["all", "A", "B", "C"];
@@ -101,6 +102,7 @@ function PortalAdminPage() {
     const [selectedCompanyId, setSelectedCompanyId] = useState(null);
     const [selectedProjectId, setSelectedProjectId] = useState(null);
     const [allProjects, setAllProjects] = useState([]);
+    const [expirationAlerts, setExpirationAlerts] = useState([]);
     const [notes, setNotes] = useState([]);
     const [noteDraft, setNoteDraft] = useState("");
     const [nextActionDraft, setNextActionDraft] = useState("");
@@ -191,6 +193,7 @@ function PortalAdminPage() {
 
         fetchLeads();
         fetchTeam();
+        getExpirationAlerts().then(setExpirationAlerts).catch(() => {});
     }, [session, role]);
 
     useEffect(() => {
@@ -575,6 +578,38 @@ function PortalAdminPage() {
                     </div>
                 </div>
             </div>
+
+            {/* Alertas de vencimiento */}
+            {expirationAlerts.length > 0 ? (
+                <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
+                    <p className="text-xs uppercase tracking-[0.14em] text-slate-500 mb-3">Vencimientos y renovaciones</p>
+                    <div className="space-y-2">
+                        {expirationAlerts.map((alert, i) => {
+                            const days = Math.ceil((new Date(alert.expires_at) - new Date()) / (1000 * 60 * 60 * 24));
+                            const isUrgent = days < 30;
+                            const isWarning = days >= 30 && days < 90;
+                            const isExpired = days < 0;
+                            const typeIcon = alert.alert_type === "contract" ? "📋" : alert.alert_type === "domain" ? "🌐" : "💳";
+                            const typeLabel = alert.alert_type === "contract" ? "Contrato" : alert.alert_type === "domain" ? "Dominio" : "Suscripcion";
+                            return (
+                                <div key={`${alert.alert_type}-${alert.entity_id}-${i}`}
+                                    className={`flex items-center gap-3 rounded-xl px-3 py-2 text-sm ${isExpired ? "bg-red-50 border border-red-200" : isUrgent ? "bg-amber-50 border border-amber-200" : isWarning ? "bg-yellow-50 border border-yellow-100" : "bg-slate-50 border border-slate-200"}`}>
+                                    <span className="text-lg">{typeIcon}</span>
+                                    <div className="flex-1 min-w-0">
+                                        <span className="font-semibold text-slate-900">{alert.entity_label || "-"}</span>
+                                        <span className="text-slate-500"> · {alert.project_title} · {alert.company_name}</span>
+                                    </div>
+                                    <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600">{typeLabel}</span>
+                                    <span className={`text-xs font-bold shrink-0 ${isExpired ? "text-red-700" : isUrgent ? "text-amber-700" : "text-slate-600"}`}>
+                                        {isExpired ? `Vencido ${Math.abs(days)}d` : `${days}d`}
+                                    </span>
+                                    {alert.auto_renew ? <span className="text-[10px] text-slate-400">Auto</span> : null}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            ) : null}
         </>
     );
 

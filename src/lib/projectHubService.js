@@ -176,3 +176,82 @@ export const deleteLink = async (id) => {
   if (error) throw error;
   return true;
 };
+
+// ─── Subscriptions (recurring costs) ────────────────────────
+const SUB_FIELDS = `id, project_id, service_name, description, cost_amount, cost_currency, billing_cycle, renewal_date, auto_renew, status, login_url, notes, created_at, updated_at`;
+
+export const listSubscriptions = async (projectId) => {
+  if (!supabase || !projectId) return [];
+  const { data, error } = await supabase
+    .from("project_subscriptions")
+    .select(SUB_FIELDS)
+    .eq("project_id", projectId)
+    .order("renewal_date", { ascending: true, nullsFirst: false });
+  if (error) throw error;
+  return data || [];
+};
+
+export const createSubscription = async (payload) => {
+  if (!supabase) throw new Error("Supabase no configurado");
+  const { data, error } = await supabase
+    .from("project_subscriptions")
+    .insert(payload)
+    .select(SUB_FIELDS)
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const updateSubscription = async (id, patch) => {
+  if (!supabase || !id) throw new Error("ID requerido");
+  const { data, error } = await supabase
+    .from("project_subscriptions")
+    .update(patch)
+    .eq("id", id)
+    .select(SUB_FIELDS)
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const deleteSubscription = async (id) => {
+  if (!supabase || !id) throw new Error("ID requerido");
+  const { error } = await supabase.from("project_subscriptions").delete().eq("id", id);
+  if (error) throw error;
+  return true;
+};
+
+// ─── Financial summary per project ──────────────────────────
+export const getProjectFinancials = async (projectId) => {
+  if (!supabase || !projectId) return null;
+  const [hoursRes, expensesRes, subsRes, contractsRes] = await Promise.all([
+    supabase.from("time_entries").select("hours, billable, billed").eq("project_id", projectId),
+    supabase.from("expenses").select("amount, billable").eq("project_id", projectId),
+    supabase.from("project_subscriptions").select("cost_amount, billing_cycle, status").eq("project_id", projectId).eq("status", "active"),
+    supabase.from("contracts").select("total_amount, status").eq("project_id", projectId),
+  ]);
+  const hours = hoursRes.data || [];
+  const expenses = expensesRes.data || [];
+  const subs = subsRes.data || [];
+  const contracts = contractsRes.data || [];
+
+  const totalHours = hours.reduce((s, h) => s + Number(h.hours || 0), 0);
+  const billableHours = hours.filter(h => h.billable).reduce((s, h) => s + Number(h.hours || 0), 0);
+  const totalExpenses = expenses.reduce((s, e) => s + Number(e.amount || 0), 0);
+  const monthlyCost = subs.reduce((s, sub) => {
+    if (sub.billing_cycle === "monthly") return s + Number(sub.cost_amount || 0);
+    if (sub.billing_cycle === "yearly") return s + Number(sub.cost_amount || 0) / 12;
+    return s;
+  }, 0);
+  const contractValue = contracts.filter(c => c.status === "active").reduce((s, c) => s + Number(c.total_amount || 0), 0);
+
+  return { totalHours, billableHours, totalExpenses, monthlyCost, contractValue };
+};
+
+// ─── Expiration alerts (all projects) ───────────────────────
+export const getExpirationAlerts = async () => {
+  if (!supabase) return [];
+  const { data, error } = await supabase.from("expiration_alerts").select("*");
+  if (error) throw error;
+  return data || [];
+};

@@ -6,7 +6,8 @@ import { listTasks, createTask, updateTask, deleteTask } from "../../lib/project
 import { listTeam, addTeamMember, removeTeamMember } from "../../lib/projectOperationsService";
 import { listTimeEntries, createTimeEntry, totalHoursByProject } from "../../lib/projectOperationsService";
 import { listActivity, logActivity } from "../../lib/activityService";
-import { listRepositories, createRepository, deleteRepository, listCredentials, createCredential, decryptCredential, deleteCredential, listStack, createStackItem, deleteStackItem, listLinks, createLink, deleteLink } from "../../lib/projectHubService";
+import { listRepositories, createRepository, deleteRepository, listCredentials, createCredential, decryptCredential, deleteCredential, listStack, createStackItem, deleteStackItem, listLinks, createLink, deleteLink, listSubscriptions, createSubscription, deleteSubscription, getProjectFinancials } from "../../lib/projectHubService";
+import { listContracts } from "../../lib/contractsService";
 import { supabase } from "../../lib/supabaseClient";
 import DeliverableViewer from "../../content/DeliverableViewer";
 
@@ -20,6 +21,8 @@ const DELIVERABLE_TYPES = { audit: "Auditoría", report: "Informe", prototype: "
 const TABS = [
   { id: "resumen", label: "Resumen" },
   { id: "deliverables", label: "Entregables" },
+  { id: "contrato", label: "Contrato" },
+  { id: "costes", label: "Costes" },
   { id: "repos", label: "Repos" },
   { id: "credenciales", label: "Credenciales" },
   { id: "stack", label: "Stack" },
@@ -57,6 +60,8 @@ export default function ProjectDetail({ projectId, onBack }) {
             <span className={`rounded-full px-2 py-1 text-xs font-semibold ${HEALTH_COLORS[project.health]}`}>{HEALTH_LABELS[project.health]}</span>
           </div>
           {project.companies ? <p className="mt-1 text-sm text-slate-500">{project.companies.legal_name}</p> : null}
+          {project.primary_contact ? <p className="mt-0.5 text-xs text-slate-400">Contacto: {project.primary_contact.full_name}{project.primary_contact.email ? ` · ${project.primary_contact.email}` : ""}{project.primary_contact.phone_mobile ? ` · ${project.primary_contact.phone_mobile}` : ""}</p> : null}
+          {project.domain ? <p className="mt-0.5 text-xs text-slate-400 font-mono">{project.domain}</p> : null}
         </div>
       </div>
 
@@ -71,6 +76,8 @@ export default function ProjectDetail({ projectId, onBack }) {
 
       {tab === "resumen" ? <ResumenTab project={project} onUpdated={reload} /> : null}
       {tab === "deliverables" ? <DeliverablesTab project={project} /> : null}
+      {tab === "contrato" ? <ContratoTab project={project} /> : null}
+      {tab === "costes" ? <CostesTab project={project} /> : null}
       {tab === "repos" ? <ReposTab project={project} /> : null}
       {tab === "credenciales" ? <CredencialesTab project={project} /> : null}
       {tab === "stack" ? <StackTab project={project} /> : null}
@@ -481,6 +488,268 @@ function ActividadTab({ project }) {
             <p className="mt-1 text-xs text-slate-500">{new Date(a.created_at).toLocaleString()} · {a.type}{a.client_visible ? " · Visible cliente" : ""}</p>
           </div>
         ))}</div>
+      }
+    </div>
+  );
+}
+
+// =================== CONTRATO ===================
+function ContratoTab({ project }) {
+  const [contracts, setContracts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [contacts, setContacts] = useState([]);
+  const [editingContact, setEditingContact] = useState(false);
+
+  const reload = async () => {
+    setLoading(true);
+    try {
+      const [c, ct] = await Promise.all([
+        listContracts({ projectId: project.id }),
+        project.company_id ? supabase.from("contacts").select("id, full_name, email, phone_mobile, job_title, is_primary").eq("company_id", project.company_id).then(r => r.data || []) : [],
+      ]);
+      setContracts(c);
+      setContacts(ct);
+    } finally { setLoading(false); }
+  };
+  useEffect(() => { reload(); }, [project.id]);
+
+  const saveContact = async (contactId) => {
+    await updateProject(project.id, { primary_contact_id: contactId || null });
+    setEditingContact(false);
+    window.location.reload();
+  };
+
+  const daysUntil = (dateStr) => {
+    if (!dateStr) return null;
+    const d = Math.ceil((new Date(dateStr) - new Date()) / (1000 * 60 * 60 * 24));
+    return d;
+  };
+
+  const CONTRACT_TYPE_LABELS = { fixed_fee: "Precio cerrado", hourly: "Por horas", retainer: "Retainer", success_fee: "Exito", mixed: "Mixto" };
+  const CONTRACT_STATUS_LABELS = { draft: "Borrador", active: "Activo", completed: "Completado", terminated: "Terminado" };
+  const CONTRACT_STATUS_COLORS = { draft: "bg-slate-100 text-slate-600", active: "bg-emerald-100 text-emerald-800", completed: "bg-sky-100 text-sky-800", terminated: "bg-red-100 text-red-800" };
+
+  return (
+    <div className="grid gap-4">
+      {/* Contacto principal */}
+      <div className="rounded-3xl border border-slate-200 bg-white p-6">
+        <div className="flex justify-between items-start">
+          <div>
+            <Label>Contacto principal del proyecto</Label>
+            {project.primary_contact ? (
+              <div className="mt-2">
+                <p className="text-lg font-semibold text-slate-900">{project.primary_contact.full_name}</p>
+                <div className="mt-1 flex gap-4 flex-wrap text-sm text-slate-600">
+                  {project.primary_contact.email ? <a href={`mailto:${project.primary_contact.email}`} className="text-blue-600 hover:underline">{project.primary_contact.email}</a> : null}
+                  {project.primary_contact.phone_mobile ? <a href={`tel:${project.primary_contact.phone_mobile}`} className="text-blue-600 hover:underline">{project.primary_contact.phone_mobile}</a> : null}
+                </div>
+              </div>
+            ) : <p className="mt-2 text-sm text-slate-500">Sin contacto asignado</p>}
+          </div>
+          <button onClick={() => setEditingContact(!editingContact)} className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-700">{editingContact ? "Cancelar" : "Cambiar"}</button>
+        </div>
+        {editingContact ? (
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button onClick={() => saveContact(null)} className="rounded-full border border-slate-300 px-3 py-1 text-xs text-slate-600">Sin contacto</button>
+            {contacts.map(c => (
+              <button key={c.id} onClick={() => saveContact(c.id)}
+                className={`rounded-full px-3 py-1 text-xs font-semibold ${c.id === project.primary_contact_id ? "bg-slate-900 text-white" : "border border-slate-300 text-slate-700 hover:border-slate-900"}`}>
+                {c.full_name}{c.job_title ? ` (${c.job_title})` : ""}{c.is_primary ? " ★" : ""}
+              </button>
+            ))}
+          </div>
+        ) : null}
+      </div>
+
+      {/* Dominio */}
+      <div className="rounded-3xl border border-slate-200 bg-white p-6">
+        <Label>Dominio</Label>
+        <div className="mt-2 flex items-center gap-4 flex-wrap">
+          <p className="text-sm font-mono text-slate-900">{project.domain || "Sin dominio"}</p>
+          {project.domain_expires_at ? (
+            <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
+              daysUntil(project.domain_expires_at) < 30 ? "bg-red-100 text-red-800" :
+              daysUntil(project.domain_expires_at) < 90 ? "bg-amber-100 text-amber-800" :
+              "bg-emerald-100 text-emerald-800"
+            }`}>
+              {daysUntil(project.domain_expires_at) > 0 ? `Expira en ${daysUntil(project.domain_expires_at)} dias` : "EXPIRADO"}
+            </span>
+          ) : project.domain ? <span className="text-xs text-slate-400">Sin fecha de expiracion</span> : null}
+        </div>
+      </div>
+
+      {/* Contratos */}
+      <div>
+        <Label>Contratos / Carta de encargo</Label>
+        {loading ? <p className="mt-2 text-sm text-slate-500">Cargando…</p> :
+         contracts.length === 0 ? <p className="mt-2 rounded-2xl border bg-slate-50 p-4 text-sm text-slate-600">Sin contratos. Crea uno desde la ficha de la empresa.</p> :
+          <div className="mt-2 grid gap-2">{contracts.map(c => {
+            const days = daysUntil(c.end_date);
+            return (
+              <div key={c.id} className="rounded-2xl border bg-white p-5">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="font-semibold text-slate-900">{c.title}</p>
+                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${CONTRACT_STATUS_COLORS[c.status]}`}>{CONTRACT_STATUS_LABELS[c.status]}</span>
+                      <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600">{CONTRACT_TYPE_LABELS[c.type] || c.type}</span>
+                    </div>
+                    {c.total_amount ? <p className="mt-1 text-sm text-slate-600">{Number(c.total_amount).toLocaleString("es")} {c.currency || "EUR"}</p> : null}
+                  </div>
+                  {c.document_url ? <a href={c.document_url} target="_blank" rel="noopener" className="text-xs text-blue-600 hover:underline shrink-0">Ver documento</a> : null}
+                </div>
+                <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-4">
+                  <div><Label>Inicio</Label><p className="mt-0.5 text-sm">{c.start_date || "-"}</p></div>
+                  <div><Label>Fin</Label><p className="mt-0.5 text-sm">{c.end_date || "-"}</p></div>
+                  <div><Label>Firmado</Label><p className="mt-0.5 text-sm">{c.signed_at ? new Date(c.signed_at).toLocaleDateString() : "Pendiente"}</p></div>
+                  <div><Label>Renovacion auto</Label><p className="mt-0.5 text-sm">{c.auto_renewal ? "Si" : "No"}</p></div>
+                </div>
+                {days !== null && c.status === "active" ? (
+                  <div className={`mt-3 rounded-xl px-3 py-2 text-xs font-semibold ${
+                    days < 0 ? "bg-red-100 text-red-800" :
+                    days < 30 ? "bg-red-50 text-red-700" :
+                    days < 90 ? "bg-amber-50 text-amber-700" :
+                    "bg-emerald-50 text-emerald-700"
+                  }`}>
+                    {days < 0 ? `Expirado hace ${Math.abs(days)} dias` : days === 0 ? "Expira HOY" : `Expira en ${days} dias`}
+                    {c.auto_renewal ? " (renovacion automatica)" : ""}
+                  </div>
+                ) : null}
+              </div>
+            );
+          })}</div>
+        }
+      </div>
+    </div>
+  );
+}
+
+// =================== COSTES ===================
+function CostesTab({ project }) {
+  const [subs, setSubs] = useState([]);
+  const [financials, setFinancials] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({ service_name: "", cost_amount: "", billing_cycle: "monthly", renewal_date: "", auto_renew: true, login_url: "", notes: "" });
+
+  const reload = async () => {
+    setLoading(true);
+    try {
+      const [s, f] = await Promise.all([listSubscriptions(project.id), getProjectFinancials(project.id)]);
+      setSubs(s);
+      setFinancials(f);
+    } finally { setLoading(false); }
+  };
+  useEffect(() => { reload(); }, [project.id]);
+
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    await createSubscription({ project_id: project.id, ...form, cost_amount: Number(form.cost_amount), renewal_date: form.renewal_date || null, login_url: form.login_url || null, notes: form.notes || null });
+    setForm({ service_name: "", cost_amount: "", billing_cycle: "monthly", renewal_date: "", auto_renew: true, login_url: "", notes: "" });
+    setShowForm(false);
+    reload();
+  };
+
+  const daysUntil = (dateStr) => {
+    if (!dateStr) return null;
+    return Math.ceil((new Date(dateStr) - new Date()) / (1000 * 60 * 60 * 24));
+  };
+
+  const CYCLE_LABELS = { monthly: "Mensual", yearly: "Anual", one_time: "Unico", other: "Otro" };
+  const STATUS_COLORS = { active: "bg-emerald-100 text-emerald-800", cancelled: "bg-slate-200 text-slate-600", expired: "bg-red-100 text-red-800", trial: "bg-sky-100 text-sky-800" };
+
+  const monthlyCost = subs.filter(s => s.status === "active").reduce((sum, s) => {
+    if (s.billing_cycle === "monthly") return sum + Number(s.cost_amount || 0);
+    if (s.billing_cycle === "yearly") return sum + Number(s.cost_amount || 0) / 12;
+    return sum;
+  }, 0);
+
+  return (
+    <div className="grid gap-4">
+      {/* Resumen financiero */}
+      {financials ? (
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
+          <div className="rounded-2xl border bg-slate-50 p-3">
+            <Label>Presupuesto</Label>
+            <p className="mt-1 text-xl font-semibold">{project.budget_amount ? `${Number(project.budget_amount).toLocaleString("es")} €` : "-"}</p>
+            {project.budget_hours ? <p className="text-xs text-slate-500">{project.budget_hours}h presupuestadas</p> : null}
+          </div>
+          <div className="rounded-2xl border bg-slate-50 p-3">
+            <Label>Horas usadas</Label>
+            <p className="mt-1 text-xl font-semibold">{financials.totalHours.toFixed(1)}h</p>
+            <p className="text-xs text-slate-500">{financials.billableHours.toFixed(1)}h facturables</p>
+          </div>
+          <div className="rounded-2xl border bg-slate-50 p-3">
+            <Label>Gastos</Label>
+            <p className="mt-1 text-xl font-semibold">{financials.totalExpenses.toLocaleString("es")} €</p>
+          </div>
+          <div className="rounded-2xl border bg-slate-50 p-3">
+            <Label>Coste mensual</Label>
+            <p className="mt-1 text-xl font-semibold">{monthlyCost.toFixed(2)} €/mes</p>
+            <p className="text-xs text-slate-500">{subs.filter(s => s.status === "active").length} suscripciones</p>
+          </div>
+          <div className="rounded-2xl border bg-slate-50 p-3">
+            <Label>Valor contrato</Label>
+            <p className="mt-1 text-xl font-semibold">{financials.contractValue ? `${financials.contractValue.toLocaleString("es")} €` : "-"}</p>
+          </div>
+        </div>
+      ) : null}
+
+      {/* Suscripciones */}
+      <div className="flex justify-between items-center">
+        <p className="text-sm text-slate-600">{subs.length} suscripcion{subs.length !== 1 ? "es" : ""} / coste{subs.length !== 1 ? "s" : ""} recurrente{subs.length !== 1 ? "s" : ""}</p>
+        <button onClick={() => setShowForm(true)} className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white">+ Suscripcion</button>
+      </div>
+
+      {showForm ? (
+        <form onSubmit={handleCreate} className="rounded-3xl border bg-white p-6 grid gap-3 md:grid-cols-3">
+          <label className="block"><Label>Servicio *</Label><input required className={inputClass} placeholder="Vercel, Supabase, Dominio…" value={form.service_name} onChange={(e) => setForm(p => ({...p, service_name: e.target.value}))} /></label>
+          <label className="block"><Label>Coste *</Label><input required type="number" step="0.01" className={inputClass} placeholder="9.99" value={form.cost_amount} onChange={(e) => setForm(p => ({...p, cost_amount: e.target.value}))} /></label>
+          <label className="block"><Label>Ciclo</Label>
+            <select className={inputClass} value={form.billing_cycle} onChange={(e) => setForm(p => ({...p, billing_cycle: e.target.value}))}>
+              {Object.entries(CYCLE_LABELS).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
+            </select>
+          </label>
+          <label className="block"><Label>Fecha renovacion</Label><input type="date" className={inputClass} value={form.renewal_date} onChange={(e) => setForm(p => ({...p, renewal_date: e.target.value}))} /></label>
+          <label className="block"><Label>URL de acceso</Label><input type="url" className={inputClass} placeholder="https://dashboard.vercel.com" value={form.login_url} onChange={(e) => setForm(p => ({...p, login_url: e.target.value}))} /></label>
+          <label className="flex items-center gap-2 mt-6"><input type="checkbox" checked={form.auto_renew} onChange={(e) => setForm(p => ({...p, auto_renew: e.target.checked}))} /><span className="text-sm text-slate-700">Renovacion automatica</span></label>
+          <label className="block md:col-span-3"><Label>Notas</Label><input className={inputClass} value={form.notes} onChange={(e) => setForm(p => ({...p, notes: e.target.value}))} /></label>
+          <div className="md:col-span-3 flex justify-end gap-3">
+            <button type="button" onClick={() => setShowForm(false)} className="text-sm text-slate-600">Cancelar</button>
+            <button type="submit" className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white">Crear</button>
+          </div>
+        </form>
+      ) : null}
+
+      {loading ? <p className="text-sm text-slate-500">Cargando…</p> : subs.length === 0 ? <p className="rounded-2xl border bg-slate-50 p-4 text-sm text-slate-600">Sin suscripciones. Registra los costes recurrentes del proyecto (hosting, SaaS, dominios…).</p> :
+        <div className="grid gap-2">{subs.map(s => {
+          const days = daysUntil(s.renewal_date);
+          return (
+            <div key={s.id} className="flex items-center gap-3 rounded-2xl border bg-white p-4">
+              <div className="flex w-10 h-10 items-center justify-center rounded-xl bg-slate-100 text-sm font-bold text-slate-600 shrink-0">
+                {s.billing_cycle === "monthly" ? "M" : s.billing_cycle === "yearly" ? "A" : "1x"}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="font-semibold text-slate-900">{s.service_name}</p>
+                  <span className="text-sm font-semibold text-slate-700">{Number(s.cost_amount).toLocaleString("es")} €/{s.billing_cycle === "monthly" ? "mes" : s.billing_cycle === "yearly" ? "ano" : "unico"}</span>
+                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${STATUS_COLORS[s.status]}`}>{s.status}</span>
+                  {s.auto_renew ? <span className="text-[10px] text-slate-400">Auto-renueva</span> : null}
+                </div>
+                {days !== null ? (
+                  <p className={`mt-0.5 text-xs font-semibold ${days < 0 ? "text-red-600" : days < 30 ? "text-amber-600" : "text-slate-500"}`}>
+                    {days < 0 ? `Vencido hace ${Math.abs(days)} dias` : days === 0 ? "Se renueva HOY" : `Renovacion en ${days} dias`} · {s.renewal_date}
+                  </p>
+                ) : null}
+                {s.notes ? <p className="mt-0.5 text-xs text-slate-500">{s.notes}</p> : null}
+              </div>
+              <div className="flex flex-col gap-1 shrink-0">
+                {s.login_url ? <a href={s.login_url} target="_blank" rel="noopener" className="text-xs text-blue-600 hover:underline">Acceder</a> : null}
+                <button onClick={async () => { if (confirm("¿Eliminar?")) { await deleteSubscription(s.id); reload(); } }} className="text-xs text-red-500">Eliminar</button>
+              </div>
+            </div>
+          );
+        })}</div>
       }
     </div>
   );

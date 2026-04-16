@@ -3,7 +3,8 @@ import { supabase } from "./supabaseClient";
 const SELECT_FIELDS = `
   id, company_id, opportunity_id, code, title, slug, description,
   status, health, start_date, end_date, manager_id,
-  budget_hours, budget_amount, currency, created_at, updated_at
+  budget_hours, budget_amount, currency, created_at, updated_at,
+  project_type, domain, domain_expires_at, logo_url, primary_contact_id
 `;
 
 const slugify = (text) =>
@@ -21,7 +22,7 @@ export const listProjects = async ({ companyId, status, managerId, limit = 200 }
   if (!supabase) return [];
   let query = supabase
     .from("projects")
-    .select(`${SELECT_FIELDS}, companies:company_id (legal_name, commercial_name, logo_url)`)
+    .select(`${SELECT_FIELDS}, companies:company_id (legal_name, commercial_name, logo_url), primary_contact:primary_contact_id (full_name, email, phone_mobile)`)
     .order("updated_at", { ascending: false })
     .limit(limit);
   if (companyId) query = query.eq("company_id", companyId);
@@ -36,7 +37,7 @@ export const listProjectsForCurrentClient = async () => {
   if (!supabase) return [];
   const { data, error } = await supabase
     .from("projects")
-    .select(`${SELECT_FIELDS}, companies:company_id (legal_name, commercial_name, logo_url)`)
+    .select(`${SELECT_FIELDS}, companies:company_id (legal_name, commercial_name, logo_url), primary_contact:primary_contact_id (full_name, email, phone_mobile)`)
     .order("updated_at", { ascending: false });
   if (error) throw error;
   return data || [];
