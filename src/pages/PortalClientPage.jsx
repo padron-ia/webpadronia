@@ -36,9 +36,9 @@ function PortalClientPage() {
             const nextRole = await resolveRole(activeSession.user);
             setRole(nextRole);
 
-            // Cargar empresa vinculada al usuario
+            // Cargar empresa y contacto vinculados al usuario
             const primaryCompany = await resolvePrimaryCompany(activeSession.user.id);
-            setCompany(primaryCompany?.company || null);
+            setCompany(primaryCompany || null);
 
             setLoading(false);
         };
@@ -55,7 +55,7 @@ function PortalClientPage() {
                 return;
             }
             resolveRole(activeSession.user).then(setRole);
-            resolvePrimaryCompany(activeSession.user.id).then((pc) => setCompany(pc?.company || null));
+            resolvePrimaryCompany(activeSession.user.id).then((pc) => setCompany(pc || null));
         });
 
         return () => subscription.unsubscribe();
@@ -91,7 +91,8 @@ function PortalClientPage() {
     return (
         <ClientShell
             email={session?.user?.email || ""}
-            companyName={company?.commercial_name || company?.legal_name || null}
+            companyName={company?.company?.commercial_name || company?.company?.legal_name || null}
+            contactName={company?.contact?.full_name || null}
             onLogout={handleLogout}
         >
             {subPath === "documentos" ? (
@@ -113,6 +114,7 @@ function PortalClientPage() {
                 />
             ) : (
                 <ClientDashboard
+                    contactName={company?.contact?.full_name || null}
                     onOpenProject={(project) => setSelectedProjectId(project.id)}
                 />
             )}

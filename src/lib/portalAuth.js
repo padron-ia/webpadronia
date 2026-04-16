@@ -36,13 +36,15 @@ export const resolveUserCompanies = async (userId) => {
         .from("client_users")
         .select(`
             id, user_id, company_id, contact_id, access_level, accepted_at,
-            company:company_id (id, legal_name, commercial_name, logo_url, lifecycle_stage)
+            company:company_id (id, legal_name, commercial_name, logo_url, lifecycle_stage),
+            contact:contact_id (id, full_name, email, job_title)
         `)
         .eq("user_id", userId);
     if (error) return [];
     return (data || []).map((row) => ({
         ...row,
-        company: row.company
+        company: row.company,
+        contact: row.contact
     }));
 };
 
