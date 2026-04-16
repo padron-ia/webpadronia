@@ -7,6 +7,7 @@ import { listTeam, addTeamMember, removeTeamMember } from "../../lib/projectOper
 import { listTimeEntries, createTimeEntry, totalHoursByProject } from "../../lib/projectOperationsService";
 import { listActivity, logActivity } from "../../lib/activityService";
 import { supabase } from "../../lib/supabaseClient";
+import DeliverableViewer from "../../content/DeliverableViewer";
 
 const STATUS_LABELS = { kickoff: "Kickoff", active: "Activo", paused: "Pausado", completed: "Completado", archived: "Archivado" };
 const HEALTH_LABELS = { on_track: "En buen camino", at_risk: "En riesgo", off_track: "Fuera de plan" };
@@ -129,6 +130,7 @@ function DeliverablesTab({ project }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [viewing, setViewing] = useState(null);
   const [form, setForm] = useState({ title: "", type: "report", description: "", content_type: "internal", content_ref: "", slug: "" });
 
   const reload = async () => { setLoading(true); try { setItems(await listDeliverablesByProject(project.id)); } finally { setLoading(false); } };
@@ -147,10 +149,14 @@ function DeliverablesTab({ project }) {
 
   const TYPE_ICON = { audit: "🔍", report: "📊", prototype: "🧪", document: "📄", presentation: "📽️", dashboard: "📈", training: "🎓" };
 
+  if (viewing) {
+    return <DeliverableViewer deliverable={viewing} onBack={() => setViewing(null)} />;
+  }
+
   return (
     <div className="grid gap-3">
       <div className="flex justify-between items-center">
-        <p className="text-sm text-slate-600">{items.length} entregable{items.length !== 1 ? "s" : ""}</p>
+        <p className="text-sm text-slate-600">{items.length} entregable{items.length !== 1 ? "s" : ""} · Haz clic para abrir</p>
         <button onClick={() => setShowForm(true)} className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white">+ Añadir</button>
       </div>
 
@@ -190,7 +196,7 @@ function DeliverablesTab({ project }) {
         {loading ? <p className="text-sm text-slate-500">Cargando…</p> :
          items.length === 0 ? <p className="rounded-2xl border bg-slate-50 p-4 text-sm text-slate-600">Sin entregables.</p> :
          items.map((d) => (
-          <div key={d.id} className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 hover:border-slate-300 transition">
+          <div key={d.id} onClick={() => setViewing(d)} className="cursor-pointer flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 hover:border-slate-400 hover:shadow-sm transition">
             <span className="text-2xl">{TYPE_ICON[d.type] || "📦"}</span>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
@@ -202,7 +208,7 @@ function DeliverablesTab({ project }) {
               {d.description ? <p className="mt-1 text-sm text-slate-600">{d.description}</p> : null}
               {d.content_ref ? <p className="mt-1 text-xs text-slate-400 font-mono">{d.content_ref}</p> : null}
             </div>
-            <button onClick={() => handleDelete(d.id)} className="text-xs text-red-500 hover:text-red-700 shrink-0">Eliminar</button>
+            <button onClick={(e) => { e.stopPropagation(); handleDelete(d.id); }} className="text-xs text-red-500 hover:text-red-700 shrink-0">Eliminar</button>
           </div>
         ))}
       </div>
