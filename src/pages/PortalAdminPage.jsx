@@ -8,6 +8,7 @@ import CompanyDetail from "../components/admin/CompanyDetail";
 import ProjectDetail from "../components/admin/ProjectDetail";
 import { listProjects } from "../lib/projectsService";
 import { getExpirationAlerts, getBusinessDashboard, getOperationalMetrics, getBillinMetrics } from "../lib/projectHubService";
+import { listBillinInvoices, listBillinExpenses, listBillinContacts, createBillinInvoice, createBillinExpense } from "../lib/billinApiService";
 
 const statusOptions = ["all", "new", "contacted", "qualified", "proposal_sent", "won", "lost"];
 const gradeOptions = ["all", "A", "B", "C"];
@@ -50,6 +51,10 @@ const sectionConfig = {
         title: "Metricas",
         subtitle: "Vision financiera y operativa del negocio con datos reales"
     },
+    facturacion: {
+        title: "Facturacion",
+        subtitle: "Crear facturas y registrar gastos — sincronizado con Billin"
+    },
     configuracion: {
         title: "Ajustes",
         subtitle: "Datos de la organizacion, equipo y configuracion del sistema"
@@ -65,6 +70,7 @@ const adminNavItems = [
     { type: "group", label: "Operativa" },
     { label: "Proyectos", href: "/portal/admin/proyectos", icon: "📋" },
     { label: "Metricas", href: "/portal/admin/metricas", icon: "📈" },
+    { label: "Facturacion", href: "/portal/admin/facturacion", icon: "💰" },
     { type: "group", label: "Sistema" },
     { label: "Ajustes", href: "/portal/admin/configuracion", icon: "⚙️" }
 ];
@@ -1072,6 +1078,7 @@ function PortalAdminPage() {
                         : <ProjectsGlobalView onSelectProject={(p) => setSelectedProjectId(p.id)} />
                 ) : null}
                 {currentSection === "metricas" ? <MetricasPanel /> : null}
+                {currentSection === "facturacion" ? <FacturacionPanel /> : null}
             </PortalShell>
 
             {selectedLead ? (
@@ -1230,6 +1237,258 @@ function ProjectsGlobalView({ onSelectProject }) {
                     ))}
                 </div>
             )}
+        </div>
+    );
+}
+
+// =================== FACTURACION PANEL ===================
+function FacturacionPanel() {
+    const [tab, setTab] = useState("facturas");
+    const [invoices, setInvoices] = useState([]);
+    const [expenses, setExpenses] = useState([]);
+    const [contacts, setContacts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [showInvForm, setShowInvForm] = useState(false);
+    const [showExpForm, setShowExpForm] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
+
+    const [invForm, setInvForm] = useState({ contactName: "", serialCode: "F2025", issuedDate: new Date().toISOString().slice(0, 10), comments: "", retentionPct: "0", lines: [{ name: "", quantity: "1", unitPrice: "", taxKey: "IVA_21" }] });
+    const [expForm, setExpForm] = useState({ providerName: "", identifier: "", issuedDate: new Date().toISOString().slice(0, 10), lines: [{ name: "", quantity: "1", unitPrice: "", taxKey: "IVA_21" }] });
+
+    const reload = async () => {
+        setLoading(true);
+        try {
+            const [inv, exp, con] = await Promise.all([
+                listBillinInvoices().catch(() => ({ items: [] })),
+                listBillinExpenses().catch(() => ({ items: [] })),
+                listBillinContacts().catch(() => ({ items: [] })),
+            ]);
+            setInvoices(inv.items || []);
+            setExpenses(exp.items || []);
+            setContacts(con.items || []);
+        } finally { setLoading(false); }
+    };
+    useEffect(() => { reload(); }, []);
+
+    const fmtEur = (n) => `${Number(n || 0).toLocaleString("es", { maximumFractionDigits: 2 })} €`;
+    const inputClass = "mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500";
+    const TAX_OPTIONS = [
+        { key: "IVA_21", label: "IVA 21%" },
+        { key: "IVA_10", label: "IVA 10%" },
+        { key: "IVA_4", label: "IVA 4%" },
+        { key: "IVA_0", label: "IVA 0%" },
+        { key: "IVA_NotSubject_0", label: "No sujeto" },
+    ];
+
+    const addInvLine = () => setInvForm(p => ({ ...p, lines: [...p.lines, { name: "", quantity: "1", unitPrice: "", taxKey: "IVA_21" }] }));
+    const removeInvLine = (i) => setInvForm(p => ({ ...p, lines: p.lines.filter((_, idx) => idx !== i) }));
+    const updateInvLine = (i, field, val) => setInvForm(p => ({ ...p, lines: p.lines.map((l, idx) => idx === i ? { ...l, [field]: val } : l) }));
+
+    const addExpLine = () => setExpForm(p => ({ ...p, lines: [...p.lines, { name: "", quantity: "1", unitPrice: "", taxKey: "IVA_21" }] }));
+    const removeExpLine = (i) => setExpForm(p => ({ ...p, lines: p.lines.filter((_, idx) => idx !== i) }));
+    const updateExpLine = (i, field, val) => setExpForm(p => ({ ...p, lines: p.lines.map((l, idx) => idx === i ? { ...l, [field]: val } : l) }));
+
+    const handleCreateInvoice = async (e) => {
+        e.preventDefault();
+        setSaving(true); setError(null); setSuccess(null);
+        try {
+            const lines = invForm.lines.map(l => {
+                const qty = Number(l.quantity); const price = Number(l.unitPrice);
+                const taxPct = l.taxKey === "IVA_21" ? 21 : l.taxKey === "IVA_10" ? 10 : l.taxKey === "IVA_4" ? 4 : 0;
+                const subtotal = qty * price;
+                const taxAmount = Math.round(subtotal * taxPct) / 100;
+                return { name: l.name, quantity: qty, unitPrice: price, totalAmount: subtotal + taxAmount, taxKey: l.taxKey, taxAmount, salesEqTaxAmount: 0 };
+            });
+            const existing = contacts.find(c => c.fiscalName.toLowerCase() === invForm.contactName.toLowerCase());
+            const contact = existing ? { fiscalName: existing.fiscalName, vatNumber: existing.vatNumber, vatNumberType: existing.vatNumberType } : { fiscalName: invForm.contactName };
+            await createBillinInvoice({ contact, lines, serialCode: invForm.serialCode, issuedDate: invForm.issuedDate, comments: invForm.comments || undefined, retentionPercentage: Number(invForm.retentionPct) || undefined });
+            setSuccess("Factura creada en Billin");
+            setShowInvForm(false);
+            setInvForm({ contactName: "", serialCode: "F2025", issuedDate: new Date().toISOString().slice(0, 10), comments: "", retentionPct: "0", lines: [{ name: "", quantity: "1", unitPrice: "", taxKey: "IVA_21" }] });
+            reload();
+        } catch (err) { setError(err.message); } finally { setSaving(false); }
+    };
+
+    const handleCreateExpense = async (e) => {
+        e.preventDefault();
+        setSaving(true); setError(null); setSuccess(null);
+        try {
+            const lines = expForm.lines.map(l => {
+                const qty = Number(l.quantity); const price = Number(l.unitPrice);
+                const taxPct = l.taxKey === "IVA_21" ? 21 : l.taxKey === "IVA_10" ? 10 : l.taxKey === "IVA_4" ? 4 : 0;
+                const subtotal = qty * price;
+                const taxAmount = Math.round(subtotal * taxPct) / 100;
+                return { name: l.name, quantity: qty, unitPrice: price, totalAmount: subtotal + taxAmount, taxKey: l.taxKey, taxAmount, salesEqTaxAmount: 0 };
+            });
+            const existing = contacts.find(c => c.fiscalName.toLowerCase() === expForm.providerName.toLowerCase());
+            const contact = existing ? { fiscalName: existing.fiscalName, vatNumber: existing.vatNumber, vatNumberType: existing.vatNumberType } : { fiscalName: expForm.providerName };
+            await createBillinExpense({ contact, lines, identifier: expForm.identifier, issuedDate: expForm.issuedDate });
+            setSuccess("Gasto registrado en Billin");
+            setShowExpForm(false);
+            setExpForm({ providerName: "", identifier: "", issuedDate: new Date().toISOString().slice(0, 10), lines: [{ name: "", quantity: "1", unitPrice: "", taxKey: "IVA_21" }] });
+            reload();
+        } catch (err) { setError(err.message); } finally { setSaving(false); }
+    };
+
+    const TABS = [{ id: "facturas", label: "Facturas" }, { id: "gastos", label: "Gastos" }, { id: "contactos", label: "Contactos Billin" }];
+
+    return (
+        <div className="grid gap-4">
+            <div className="flex gap-1 border-b border-slate-200">
+                {TABS.map(t => <button key={t.id} onClick={() => setTab(t.id)} className={`px-4 py-2 text-sm font-semibold transition ${tab === t.id ? "border-b-2 border-slate-900 text-slate-900" : "text-slate-500 hover:text-slate-900"}`}>{t.label}</button>)}
+            </div>
+
+            {error ? <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-800">{error}</div> : null}
+            {success ? <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm text-emerald-800">{success}</div> : null}
+
+            {/* ═══ FACTURAS ═══ */}
+            {tab === "facturas" ? (
+                <div className="grid gap-3">
+                    <div className="flex justify-between items-center">
+                        <p className="text-sm text-slate-600">{invoices.length} facturas en Billin</p>
+                        <button onClick={() => { setShowInvForm(!showInvForm); setShowExpForm(false); }} className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white">+ Nueva factura</button>
+                    </div>
+
+                    {showInvForm ? (
+                        <form onSubmit={handleCreateInvoice} className="rounded-3xl border bg-white p-6 grid gap-3">
+                            <p className="text-sm font-semibold text-slate-900">Nueva factura → Billin</p>
+                            <div className="grid gap-3 md:grid-cols-4">
+                                <label className="block md:col-span-2"><span className="text-xs font-semibold uppercase text-slate-500">Cliente *</span>
+                                    <input required list="billin-contacts" className={inputClass} placeholder="Nombre fiscal del cliente" value={invForm.contactName} onChange={e => setInvForm(p => ({ ...p, contactName: e.target.value }))} />
+                                    <datalist id="billin-contacts">{contacts.filter(c => c.isCustomer).map(c => <option key={c.id} value={c.fiscalName} />)}</datalist>
+                                </label>
+                                <label className="block"><span className="text-xs font-semibold uppercase text-slate-500">Serie</span><input className={inputClass} value={invForm.serialCode} onChange={e => setInvForm(p => ({ ...p, serialCode: e.target.value }))} /></label>
+                                <label className="block"><span className="text-xs font-semibold uppercase text-slate-500">Fecha *</span><input required type="date" className={inputClass} value={invForm.issuedDate} onChange={e => setInvForm(p => ({ ...p, issuedDate: e.target.value }))} /></label>
+                            </div>
+
+                            <div>
+                                <div className="flex justify-between items-center mb-2"><span className="text-xs font-semibold uppercase text-slate-500">Lineas</span><button type="button" onClick={addInvLine} className="text-xs text-blue-600 font-semibold">+ Linea</button></div>
+                                {invForm.lines.map((l, i) => (
+                                    <div key={i} className="grid grid-cols-12 gap-2 mb-2 items-end">
+                                        <input className={`${inputClass} col-span-4`} placeholder="Concepto" value={l.name} onChange={e => updateInvLine(i, "name", e.target.value)} required />
+                                        <input className={`${inputClass} col-span-2`} type="number" step="1" min="1" placeholder="Ud." value={l.quantity} onChange={e => updateInvLine(i, "quantity", e.target.value)} />
+                                        <input className={`${inputClass} col-span-2`} type="number" step="0.01" placeholder="Precio" value={l.unitPrice} onChange={e => updateInvLine(i, "unitPrice", e.target.value)} required />
+                                        <select className={`${inputClass} col-span-3`} value={l.taxKey} onChange={e => updateInvLine(i, "taxKey", e.target.value)}>{TAX_OPTIONS.map(t => <option key={t.key} value={t.key}>{t.label}</option>)}</select>
+                                        {invForm.lines.length > 1 ? <button type="button" onClick={() => removeInvLine(i)} className="col-span-1 text-red-500 text-xs pb-2">✕</button> : <div className="col-span-1" />}
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="grid gap-3 md:grid-cols-3">
+                                <label className="block"><span className="text-xs font-semibold uppercase text-slate-500">IRPF %</span><input type="number" step="1" className={inputClass} value={invForm.retentionPct} onChange={e => setInvForm(p => ({ ...p, retentionPct: e.target.value }))} /></label>
+                                <label className="block md:col-span-2"><span className="text-xs font-semibold uppercase text-slate-500">Comentarios</span><input className={inputClass} value={invForm.comments} onChange={e => setInvForm(p => ({ ...p, comments: e.target.value }))} /></label>
+                            </div>
+
+                            <div className="flex justify-end gap-3">
+                                <button type="button" onClick={() => setShowInvForm(false)} className="text-sm text-slate-600">Cancelar</button>
+                                <button type="submit" disabled={saving} className="rounded-full bg-emerald-700 px-5 py-2 text-sm font-semibold text-white disabled:opacity-50">{saving ? "Enviando a Billin…" : "Crear factura en Billin"}</button>
+                            </div>
+                        </form>
+                    ) : null}
+
+                    {loading ? <p className="text-sm text-slate-500">Cargando…</p> : (
+                        <div className="overflow-x-auto rounded-2xl border bg-white">
+                            <table className="w-full text-xs">
+                                <thead className="bg-slate-50 text-[10px] uppercase text-slate-500"><tr><th className="px-3 py-2 text-left">Numero</th><th className="px-3 py-2 text-left">Fecha</th><th className="px-3 py-2 text-left">Cliente</th><th className="px-3 py-2 text-right">Total</th><th className="px-3 py-2 text-center">Estado</th><th className="px-3 py-2 text-left">Conceptos</th></tr></thead>
+                                <tbody>{invoices.map(inv => (
+                                    <tr key={inv.id} className="border-t hover:bg-slate-50">
+                                        <td className="px-3 py-2 font-mono font-semibold">{inv.identifier}</td>
+                                        <td className="px-3 py-2">{inv.issuedDate}</td>
+                                        <td className="px-3 py-2 font-semibold">{inv.contact?.fiscalName}</td>
+                                        <td className="px-3 py-2 text-right font-mono font-semibold">{fmtEur(inv.total?.totalAmount)}</td>
+                                        <td className="px-3 py-2 text-center">{inv.isPaid ? <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[9px] font-bold text-emerald-800">Cobrada</span> : <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[9px] font-bold text-amber-800">Pendiente</span>}</td>
+                                        <td className="px-3 py-2 text-[10px] text-slate-500">{(inv.lines || []).map(l => l.name).join(", ")}</td>
+                                    </tr>
+                                ))}</tbody>
+                            </table>
+                        </div>
+                    )}
+                </div>
+            ) : null}
+
+            {/* ═══ GASTOS ═══ */}
+            {tab === "gastos" ? (
+                <div className="grid gap-3">
+                    <div className="flex justify-between items-center">
+                        <p className="text-sm text-slate-600">{expenses.length} gastos en Billin</p>
+                        <button onClick={() => { setShowExpForm(!showExpForm); setShowInvForm(false); }} className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white">+ Nuevo gasto</button>
+                    </div>
+
+                    {showExpForm ? (
+                        <form onSubmit={handleCreateExpense} className="rounded-3xl border bg-white p-6 grid gap-3">
+                            <p className="text-sm font-semibold text-slate-900">Nuevo gasto → Billin</p>
+                            <div className="grid gap-3 md:grid-cols-4">
+                                <label className="block md:col-span-2"><span className="text-xs font-semibold uppercase text-slate-500">Proveedor *</span>
+                                    <input required list="billin-providers" className={inputClass} placeholder="Nombre fiscal" value={expForm.providerName} onChange={e => setExpForm(p => ({ ...p, providerName: e.target.value }))} />
+                                    <datalist id="billin-providers">{contacts.filter(c => c.isProvider).map(c => <option key={c.id} value={c.fiscalName} />)}</datalist>
+                                </label>
+                                <label className="block"><span className="text-xs font-semibold uppercase text-slate-500">Num. factura *</span><input required className={inputClass} placeholder="Numero del proveedor" value={expForm.identifier} onChange={e => setExpForm(p => ({ ...p, identifier: e.target.value }))} /></label>
+                                <label className="block"><span className="text-xs font-semibold uppercase text-slate-500">Fecha *</span><input required type="date" className={inputClass} value={expForm.issuedDate} onChange={e => setExpForm(p => ({ ...p, issuedDate: e.target.value }))} /></label>
+                            </div>
+
+                            <div>
+                                <div className="flex justify-between items-center mb-2"><span className="text-xs font-semibold uppercase text-slate-500">Lineas</span><button type="button" onClick={addExpLine} className="text-xs text-blue-600 font-semibold">+ Linea</button></div>
+                                {expForm.lines.map((l, i) => (
+                                    <div key={i} className="grid grid-cols-12 gap-2 mb-2 items-end">
+                                        <input className={`${inputClass} col-span-4`} placeholder="Concepto" value={l.name} onChange={e => updateExpLine(i, "name", e.target.value)} required />
+                                        <input className={`${inputClass} col-span-2`} type="number" step="1" min="1" placeholder="Ud." value={l.quantity} onChange={e => updateExpLine(i, "quantity", e.target.value)} />
+                                        <input className={`${inputClass} col-span-2`} type="number" step="0.01" placeholder="Precio" value={l.unitPrice} onChange={e => updateExpLine(i, "unitPrice", e.target.value)} required />
+                                        <select className={`${inputClass} col-span-3`} value={l.taxKey} onChange={e => updateExpLine(i, "taxKey", e.target.value)}>{TAX_OPTIONS.map(t => <option key={t.key} value={t.key}>{t.label}</option>)}</select>
+                                        {expForm.lines.length > 1 ? <button type="button" onClick={() => removeExpLine(i)} className="col-span-1 text-red-500 text-xs pb-2">✕</button> : <div className="col-span-1" />}
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="flex justify-end gap-3">
+                                <button type="button" onClick={() => setShowExpForm(false)} className="text-sm text-slate-600">Cancelar</button>
+                                <button type="submit" disabled={saving} className="rounded-full bg-red-700 px-5 py-2 text-sm font-semibold text-white disabled:opacity-50">{saving ? "Enviando a Billin…" : "Registrar gasto en Billin"}</button>
+                            </div>
+                        </form>
+                    ) : null}
+
+                    {loading ? <p className="text-sm text-slate-500">Cargando…</p> : (
+                        <div className="overflow-x-auto rounded-2xl border bg-white">
+                            <table className="w-full text-xs">
+                                <thead className="bg-slate-50 text-[10px] uppercase text-slate-500"><tr><th className="px-3 py-2 text-left">Numero</th><th className="px-3 py-2 text-left">Fecha</th><th className="px-3 py-2 text-left">Proveedor</th><th className="px-3 py-2 text-right">Total</th><th className="px-3 py-2 text-left">Conceptos</th></tr></thead>
+                                <tbody>{expenses.map(exp => (
+                                    <tr key={exp.id} className="border-t hover:bg-slate-50">
+                                        <td className="px-3 py-2 font-mono text-[10px]">{exp.identifier}</td>
+                                        <td className="px-3 py-2">{exp.issuedDate}</td>
+                                        <td className="px-3 py-2 font-semibold">{exp.contact?.fiscalName}</td>
+                                        <td className="px-3 py-2 text-right font-mono font-semibold text-red-700">{fmtEur(exp.total?.totalAmount)}</td>
+                                        <td className="px-3 py-2 text-[10px] text-slate-500">{(exp.lines || []).map(l => l.name).join(", ")}</td>
+                                    </tr>
+                                ))}</tbody>
+                            </table>
+                        </div>
+                    )}
+                </div>
+            ) : null}
+
+            {/* ═══ CONTACTOS BILLIN ═══ */}
+            {tab === "contactos" ? (
+                <div className="grid gap-3">
+                    <p className="text-sm text-slate-600">{contacts.length} contactos en Billin</p>
+                    {loading ? <p className="text-sm text-slate-500">Cargando…</p> : (
+                        <div className="overflow-x-auto rounded-2xl border bg-white">
+                            <table className="w-full text-xs">
+                                <thead className="bg-slate-50 text-[10px] uppercase text-slate-500"><tr><th className="px-3 py-2 text-left">Nombre fiscal</th><th className="px-3 py-2 text-left">NIF/CIF</th><th className="px-3 py-2 text-center">Cliente</th><th className="px-3 py-2 text-center">Proveedor</th><th className="px-3 py-2 text-left">Ciudad</th></tr></thead>
+                                <tbody>{contacts.map(c => (
+                                    <tr key={c.id} className="border-t hover:bg-slate-50">
+                                        <td className="px-3 py-2 font-semibold">{c.fiscalName}</td>
+                                        <td className="px-3 py-2 font-mono">{c.vatNumber || "—"}</td>
+                                        <td className="px-3 py-2 text-center">{c.isCustomer ? "🟢" : "—"}</td>
+                                        <td className="px-3 py-2 text-center">{c.isProvider ? "🟢" : "—"}</td>
+                                        <td className="px-3 py-2">{c.address?.city || "—"}</td>
+                                    </tr>
+                                ))}</tbody>
+                            </table>
+                        </div>
+                    )}
+                </div>
+            ) : null}
         </div>
     );
 }
