@@ -255,3 +255,11 @@ export const getExpirationAlerts = async () => {
   if (error) throw error;
   return data || [];
 };
+
+// ─── Business dashboard (all KPIs) ─────────────────────────
+export const getBusinessDashboard = async () => {
+  if (!supabase) return null;
+  const { data, error } = await supabase.rpc("get_business_dashboard");
+  if (error) throw error;
+  return data;
+};

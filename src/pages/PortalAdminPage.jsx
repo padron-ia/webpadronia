@@ -7,7 +7,7 @@ import CompaniesList from "../components/admin/CompaniesList";
 import CompanyDetail from "../components/admin/CompanyDetail";
 import ProjectDetail from "../components/admin/ProjectDetail";
 import { listProjects } from "../lib/projectsService";
-import { getExpirationAlerts } from "../lib/projectHubService";
+import { getExpirationAlerts, getBusinessDashboard } from "../lib/projectHubService";
 
 const statusOptions = ["all", "new", "contacted", "qualified", "proposal_sent", "won", "lost"];
 const gradeOptions = ["all", "A", "B", "C"];
@@ -103,6 +103,7 @@ function PortalAdminPage() {
     const [selectedProjectId, setSelectedProjectId] = useState(null);
     const [allProjects, setAllProjects] = useState([]);
     const [expirationAlerts, setExpirationAlerts] = useState([]);
+    const [bizDash, setBizDash] = useState(null);
     const [notes, setNotes] = useState([]);
     const [noteDraft, setNoteDraft] = useState("");
     const [nextActionDraft, setNextActionDraft] = useState("");
@@ -194,6 +195,7 @@ function PortalAdminPage() {
         fetchLeads();
         fetchTeam();
         getExpirationAlerts().then(setExpirationAlerts).catch(() => {});
+        getBusinessDashboard().then(setBizDash).catch(() => {});
     }, [session, role]);
 
     useEffect(() => {
@@ -534,84 +536,199 @@ function PortalAdminPage() {
         );
     };
 
-    const renderDashboard = () => (
+    const renderDashboard = () => {
+        const d = bizDash || {};
+        const HEALTH_COLORS = { on_track: "bg-emerald-100 text-emerald-800", at_risk: "bg-amber-100 text-amber-800", off_track: "bg-red-100 text-red-800" };
+        const HEALTH_DOT = { on_track: "bg-emerald-500", at_risk: "bg-amber-500", off_track: "bg-red-500" };
+        const STATUS_COLORS_DASH = { active: "bg-emerald-100 text-emerald-800", kickoff: "bg-sky-100 text-sky-800", paused: "bg-amber-100 text-amber-800" };
+
+        return (
         <>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><p className="text-xs uppercase tracking-[0.14em] text-slate-500">Nuevos hoy</p><p className="mt-2 text-3xl font-semibold text-slate-900">{kpis.createdToday}</p></div>
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><p className="text-xs uppercase tracking-[0.14em] text-slate-500">Nuevos 7 días</p><p className="mt-2 text-3xl font-semibold text-slate-900">{kpis.created7Days}</p></div>
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><p className="text-xs uppercase tracking-[0.14em] text-slate-500">Leads grado A</p><p className="mt-2 text-3xl font-semibold text-slate-900">{kpis.gradeA}</p></div>
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><p className="text-xs uppercase tracking-[0.14em] text-slate-500">Pendientes</p><p className="mt-2 text-3xl font-semibold text-slate-900">{kpis.pending}</p></div>
+            {/* ═══ FILA 1: KPIs PRINCIPALES ═══ */}
+            <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+                <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-900 to-slate-800 p-5 text-white">
+                    <p className="text-[10px] uppercase tracking-[0.14em] opacity-60">Proyectos activos</p>
+                    <p className="mt-1 text-3xl font-bold">{d.projects_active ?? "-"}</p>
+                    <p className="mt-1 text-xs opacity-50">{d.projects_total ?? 0} totales{d.projects_at_risk > 0 ? ` · ${d.projects_at_risk} en riesgo` : ""}</p>
+                </div>
+                <div className="rounded-2xl border border-slate-200 bg-white p-5">
+                    <p className="text-[10px] uppercase tracking-[0.14em] text-slate-500">Clientes</p>
+                    <p className="mt-1 text-3xl font-bold text-slate-900">{d.clients_total ?? "-"}</p>
+                    <p className="mt-1 text-xs text-slate-400">{d.companies_total ?? 0} empresas totales</p>
+                </div>
+                <div className="rounded-2xl border border-slate-200 bg-white p-5">
+                    <p className="text-[10px] uppercase tracking-[0.14em] text-slate-500">Coste mensual</p>
+                    <p className="mt-1 text-3xl font-bold text-slate-900">{Number(d.monthly_subscriptions_cost || 0).toFixed(0)} <span className="text-lg font-normal text-slate-400">€</span></p>
+                    <p className="mt-1 text-xs text-slate-400">suscripciones activas</p>
+                </div>
+                <div className="rounded-2xl border p-5 relative overflow-hidden" style={{ borderColor: d.expirations_urgent > 0 ? "#f59e0b" : "#e2e8f0", backgroundColor: d.expirations_urgent > 0 ? "#fffbeb" : "white" }}>
+                    <p className="text-[10px] uppercase tracking-[0.14em]" style={{ color: d.expirations_urgent > 0 ? "#b45309" : "#64748b" }}>Alertas</p>
+                    <p className="mt-1 text-3xl font-bold" style={{ color: d.expirations_urgent > 0 ? "#b45309" : "#0f172a" }}>{d.expirations_urgent ?? 0}</p>
+                    <p className="mt-1 text-xs" style={{ color: d.expirations_urgent > 0 ? "#b45309" : "#94a3b8" }}>vencimientos proximos 30d</p>
+                </div>
             </div>
 
+            {/* ═══ FILA 2: OPERATIVA + PIPELINE ═══ */}
             <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-6">
-                {statusOptions.filter((status) => status !== "all").map((status) => (
-                    <div key={`status-${status}`} className="rounded-xl border border-slate-200 bg-white p-3">
-                        <p className="text-xs uppercase tracking-[0.1em] text-slate-500">{statusLabel[status]}</p>
-                        <p className="mt-1 text-xl font-semibold text-slate-900">{leadsByStatus[status].length}</p>
-                    </div>
-                ))}
+                <div className="rounded-xl border border-slate-200 bg-white p-3">
+                    <p className="text-[10px] uppercase tracking-[0.1em] text-slate-500">Leads nuevos</p>
+                    <p className="mt-1 text-xl font-bold text-slate-900">{d.leads_new ?? 0}</p>
+                    <p className="text-[10px] text-slate-400">{d.leads_total_month ?? 0} este mes</p>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-white p-3">
+                    <p className="text-[10px] uppercase tracking-[0.1em] text-slate-500">Oportunidades</p>
+                    <p className="mt-1 text-xl font-bold text-slate-900">{d.opportunities_open ?? 0}</p>
+                    <p className="text-[10px] text-slate-400">{Number(d.opportunities_value || 0).toLocaleString("es")} € pipeline</p>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-white p-3">
+                    <p className="text-[10px] uppercase tracking-[0.1em] text-slate-500">Contratos</p>
+                    <p className="mt-1 text-xl font-bold text-slate-900">{d.contracts_active ?? 0}</p>
+                    <p className="text-[10px] text-slate-400">{Number(d.contracts_value || 0).toLocaleString("es")} € activos</p>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-white p-3">
+                    <p className="text-[10px] uppercase tracking-[0.1em] text-slate-500">Tareas abiertas</p>
+                    <p className="mt-1 text-xl font-bold text-slate-900">{d.tasks_open ?? 0}</p>
+                    <p className="text-[10px] text-slate-400">{d.tasks_overdue ?? 0} vencidas</p>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-white p-3">
+                    <p className="text-[10px] uppercase tracking-[0.1em] text-slate-500">Horas mes</p>
+                    <p className="mt-1 text-xl font-bold text-slate-900">{Number(d.hours_month || 0).toFixed(1)}h</p>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-white p-3">
+                    <p className="text-[10px] uppercase tracking-[0.1em] text-slate-500">Entregables</p>
+                    <p className="mt-1 text-xl font-bold text-slate-900">{d.deliverables_total ?? 0}</p>
+                </div>
             </div>
 
-            <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-2">
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                    <p className="text-xs uppercase tracking-[0.14em] text-slate-500">Prioridad de hoy</p>
-                    {priorityLeads.length === 0 ? <p className="mt-2 text-sm text-slate-600">No hay leads A pendientes en este momento.</p> : null}
-                    <div className="mt-2 flex flex-wrap gap-2 text-sm">
-                        {priorityLeads.map((lead) => (
-                            <button key={lead.id} onClick={() => setSelectedLead(lead)} className="rounded-full border border-slate-300 bg-white px-3 py-1 text-slate-700">
-                                {(lead.name || "Sin nombre") + " - " + (lead.company || "Sin empresa")}
+            {/* ═══ FILA 3: PROYECTOS ACTIVOS + ALERTAS ═══ */}
+            <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-3">
+                {/* Proyectos activos — acceso rapido */}
+                <div className="xl:col-span-2 rounded-2xl border border-slate-200 bg-white p-5">
+                    <div className="flex justify-between items-center mb-4">
+                        <p className="text-xs uppercase tracking-[0.14em] text-slate-500 font-semibold">Proyectos activos</p>
+                        <button onClick={() => navigate("/portal/admin/proyectos")} className="text-xs font-semibold text-slate-500 hover:text-slate-900">Ver todos →</button>
+                    </div>
+                    <div className="grid gap-2 sm:grid-cols-2">
+                        {(d.recent_projects || []).map((p) => (
+                            <button key={p.id} onClick={() => { navigate("/portal/admin/proyectos"); setTimeout(() => setSelectedProjectId(p.id), 100); }}
+                                className="text-left flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 hover:border-slate-300 hover:shadow-sm transition">
+                                <div className={`w-2.5 h-2.5 rounded-full shrink-0 ${HEALTH_DOT[p.health] || "bg-slate-300"}`} />
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-semibold text-slate-900 truncate">{p.title}</p>
+                                    <p className="text-[11px] text-slate-500">{p.company_name}{p.domain ? ` · ${p.domain}` : ""}</p>
+                                </div>
+                                <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${STATUS_COLORS_DASH[p.status] || "bg-slate-100 text-slate-600"}`}>
+                                    {p.status === "active" ? "Activo" : p.status === "kickoff" ? "Kickoff" : p.status}
+                                </span>
                             </button>
                         ))}
                     </div>
                 </div>
 
-                <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-                    <p className="text-xs uppercase tracking-[0.14em] text-amber-700">Alertas de contacto</p>
-                    {unattendedLeads.length === 0 ? <p className="mt-2 text-sm text-amber-700">No hay leads sin contacto mayor a 24h.</p> : null}
-                    <div className="mt-2 space-y-2">
-                        {unattendedLeads.slice(0, 5).map((lead) => (
-                            <div key={`alert-${lead.id}`} className="rounded-xl border border-amber-200 bg-white px-3 py-2 text-sm">
-                                <p className="font-semibold text-slate-900">{lead.name || "Sin nombre"}</p>
-                                <p className="text-slate-600">{lead.company || "Sin empresa"}</p>
+                {/* Alertas: vencimientos + leads */}
+                <div className="rounded-2xl border border-slate-200 bg-white p-5">
+                    <p className="text-xs uppercase tracking-[0.14em] text-slate-500 font-semibold mb-3">Requiere atencion</p>
+
+                    {/* Leads sin atender */}
+                    {unattendedLeads.length > 0 ? (
+                        <div className="mb-3">
+                            <p className="text-[10px] uppercase tracking-[0.1em] text-amber-600 font-semibold mb-1.5">Leads sin contacto &gt;24h</p>
+                            {unattendedLeads.slice(0, 3).map((lead) => (
+                                <button key={`ua-${lead.id}`} onClick={() => setSelectedLead(lead)}
+                                    className="w-full text-left rounded-lg bg-amber-50 border border-amber-100 px-3 py-1.5 mb-1 text-xs">
+                                    <span className="font-semibold text-slate-900">{lead.name || "Sin nombre"}</span>
+                                    <span className="text-slate-500"> · {lead.company || "Sin empresa"}</span>
+                                </button>
+                            ))}
+                        </div>
+                    ) : null}
+
+                    {/* Vencimientos */}
+                    {expirationAlerts.length > 0 ? (
+                        <div>
+                            <p className="text-[10px] uppercase tracking-[0.1em] text-slate-500 font-semibold mb-1.5">Vencimientos</p>
+                            {expirationAlerts.slice(0, 5).map((alert, i) => {
+                                const days = Math.ceil((new Date(alert.expires_at) - new Date()) / (1000 * 60 * 60 * 24));
+                                const isExpired = days < 0;
+                                const isUrgent = days < 30;
+                                const typeIcon = alert.alert_type === "contract" ? "📋" : alert.alert_type === "domain" ? "🌐" : "💳";
+                                return (
+                                    <div key={`exp-${i}`} className={`flex items-center gap-2 rounded-lg px-3 py-1.5 mb-1 text-xs ${isExpired ? "bg-red-50 border border-red-100" : isUrgent ? "bg-amber-50 border border-amber-100" : "bg-slate-50 border border-slate-100"}`}>
+                                        <span>{typeIcon}</span>
+                                        <span className="flex-1 truncate"><span className="font-semibold">{alert.entity_label}</span> · {alert.project_title}</span>
+                                        <span className={`font-bold shrink-0 ${isExpired ? "text-red-600" : isUrgent ? "text-amber-600" : "text-slate-500"}`}>{isExpired ? `${Math.abs(days)}d ago` : `${days}d`}</span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : null}
+
+                    {unattendedLeads.length === 0 && expirationAlerts.length === 0 ? (
+                        <p className="text-sm text-emerald-600 py-4 text-center">Todo en orden</p>
+                    ) : null}
+                </div>
+            </div>
+
+            {/* ═══ FILA 4: ACTIVIDAD + LEADS + ACCESOS RAPIDOS ═══ */}
+            <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-3">
+                {/* Actividad reciente */}
+                <div className="rounded-2xl border border-slate-200 bg-white p-5">
+                    <p className="text-xs uppercase tracking-[0.14em] text-slate-500 font-semibold mb-3">Actividad reciente</p>
+                    {(d.recent_activity || []).length === 0 ? <p className="text-sm text-slate-400 text-center py-4">Sin actividad reciente</p> :
+                        <div className="space-y-2">{(d.recent_activity || []).map((a, i) => (
+                            <div key={`act-${i}`} className="rounded-lg bg-slate-50 px-3 py-2 text-xs">
+                                <p className="font-semibold text-slate-900">{a.title}</p>
+                                {a.project_title ? <p className="text-slate-500">{a.project_title}</p> : null}
+                                <p className="text-slate-400 mt-0.5">{new Date(a.created_at).toLocaleDateString("es-ES", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</p>
                             </div>
+                        ))}</div>
+                    }
+                </div>
+
+                {/* Leads prioritarios */}
+                <div className="rounded-2xl border border-slate-200 bg-white p-5">
+                    <p className="text-xs uppercase tracking-[0.14em] text-slate-500 font-semibold mb-3">Leads prioritarios</p>
+                    {priorityLeads.length === 0 ? <p className="text-sm text-slate-400 text-center py-4">Sin leads A pendientes</p> :
+                        <div className="space-y-1.5">{priorityLeads.slice(0, 6).map((lead) => (
+                            <button key={lead.id} onClick={() => setSelectedLead(lead)}
+                                className="w-full text-left rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-xs hover:border-slate-300 transition">
+                                <span className="font-semibold text-slate-900">{lead.name || "Sin nombre"}</span>
+                                <span className="text-slate-500"> · {lead.company || ""}</span>
+                                <span className="float-right rounded-full bg-emerald-100 px-1.5 py-0.5 text-[9px] font-bold text-emerald-800">{lead.lead_grade}</span>
+                            </button>
+                        ))}</div>
+                    }
+                </div>
+
+                {/* Accesos rapidos */}
+                <div className="rounded-2xl border border-slate-200 bg-white p-5">
+                    <p className="text-xs uppercase tracking-[0.14em] text-slate-500 font-semibold mb-3">Accesos rapidos</p>
+                    <div className="grid grid-cols-2 gap-2">
+                        {[
+                            { label: "Inbox", icon: "📥", href: "/portal/admin/inbox" },
+                            { label: "Empresas", icon: "🏢", href: "/portal/admin/empresas" },
+                            { label: "Pipeline", icon: "🎯", href: "/portal/admin/pipeline" },
+                            { label: "Proyectos", icon: "📋", href: "/portal/admin/proyectos" },
+                            { label: "Billin", icon: "💰", href: "https://app.billin.net", external: true },
+                            { label: "Supabase", icon: "⚡", href: "https://supabase.com/dashboard/project/tfhmeoiryhuivdnpwpjs", external: true },
+                        ].map((item) => (
+                            item.external ? (
+                                <a key={item.label} href={item.href} target="_blank" rel="noopener"
+                                    className="flex items-center gap-2 rounded-xl border border-slate-100 bg-slate-50 px-3 py-2.5 text-xs font-semibold text-slate-700 hover:border-slate-300 hover:shadow-sm transition">
+                                    <span className="text-base">{item.icon}</span> {item.label} <span className="text-slate-300 ml-auto">↗</span>
+                                </a>
+                            ) : (
+                                <button key={item.label} onClick={() => navigate(item.href)}
+                                    className="flex items-center gap-2 rounded-xl border border-slate-100 bg-slate-50 px-3 py-2.5 text-xs font-semibold text-slate-700 hover:border-slate-300 hover:shadow-sm transition">
+                                    <span className="text-base">{item.icon}</span> {item.label}
+                                </button>
+                            )
                         ))}
                     </div>
                 </div>
             </div>
-
-            {/* Alertas de vencimiento */}
-            {expirationAlerts.length > 0 ? (
-                <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-                    <p className="text-xs uppercase tracking-[0.14em] text-slate-500 mb-3">Vencimientos y renovaciones</p>
-                    <div className="space-y-2">
-                        {expirationAlerts.map((alert, i) => {
-                            const days = Math.ceil((new Date(alert.expires_at) - new Date()) / (1000 * 60 * 60 * 24));
-                            const isUrgent = days < 30;
-                            const isWarning = days >= 30 && days < 90;
-                            const isExpired = days < 0;
-                            const typeIcon = alert.alert_type === "contract" ? "📋" : alert.alert_type === "domain" ? "🌐" : "💳";
-                            const typeLabel = alert.alert_type === "contract" ? "Contrato" : alert.alert_type === "domain" ? "Dominio" : "Suscripcion";
-                            return (
-                                <div key={`${alert.alert_type}-${alert.entity_id}-${i}`}
-                                    className={`flex items-center gap-3 rounded-xl px-3 py-2 text-sm ${isExpired ? "bg-red-50 border border-red-200" : isUrgent ? "bg-amber-50 border border-amber-200" : isWarning ? "bg-yellow-50 border border-yellow-100" : "bg-slate-50 border border-slate-200"}`}>
-                                    <span className="text-lg">{typeIcon}</span>
-                                    <div className="flex-1 min-w-0">
-                                        <span className="font-semibold text-slate-900">{alert.entity_label || "-"}</span>
-                                        <span className="text-slate-500"> · {alert.project_title} · {alert.company_name}</span>
-                                    </div>
-                                    <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600">{typeLabel}</span>
-                                    <span className={`text-xs font-bold shrink-0 ${isExpired ? "text-red-700" : isUrgent ? "text-amber-700" : "text-slate-600"}`}>
-                                        {isExpired ? `Vencido ${Math.abs(days)}d` : `${days}d`}
-                                    </span>
-                                    {alert.auto_renew ? <span className="text-[10px] text-slate-400">Auto</span> : null}
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-            ) : null}
         </>
-    );
+    );};
 
     const renderInbox = () => (
         <>
