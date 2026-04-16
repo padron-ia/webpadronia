@@ -25,47 +25,40 @@ const statusLabel = {
 const sectionConfig = {
     dashboard: {
         title: "Dashboard",
-        subtitle: "Resumen ejecutivo con volumen, prioridad y estado del pipeline"
+        subtitle: "Vision general del negocio: clientes, proyectos, pipeline y facturacion"
     },
     inbox: {
         title: "Inbox",
-        subtitle: "Triage diario de nuevos leads y casos sin contacto"
+        subtitle: "Leads nuevos del formulario web — triage y conversion a empresa"
     },
-    leads: {
-        title: "Leads",
-        subtitle: "Base completa para filtrar, buscar y operar en escala"
+    empresas: {
+        title: "Empresas",
+        subtitle: "CRM completo: clientes, prospects, partners con contactos y proyectos"
     },
     pipeline: {
         title: "Pipeline",
         subtitle: "Vista comercial por etapas para mover oportunidades rapido"
     },
-    actividades: {
-        title: "Actividades",
-        subtitle: "Seguimientos, proximas acciones y tareas pendientes"
-    },
-    reportes: {
-        title: "Reportes",
-        subtitle: "Rendimiento por etapa, conversion y responsables"
+    proyectos: {
+        title: "Proyectos",
+        subtitle: "Proyectos activos con hitos, deliverables, equipo y seguimiento"
     },
     configuracion: {
-        title: "Configuracion",
-        subtitle: "Equipo, criterios operativos y checklist del sistema"
-    },
-    empresas: {
-        title: "Empresas",
-        subtitle: "Clientes, prospects, partners — ficha completa con contactos y proyectos"
+        title: "Ajustes",
+        subtitle: "Datos de la organizacion, equipo y configuracion del sistema"
     }
 };
 
 const adminNavItems = [
-    { label: "Dashboard", href: "/portal/admin/dashboard" },
-    { label: "Inbox", href: "/portal/admin/inbox" },
-    { label: "Leads", href: "/portal/admin/leads" },
-    { label: "Pipeline", href: "/portal/admin/pipeline" },
-    { label: "Actividades", href: "/portal/admin/actividades" },
-    { label: "Reportes", href: "/portal/admin/reportes" },
-    { label: "Configuracion", href: "/portal/admin/configuracion" },
-    { label: "Empresas", href: "/portal/admin/empresas" }
+    { type: "group", label: "Comercial" },
+    { label: "Dashboard", href: "/portal/admin/dashboard", icon: "📊" },
+    { label: "Inbox", href: "/portal/admin/inbox", icon: "📥" },
+    { label: "Empresas", href: "/portal/admin/empresas", icon: "🏢" },
+    { label: "Pipeline", href: "/portal/admin/pipeline", icon: "🎯" },
+    { type: "group", label: "Operativa" },
+    { label: "Proyectos", href: "/portal/admin/proyectos", icon: "📋" },
+    { type: "group", label: "Sistema" },
+    { label: "Ajustes", href: "/portal/admin/configuracion", icon: "⚙️" }
 ];
 
 const quickViews = [
@@ -905,15 +898,20 @@ function PortalAdminPage() {
 
                 {currentSection === "dashboard" ? renderDashboard() : null}
                 {currentSection === "inbox" ? renderInbox() : null}
-                {currentSection === "leads" ? renderLeadsTable() : null}
                 {currentSection === "pipeline" ? renderPipeline() : null}
-                {currentSection === "actividades" ? renderActivities() : null}
-                {currentSection === "reportes" ? renderReportes() : null}
                 {currentSection === "configuracion" ? renderConfig() : null}
                 {currentSection === "empresas" ? (
                     selectedCompanyId
                         ? <CompanyDetail companyId={selectedCompanyId} onBack={() => setSelectedCompanyId(null)} />
                         : <CompaniesList onSelectCompany={(c) => setSelectedCompanyId(c.id)} />
+                ) : null}
+                {currentSection === "proyectos" ? (
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center">
+                        <p className="text-3xl mb-3">📋</p>
+                        <p className="text-lg font-semibold text-slate-900">Proyectos</p>
+                        <p className="mt-2 text-sm text-slate-600">Vista completa de proyectos en desarrollo. Los proyectos se crean desde la ficha de cada empresa en la seccion Empresas.</p>
+                        <a href="/portal/admin/empresas" className="mt-4 inline-block rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white">Ir a Empresas</a>
+                    </div>
                 ) : null}
             </PortalShell>
 
