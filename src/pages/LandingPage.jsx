@@ -9,6 +9,7 @@ import FAQSection from "../components/FAQSection";
 import ConsultForm from "../components/ConsultForm";
 import Footer from "../components/Footer";
 import WhatsAppFloatButton from "../components/WhatsAppFloatButton";
+import CookieBanner from "../components/CookieBanner";
 
 function LandingPage() {
     useEffect(() => {
@@ -65,6 +66,7 @@ function LandingPage() {
             <ConsultForm />
             <Footer />
             <WhatsAppFloatButton />
+            <CookieBanner />
         </main>
     );
 }

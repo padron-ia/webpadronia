@@ -3,6 +3,7 @@ import ConsultForm from "../components/ConsultForm";
 import Footer from "../components/Footer";
 import FloatingNavbar from "../components/FloatingNavbar";
 import WhatsAppFloatButton from "../components/WhatsAppFloatButton";
+import CookieBanner from "../components/CookieBanner";
 
 function LandingGimnasios() {
     return (
@@ -68,6 +69,7 @@ function LandingGimnasios() {
             </main>
             <Footer />
             <WhatsAppFloatButton />
+            <CookieBanner />
         </div>
     );
 }
