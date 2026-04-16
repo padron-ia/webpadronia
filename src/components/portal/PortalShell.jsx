@@ -3,7 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 function PortalShell({ email, role, title, subtitle, onLogout, navItems = [], children }) {
     return (
         <main className="min-h-screen bg-slate-100 px-4 py-6 sm:px-8 sm:py-8">
-            <div className="mx-auto flex w-full max-w-7xl gap-6">
+            <div className="mx-auto flex w-full max-w-[1440px] gap-6">
                 <aside className="hidden w-64 shrink-0 rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_12px_35px_rgba(15,23,42,0.06)] lg:block">
                     <Link to="/" className="inline-flex items-center gap-2 text-slate-900">
                         <img src="/assets/logo-padron-ia-clean.png" alt="Padrón IA" className="h-10 w-auto object-contain" />
@@ -46,7 +46,7 @@ function PortalShell({ email, role, title, subtitle, onLogout, navItems = [], ch
                     </button>
                 </aside>
 
-                <section className="min-w-0 w-full rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_12px_35px_rgba(15,23,42,0.06)] sm:p-8">
+                <section className="min-w-0 flex-1 overflow-hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_12px_35px_rgba(15,23,42,0.06)] sm:p-8">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                         <div>
                             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Padrón IA CRM</p>

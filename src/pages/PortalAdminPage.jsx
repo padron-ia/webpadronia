@@ -569,7 +569,7 @@ function PortalAdminPage() {
             </div>
 
             {/* ═══ FILA 2: OPERATIVA + PIPELINE ═══ */}
-            <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-6">
+            <div className="mt-4 grid grid-cols-3 gap-3 lg:grid-cols-6">
                 <div className="rounded-xl border border-slate-200 bg-white p-3">
                     <p className="text-[10px] uppercase tracking-[0.1em] text-slate-500">Leads nuevos</p>
                     <p className="mt-1 text-xl font-bold text-slate-900">{d.leads_new ?? 0}</p>
@@ -601,9 +601,9 @@ function PortalAdminPage() {
             </div>
 
             {/* ═══ FILA 3: PROYECTOS ACTIVOS + ALERTAS ═══ */}
-            <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-3">
+            <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
                 {/* Proyectos activos — acceso rapido */}
-                <div className="xl:col-span-2 rounded-2xl border border-slate-200 bg-white p-5">
+                <div className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white p-5">
                     <div className="flex justify-between items-center mb-4">
                         <p className="text-xs uppercase tracking-[0.14em] text-slate-500 font-semibold">Proyectos activos</p>
                         <button onClick={() => navigate("/portal/admin/proyectos")} className="text-xs font-semibold text-slate-500 hover:text-slate-900">Ver todos →</button>
@@ -670,7 +670,7 @@ function PortalAdminPage() {
             </div>
 
             {/* ═══ FILA 4: ACTIVIDAD + LEADS + ACCESOS RAPIDOS ═══ */}
-            <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-3">
+            <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
                 {/* Actividad reciente */}
                 <div className="rounded-2xl border border-slate-200 bg-white p-5">
                     <p className="text-xs uppercase tracking-[0.14em] text-slate-500 font-semibold mb-3">Actividad reciente</p>
