@@ -1237,27 +1237,33 @@ function ProjectsGlobalView({ onSelectProject }) {
 // =================== METRICAS PANEL ===================
 function MetricasPanel() {
     const [ops, setOps] = useState(null);
-    const [billin, setBillin] = useState(null);
+    const [b, setB] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [billinLoading, setBillinLoading] = useState(true);
-    const [billinError, setBillinError] = useState(null);
-    const [tab, setTab] = useState("financiero");
+    const [bLoading, setBLoading] = useState(true);
+    const [bError, setBError] = useState(null);
+    const [tab, setTab] = useState("resumen");
 
     useEffect(() => {
         getOperationalMetrics().then(setOps).catch(() => {}).finally(() => setLoading(false));
-        getBillinMetrics().then(setBillin).catch((e) => setBillinError(e.message)).finally(() => setBillinLoading(false));
+        getBillinMetrics().then(setB).catch((e) => setBError(e.message)).finally(() => setBLoading(false));
     }, []);
 
     const fmt = (n) => Number(n || 0).toLocaleString("es", { maximumFractionDigits: 2 });
     const fmtEur = (n) => `${fmt(n)} €`;
+    const pct = (n) => `${n > 0 ? "+" : ""}${n}%`;
 
     const TABS = [
-        { id: "financiero", label: "Financiero" },
+        { id: "resumen", label: "Resumen" },
+        { id: "clientes", label: "Clientes" },
+        { id: "servicios", label: "Servicios" },
+        { id: "gastos", label: "Gastos" },
+        { id: "facturas", label: "Facturas" },
         { id: "proyectos", label: "Por proyecto" },
         { id: "hub", label: "Hub health" },
     ];
 
     const HEALTH_DOT = { on_track: "bg-emerald-500", at_risk: "bg-amber-500", off_track: "bg-red-500" };
+    const barMax = (arr, key) => Math.max(...arr.map(a => a[key] || 0), 1);
 
     return (
         <div className="grid gap-4">
@@ -1270,257 +1276,274 @@ function MetricasPanel() {
                 ))}
             </div>
 
-            {/* ═══ TAB FINANCIERO ═══ */}
-            {tab === "financiero" ? (
+            {bError ? (
+                <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+                    Billin no conectado: {bError}. Configura los secrets en Supabase Edge Functions.
+                </div>
+            ) : null}
+
+            {/* ═══ TAB RESUMEN ═══ */}
+            {tab === "resumen" && b ? (
                 <div className="grid gap-4">
-                    {billinError ? (
-                        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-                            Billin no conectado: {billinError}. Configura BILLIN_CLIENT_ID y BILLIN_CLIENT_SECRET en Supabase Edge Function secrets.
+                    {/* KPIs principales */}
+                    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+                        <div className="rounded-2xl border bg-gradient-to-br from-emerald-900 to-emerald-800 p-5 text-white">
+                            <p className="text-[10px] uppercase tracking-[0.14em] opacity-60">Facturado total</p>
+                            <p className="mt-1 text-2xl font-bold">{fmtEur(b.totalRevenue)}</p>
+                            <p className="text-xs opacity-50">{b.totalInvoices} facturas · {b.totalClients} clientes</p>
                         </div>
-                    ) : billinLoading ? (
-                        <p className="text-sm text-slate-500">Cargando datos de Billin…</p>
-                    ) : billin ? (
-                        <>
-                            {/* KPIs principales */}
-                            <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-                                <div className="rounded-2xl border bg-gradient-to-br from-emerald-900 to-emerald-800 p-5 text-white">
-                                    <p className="text-[10px] uppercase tracking-[0.14em] opacity-60">Facturado total</p>
-                                    <p className="mt-1 text-2xl font-bold">{fmtEur(billin.totalRevenue)}</p>
-                                    <p className="text-xs opacity-50">{billin.totalInvoices} facturas</p>
-                                </div>
-                                <div className="rounded-2xl border bg-white p-5">
-                                    <p className="text-[10px] uppercase tracking-[0.14em] text-slate-500">Este ano</p>
-                                    <p className="mt-1 text-2xl font-bold text-slate-900">{fmtEur(billin.revenueThisYear)}</p>
-                                    <p className="text-xs text-slate-400">{billin.invoicesThisYear} facturas</p>
-                                </div>
-                                <div className="rounded-2xl border bg-white p-5">
-                                    <p className="text-[10px] uppercase tracking-[0.14em] text-slate-500">MRR estimado</p>
-                                    <p className="mt-1 text-2xl font-bold text-slate-900">{fmtEur(billin.mrr)}</p>
-                                    <p className="text-xs text-slate-400">media 3 meses</p>
-                                </div>
-                                <div className="rounded-2xl border p-5" style={{ backgroundColor: billin.pendingAmount > 0 ? "#fef3c7" : "white", borderColor: billin.pendingAmount > 0 ? "#fbbf24" : "#e2e8f0" }}>
-                                    <p className="text-[10px] uppercase tracking-[0.14em]" style={{ color: billin.pendingAmount > 0 ? "#b45309" : "#64748b" }}>Pendiente cobro</p>
-                                    <p className="mt-1 text-2xl font-bold" style={{ color: billin.pendingAmount > 0 ? "#b45309" : "#0f172a" }}>{fmtEur(billin.pendingAmount)}</p>
-                                    <p className="text-xs" style={{ color: billin.pendingAmount > 0 ? "#b45309" : "#94a3b8" }}>{billin.invoicesUnpaid} sin cobrar</p>
-                                </div>
-                            </div>
-
-                            {/* Facturado vs cobrado */}
-                            <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
-                                <div className="rounded-xl border bg-white p-3"><p className="text-[10px] uppercase tracking-[0.1em] text-slate-500">Este mes</p><p className="mt-1 text-lg font-bold">{fmtEur(billin.revenueThisMonth)}</p></div>
-                                <div className="rounded-xl border bg-white p-3"><p className="text-[10px] uppercase tracking-[0.1em] text-slate-500">Cobrado total</p><p className="mt-1 text-lg font-bold text-emerald-700">{fmtEur(billin.totalPaid)}</p></div>
-                                <div className="rounded-xl border bg-white p-3"><p className="text-[10px] uppercase tracking-[0.1em] text-slate-500">Ano anterior</p><p className="mt-1 text-lg font-bold">{fmtEur(billin.revenueLastYear)}</p></div>
-                                <div className="rounded-xl border bg-white p-3"><p className="text-[10px] uppercase tracking-[0.1em] text-slate-500">Factura media</p><p className="mt-1 text-lg font-bold">{fmtEur(billin.avgInvoiceValue)}</p></div>
-                                <div className="rounded-xl border bg-white p-3"><p className="text-[10px] uppercase tracking-[0.1em] text-slate-500">Clientes Billin</p><p className="mt-1 text-lg font-bold">{billin.totalClients}</p></div>
-                            </div>
-
-                            {/* Revenue por mes (barras) */}
-                            <div className="rounded-2xl border bg-white p-5">
-                                <p className="text-xs uppercase tracking-[0.14em] text-slate-500 font-semibold mb-4">Facturacion mensual {new Date().getFullYear()}</p>
-                                <div className="flex items-end gap-1" style={{ height: "140px" }}>
-                                    {Object.entries(billin.revenueByMonth || {}).map(([month, amount]) => {
-                                        const max = Math.max(...Object.values(billin.revenueByMonth || {}), 1);
-                                        const pct = (amount / max) * 100;
-                                        const monthNum = parseInt(month.split("-")[1]);
-                                        const isCurrentMonth = monthNum === new Date().getMonth() + 1;
-                                        const monthLabel = ["E","F","M","A","M","J","J","A","S","O","N","D"][monthNum - 1];
-                                        return (
-                                            <div key={month} className="flex-1 flex flex-col items-center gap-1">
-                                                <span className="text-[9px] text-slate-500 font-semibold">{amount > 0 ? `${(amount/1000).toFixed(1)}k` : ""}</span>
-                                                <div className={`w-full rounded-t-md transition-all ${isCurrentMonth ? "bg-emerald-500" : amount > 0 ? "bg-slate-300" : "bg-slate-100"}`}
-                                                    style={{ height: `${Math.max(pct, 2)}%`, minHeight: "2px" }} />
-                                                <span className={`text-[10px] font-semibold ${isCurrentMonth ? "text-emerald-700" : "text-slate-400"}`}>{monthLabel}</span>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-
-                            {/* Revenue por cliente + por producto */}
-                            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                                <div className="rounded-2xl border bg-white p-5">
-                                    <p className="text-xs uppercase tracking-[0.14em] text-slate-500 font-semibold mb-3">Por cliente</p>
-                                    <div className="space-y-2">
-                                        {(billin.revenueByClient || []).map((c, i) => {
-                                            const max = billin.revenueByClient[0]?.total || 1;
-                                            return (
-                                                <div key={i}>
-                                                    <div className="flex justify-between text-xs mb-0.5">
-                                                        <span className="font-semibold text-slate-900 truncate">{c.name}</span>
-                                                        <span className="text-slate-600 shrink-0 ml-2">{fmtEur(c.total)} ({c.count})</span>
-                                                    </div>
-                                                    <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
-                                                        <div className="h-full rounded-full bg-slate-700" style={{ width: `${(c.total / max) * 100}%` }} />
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-                                <div className="rounded-2xl border bg-white p-5">
-                                    <p className="text-xs uppercase tracking-[0.14em] text-slate-500 font-semibold mb-3">Por servicio</p>
-                                    <div className="space-y-2">
-                                        {(billin.revenueByProduct || []).slice(0, 8).map((p, i) => {
-                                            const max = billin.revenueByProduct[0]?.total || 1;
-                                            return (
-                                                <div key={i}>
-                                                    <div className="flex justify-between text-xs mb-0.5">
-                                                        <span className="font-semibold text-slate-900 truncate">{p.name}</span>
-                                                        <span className="text-slate-600 shrink-0 ml-2">{fmtEur(p.total)} ({p.count}x)</span>
-                                                    </div>
-                                                    <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
-                                                        <div className="h-full rounded-full bg-emerald-600" style={{ width: `${(p.total / max) * 100}%` }} />
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-                            </div>
-                        </>
-                    ) : null}
-
-                    {/* Costes operativos (siempre visible, desde Supabase) */}
-                    {ops ? (
                         <div className="rounded-2xl border bg-white p-5">
-                            <p className="text-xs uppercase tracking-[0.14em] text-slate-500 font-semibold mb-3">Costes operativos (suscripciones)</p>
-                            <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 mb-4">
-                                <div className="rounded-xl border bg-slate-50 p-3"><p className="text-[10px] uppercase text-slate-500">Coste mensual</p><p className="mt-1 text-lg font-bold">{fmtEur(ops.total_monthly_cost)}</p></div>
-                                <div className="rounded-xl border bg-slate-50 p-3"><p className="text-[10px] uppercase text-slate-500">Coste anual est.</p><p className="mt-1 text-lg font-bold">{fmtEur(ops.total_yearly_cost)}</p></div>
-                                <div className="rounded-xl border bg-slate-50 p-3"><p className="text-[10px] uppercase text-slate-500">Horas este mes</p><p className="mt-1 text-lg font-bold">{Number(ops.total_hours_this_month || 0).toFixed(1)}h</p></div>
-                            </div>
-                            {(ops.subscriptions_by_service || []).length > 0 ? (
-                                <div className="space-y-1">
-                                    {ops.subscriptions_by_service.map((s, i) => (
-                                        <div key={i} className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-1.5 text-xs">
-                                            <span className="font-semibold text-slate-900">{s.service_name}</span>
-                                            <span className="text-slate-600">{fmtEur(s.total_cost)}/{s.billing_cycle === "monthly" ? "mes" : "ano"} ({s.count} proj)</span>
+                            <p className="text-[10px] uppercase tracking-[0.14em] text-slate-500">Beneficio neto</p>
+                            <p className="mt-1 text-2xl font-bold text-emerald-700">{fmtEur(b.netProfit)}</p>
+                            <p className="text-xs text-slate-400">{fmtEur(b.totalExpenses)} gastos</p>
+                        </div>
+                        <div className="rounded-2xl border bg-white p-5">
+                            <p className="text-[10px] uppercase tracking-[0.14em] text-slate-500">MRR estimado</p>
+                            <p className="mt-1 text-2xl font-bold text-slate-900">{fmtEur(b.mrr)}</p>
+                            <p className="text-xs text-slate-400">{b.recurringPct}% recurrente</p>
+                        </div>
+                        <div className="rounded-2xl border p-5" style={{ backgroundColor: b.pendingAmount > 0 ? "#fef3c7" : "white", borderColor: b.pendingAmount > 0 ? "#fbbf24" : "#e2e8f0" }}>
+                            <p className="text-[10px] uppercase tracking-[0.14em]" style={{ color: b.pendingAmount > 0 ? "#b45309" : "#64748b" }}>Pendiente cobro</p>
+                            <p className="mt-1 text-2xl font-bold" style={{ color: b.pendingAmount > 0 ? "#b45309" : "#0f172a" }}>{fmtEur(b.pendingAmount)}</p>
+                            <p className="text-xs" style={{ color: b.pendingAmount > 0 ? "#b45309" : "#94a3b8" }}>{b.invoicesUnpaid} sin cobrar · {b.collectionRate}% cobrado</p>
+                        </div>
+                    </div>
+
+                    {/* Metricas secundarias */}
+                    <div className="grid grid-cols-3 gap-3 lg:grid-cols-6">
+                        <div className="rounded-xl border bg-white p-3"><p className="text-[10px] uppercase text-slate-500">Este ano</p><p className="mt-1 text-lg font-bold">{fmtEur(b.revenueThisYear)}</p></div>
+                        <div className="rounded-xl border bg-white p-3"><p className="text-[10px] uppercase text-slate-500">Ano anterior</p><p className="mt-1 text-lg font-bold">{fmtEur(b.revenueLastYear)}</p></div>
+                        <div className="rounded-xl border bg-white p-3"><p className="text-[10px] uppercase text-slate-500">YoY</p><p className={`mt-1 text-lg font-bold ${b.yoyGrowth >= 0 ? "text-emerald-700" : "text-red-700"}`}>{pct(b.yoyGrowth)}</p></div>
+                        <div className="rounded-xl border bg-white p-3"><p className="text-[10px] uppercase text-slate-500">Factura media</p><p className="mt-1 text-lg font-bold">{fmtEur(b.avgInvoiceValue)}</p></div>
+                        <div className="rounded-xl border bg-white p-3"><p className="text-[10px] uppercase text-slate-500">Mejor mes</p><p className="mt-1 text-sm font-bold">{b.bestMonth?.month || "-"}</p><p className="text-[10px] text-slate-400">{b.bestMonth ? fmtEur(b.bestMonth.revenue) : ""}</p></div>
+                        <div className="rounded-xl border bg-white p-3"><p className="text-[10px] uppercase text-slate-500">Peor mes</p><p className="mt-1 text-sm font-bold">{b.worstMonth?.month || "-"}</p><p className="text-[10px] text-slate-400">{b.worstMonth ? fmtEur(b.worstMonth.revenue) : ""}</p></div>
+                    </div>
+
+                    {/* Comparativa mensual este ano vs anterior */}
+                    <div className="rounded-2xl border bg-white p-5">
+                        <p className="text-xs uppercase tracking-[0.14em] text-slate-500 font-semibold mb-4">Facturacion mensual — {new Date().getFullYear()} vs {new Date().getFullYear() - 1}</p>
+                        <div className="flex items-end gap-1" style={{ height: "160px" }}>
+                            {(b.monthComparison || []).map((m, i) => {
+                                const max = Math.max(...(b.monthComparison || []).map(x => Math.max(x.thisYear, x.lastYear)), 1);
+                                const isCurrent = i === new Date().getMonth();
+                                return (
+                                    <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
+                                        <span className="text-[8px] text-slate-500 font-semibold">{m.thisYear > 0 ? `${(m.thisYear/1000).toFixed(1)}k` : ""}</span>
+                                        <div className="w-full flex gap-px" style={{ height: "120px", alignItems: "flex-end" }}>
+                                            <div className="flex-1 rounded-t bg-slate-200" style={{ height: `${Math.max((m.lastYear / max) * 100, 1)}%` }} title={`${new Date().getFullYear()-1}: ${fmt(m.lastYear)}`} />
+                                            <div className={`flex-1 rounded-t ${isCurrent ? "bg-emerald-500" : "bg-slate-700"}`} style={{ height: `${Math.max((m.thisYear / max) * 100, 1)}%` }} title={`${new Date().getFullYear()}: ${fmt(m.thisYear)}`} />
                                         </div>
-                                    ))}
+                                        <span className={`text-[10px] font-semibold ${isCurrent ? "text-emerald-700" : "text-slate-400"}`}>{m.label}</span>
+                                        {m.thisYear > 0 && m.lastYear > 0 ? <span className={`text-[8px] font-bold ${m.diffPct >= 0 ? "text-emerald-600" : "text-red-600"}`}>{pct(m.diffPct)}</span> : null}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        <div className="mt-2 flex items-center gap-4 text-[10px] text-slate-400">
+                            <span className="flex items-center gap-1"><span className="w-3 h-2 rounded bg-slate-200 inline-block" />{new Date().getFullYear() - 1}</span>
+                            <span className="flex items-center gap-1"><span className="w-3 h-2 rounded bg-slate-700 inline-block" />{new Date().getFullYear()}</span>
+                        </div>
+                    </div>
+
+                    {/* P&L mensual */}
+                    <div className="rounded-2xl border bg-white p-5">
+                        <p className="text-xs uppercase tracking-[0.14em] text-slate-500 font-semibold mb-3">Cuenta de resultados mensual</p>
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-xs">
+                                <thead className="bg-slate-50 text-[10px] uppercase text-slate-500"><tr><th className="px-3 py-1.5 text-left">Mes</th><th className="px-3 py-1.5 text-right">Ingresos</th><th className="px-3 py-1.5 text-right">Gastos</th><th className="px-3 py-1.5 text-right">Beneficio</th></tr></thead>
+                                <tbody>{(b.monthlyPL || []).map(m => (
+                                    <tr key={m.month} className="border-t"><td className="px-3 py-1.5 font-semibold">{m.month}</td><td className="px-3 py-1.5 text-right text-emerald-700">{fmtEur(m.revenue)}</td><td className="px-3 py-1.5 text-right text-red-600">{fmtEur(m.expenses)}</td><td className={`px-3 py-1.5 text-right font-bold ${m.profit >= 0 ? "text-slate-900" : "text-red-700"}`}>{fmtEur(m.profit)}</td></tr>
+                                ))}</tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    {/* Revenue by year */}
+                    {b.revenueByYear ? (
+                        <div className="rounded-2xl border bg-white p-5">
+                            <p className="text-xs uppercase tracking-[0.14em] text-slate-500 font-semibold mb-3">Por ano</p>
+                            <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+                                {Object.entries(b.revenueByYear).sort(([a],[b]) => Number(b) - Number(a)).map(([year, d]) => (
+                                    <div key={year} className="rounded-xl border bg-slate-50 p-3">
+                                        <p className="text-lg font-bold text-slate-900">{year}</p>
+                                        <p className="text-sm text-emerald-700 font-semibold">{fmtEur(d.revenue)}</p>
+                                        <p className="text-[10px] text-slate-500">{d.count} facturas · {fmtEur(d.paid)} cobrado</p>
+                                        {d.pending > 0 ? <p className="text-[10px] text-amber-600 font-semibold">{fmtEur(d.pending)} pendiente</p> : null}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ) : null}
+                </div>
+            ) : tab === "resumen" && bLoading ? <p className="text-sm text-slate-500">Cargando datos financieros…</p> : null}
+
+            {/* ═══ TAB CLIENTES ═══ */}
+            {tab === "clientes" && b ? (
+                <div className="grid gap-4">
+                    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+                        <div className="rounded-2xl border bg-white p-5"><p className="text-[10px] uppercase text-slate-500">Clientes activos</p><p className="mt-1 text-2xl font-bold">{b.totalClients}</p></div>
+                        <div className="rounded-2xl border bg-white p-5"><p className="text-[10px] uppercase text-slate-500">Recurrentes</p><p className="mt-1 text-2xl font-bold text-emerald-700">{b.recurringClients}</p><p className="text-xs text-slate-400">3+ meses facturando</p></div>
+                        <div className="rounded-2xl border bg-white p-5"><p className="text-[10px] uppercase text-slate-500">Revenue recurrente</p><p className="mt-1 text-2xl font-bold">{fmtEur(b.recurringRevenue)}</p><p className="text-xs text-slate-400">{b.recurringPct}% del total</p></div>
+                        <div className="rounded-2xl border bg-white p-5"><p className="text-[10px] uppercase text-slate-500">Revenue puntual</p><p className="mt-1 text-2xl font-bold">{fmtEur(b.oneTimeRevenue)}</p></div>
+                    </div>
+                    <div className="overflow-x-auto rounded-2xl border bg-white">
+                        <table className="w-full text-xs">
+                            <thead className="bg-slate-50 text-[10px] uppercase text-slate-500"><tr><th className="px-3 py-2 text-left">Cliente</th><th className="px-3 py-2 text-right">Facturado</th><th className="px-3 py-2 text-right">Cobrado</th><th className="px-3 py-2 text-right">Pendiente</th><th className="px-3 py-2 text-right">Facturas</th><th className="px-3 py-2 text-right">Media</th><th className="px-3 py-2 text-center">Meses</th><th className="px-3 py-2 text-right">% Revenue</th><th className="px-3 py-2 text-center">Recurrente</th></tr></thead>
+                            <tbody>{(b.clientMetrics || []).map((c, i) => (
+                                <tr key={i} className="border-t hover:bg-slate-50">
+                                    <td className="px-3 py-2"><p className="font-semibold text-slate-900">{c.name}</p><p className="text-[10px] text-slate-400">{c.vatNumber} · Desde {c.firstInvoice}</p></td>
+                                    <td className="px-3 py-2 text-right font-mono font-semibold">{fmtEur(c.total)}</td>
+                                    <td className="px-3 py-2 text-right font-mono text-emerald-700">{fmtEur(c.paid)}</td>
+                                    <td className="px-3 py-2 text-right font-mono">{c.pending > 0 ? <span className="text-amber-700 font-semibold">{fmtEur(c.pending)}</span> : "—"}</td>
+                                    <td className="px-3 py-2 text-right">{c.count}</td>
+                                    <td className="px-3 py-2 text-right font-mono">{fmtEur(c.avgInvoice)}</td>
+                                    <td className="px-3 py-2 text-center">{c.monthsActive}</td>
+                                    <td className="px-3 py-2 text-right">
+                                        <div className="flex items-center justify-end gap-1"><span className="font-semibold">{c.revenueShare}%</span>
+                                            <div className="w-12 h-1.5 rounded-full bg-slate-100 overflow-hidden"><div className="h-full rounded-full bg-slate-700" style={{ width: `${c.revenueShare}%` }} /></div>
+                                        </div>
+                                    </td>
+                                    <td className="px-3 py-2 text-center">{c.isRecurring ? <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[9px] font-bold text-emerald-800">SI</span> : <span className="text-slate-400">No</span>}</td>
+                                </tr>
+                            ))}</tbody>
+                        </table>
+                    </div>
+                </div>
+            ) : null}
+
+            {/* ═══ TAB SERVICIOS ═══ */}
+            {tab === "servicios" && b ? (
+                <div className="grid gap-4">
+                    <div className="overflow-x-auto rounded-2xl border bg-white">
+                        <table className="w-full text-xs">
+                            <thead className="bg-slate-50 text-[10px] uppercase text-slate-500"><tr><th className="px-3 py-2 text-left">Servicio</th><th className="px-3 py-2 text-right">Facturado</th><th className="px-3 py-2 text-right">Veces</th><th className="px-3 py-2 text-right">Precio medio</th><th className="px-3 py-2">Barra</th></tr></thead>
+                            <tbody>{(b.productMetrics || []).map((p, i) => (
+                                <tr key={i} className="border-t"><td className="px-3 py-2 font-semibold text-slate-900">{p.name}</td><td className="px-3 py-2 text-right font-mono font-semibold">{fmtEur(p.total)}</td><td className="px-3 py-2 text-right">{p.count}x</td><td className="px-3 py-2 text-right font-mono">{fmtEur(p.avgPrice)}</td>
+                                    <td className="px-3 py-2"><div className="h-2 rounded-full bg-slate-100 overflow-hidden w-24"><div className="h-full rounded-full bg-emerald-600" style={{ width: `${(p.total / barMax(b.productMetrics, "total")) * 100}%` }} /></div></td>
+                                </tr>
+                            ))}</tbody>
+                        </table>
+                    </div>
+                </div>
+            ) : null}
+
+            {/* ═══ TAB GASTOS ═══ */}
+            {tab === "gastos" ? (
+                <div className="grid gap-4">
+                    {b ? (
+                        <>
+                            <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+                                <div className="rounded-2xl border bg-white p-5"><p className="text-[10px] uppercase text-slate-500">Gastos Billin</p><p className="mt-1 text-2xl font-bold text-red-700">{fmtEur(b.totalExpenses)}</p><p className="text-xs text-slate-400">{b.totalExpenseCount} gastos</p></div>
+                                <div className="rounded-2xl border bg-white p-5"><p className="text-[10px] uppercase text-slate-500">Suscripciones/mes</p><p className="mt-1 text-2xl font-bold">{ops ? fmtEur(ops.total_monthly_cost) : "—"}</p></div>
+                                <div className="rounded-2xl border bg-white p-5"><p className="text-[10px] uppercase text-slate-500">Suscripciones/ano</p><p className="mt-1 text-2xl font-bold">{ops ? fmtEur(ops.total_yearly_cost) : "—"}</p></div>
+                                <div className="rounded-2xl border bg-white p-5"><p className="text-[10px] uppercase text-slate-500">Proveedores</p><p className="mt-1 text-2xl font-bold">{b.totalProviders}</p></div>
+                            </div>
+                            {/* Gastos por proveedor */}
+                            {(b.expensesByCategory || []).length > 0 ? (
+                                <div className="rounded-2xl border bg-white p-5">
+                                    <p className="text-xs uppercase tracking-[0.14em] text-slate-500 font-semibold mb-3">Gastos por proveedor (Billin)</p>
+                                    <div className="space-y-2">{b.expensesByCategory.map((c, i) => (
+                                        <div key={i}><div className="flex justify-between text-xs mb-0.5"><span className="font-semibold">{c.name}</span><span className="text-slate-600">{fmtEur(c.total)} ({c.count}x)</span></div>
+                                            <div className="h-2 rounded-full bg-slate-100 overflow-hidden"><div className="h-full rounded-full bg-red-400" style={{ width: `${(c.total / barMax(b.expensesByCategory, "total")) * 100}%` }} /></div>
+                                        </div>
+                                    ))}</div>
                                 </div>
                             ) : null}
+                            {/* Detalle gastos */}
+                            {(b.expenseList || []).length > 0 ? (
+                                <div className="overflow-x-auto rounded-2xl border bg-white">
+                                    <table className="w-full text-xs"><thead className="bg-slate-50 text-[10px] uppercase text-slate-500"><tr><th className="px-3 py-2 text-left">Fecha</th><th className="px-3 py-2 text-left">Proveedor</th><th className="px-3 py-2 text-left">Numero</th><th className="px-3 py-2 text-right">Total</th></tr></thead>
+                                        <tbody>{b.expenseList.map((e, i) => (
+                                            <tr key={i} className="border-t"><td className="px-3 py-1.5">{e.date}</td><td className="px-3 py-1.5 font-semibold">{e.provider}</td><td className="px-3 py-1.5 text-slate-400 font-mono text-[10px]">{e.number}</td><td className="px-3 py-1.5 text-right font-mono font-semibold text-red-700">{fmtEur(e.total)}</td></tr>
+                                        ))}</tbody>
+                                    </table>
+                                </div>
+                            ) : null}
+                        </>
+                    ) : null}
+                    {/* Suscripciones del hub */}
+                    {ops && (ops.subscriptions_by_service || []).length > 0 ? (
+                        <div className="rounded-2xl border bg-white p-5">
+                            <p className="text-xs uppercase tracking-[0.14em] text-slate-500 font-semibold mb-3">Suscripciones por servicio (Hub)</p>
+                            <div className="space-y-1">{ops.subscriptions_by_service.map((s, i) => (
+                                <div key={i} className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2 text-xs"><span className="font-semibold text-slate-900">{s.service_name}</span><span className="text-slate-600">{fmtEur(s.total_cost)}/{s.billing_cycle === "monthly" ? "mes" : "ano"} · {s.count} proyecto{s.count > 1 ? "s" : ""}</span></div>
+                            ))}</div>
                         </div>
                     ) : null}
+                </div>
+            ) : null}
+
+            {/* ═══ TAB FACTURAS ═══ */}
+            {tab === "facturas" && b ? (
+                <div className="overflow-x-auto rounded-2xl border bg-white">
+                    <table className="w-full text-xs">
+                        <thead className="bg-slate-50 text-[10px] uppercase text-slate-500"><tr><th className="px-3 py-2 text-left">Numero</th><th className="px-3 py-2 text-left">Fecha</th><th className="px-3 py-2 text-left">Cliente</th><th className="px-3 py-2 text-right">Base</th><th className="px-3 py-2 text-right">IVA</th><th className="px-3 py-2 text-right">IRPF</th><th className="px-3 py-2 text-right">Total</th><th className="px-3 py-2 text-center">Estado</th><th className="px-3 py-2 text-left">Conceptos</th></tr></thead>
+                        <tbody>{(b.invoiceList || []).map((inv, i) => (
+                            <tr key={i} className="border-t hover:bg-slate-50">
+                                <td className="px-3 py-2 font-mono font-semibold">{inv.number}</td>
+                                <td className="px-3 py-2">{inv.date}</td>
+                                <td className="px-3 py-2 font-semibold">{inv.client}</td>
+                                <td className="px-3 py-2 text-right font-mono">{fmtEur(inv.subtotal)}</td>
+                                <td className="px-3 py-2 text-right font-mono text-slate-500">{fmtEur(inv.vat)}</td>
+                                <td className="px-3 py-2 text-right font-mono text-slate-500">{inv.retention > 0 ? `-${fmtEur(inv.retention)}` : "—"}</td>
+                                <td className="px-3 py-2 text-right font-mono font-semibold">{fmtEur(inv.total)}</td>
+                                <td className="px-3 py-2 text-center">{inv.isPaid ? <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[9px] font-bold text-emerald-800">Cobrada</span> : <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[9px] font-bold text-amber-800">Pendiente</span>}</td>
+                                <td className="px-3 py-2 text-[10px] text-slate-500">{inv.lines.map(l => l.name).join(", ")}</td>
+                            </tr>
+                        ))}</tbody>
+                    </table>
                 </div>
             ) : null}
 
             {/* ═══ TAB POR PROYECTO ═══ */}
-            {tab === "proyectos" ? (
+            {tab === "proyectos" && ops ? (
                 <div className="grid gap-3">
-                    {loading ? <p className="text-sm text-slate-500">Cargando…</p> : !ops ? <p className="text-sm text-slate-400">Sin datos</p> : (
-                        <>
-                            <div className="overflow-x-auto rounded-2xl border bg-white">
-                                <table className="w-full text-left text-xs">
-                                    <thead className="bg-slate-50 text-[10px] uppercase tracking-[0.1em] text-slate-500">
-                                        <tr>
-                                            <th className="px-3 py-2">Proyecto</th>
-                                            <th className="px-3 py-2">Estado</th>
-                                            <th className="px-3 py-2 text-right">Presupuesto</th>
-                                            <th className="px-3 py-2 text-right">Horas</th>
-                                            <th className="px-3 py-2 text-right">Coste/mes</th>
-                                            <th className="px-3 py-2 text-right">Contrato</th>
-                                            <th className="px-3 py-2 text-center">Tareas</th>
-                                            <th className="px-3 py-2 text-center">Entregables</th>
-                                            <th className="px-3 py-2 text-center">Subs</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {(ops.projects || []).map((p) => (
-                                            <tr key={p.id} className="border-t hover:bg-slate-50">
-                                                <td className="px-3 py-2">
-                                                    <div className="flex items-center gap-2">
-                                                        <div className={`w-2 h-2 rounded-full shrink-0 ${HEALTH_DOT[p.health] || "bg-slate-300"}`} />
-                                                        <div>
-                                                            <p className="font-semibold text-slate-900">{p.title}</p>
-                                                            <p className="text-[10px] text-slate-400">{p.company_name}</p>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td className="px-3 py-2"><span className={`rounded-full px-1.5 py-0.5 text-[9px] font-bold ${p.status === "active" ? "bg-emerald-100 text-emerald-800" : "bg-sky-100 text-sky-800"}`}>{p.status}</span></td>
-                                                <td className="px-3 py-2 text-right font-mono">{p.budget_amount ? fmtEur(p.budget_amount) : "—"}</td>
-                                                <td className="px-3 py-2 text-right font-mono">{Number(p.hours_total).toFixed(1)}h <span className="text-slate-400">({Number(p.hours_this_month).toFixed(1)} mes)</span></td>
-                                                <td className="px-3 py-2 text-right font-mono">{Number(p.monthly_cost) > 0 ? fmtEur(p.monthly_cost) : "—"}</td>
-                                                <td className="px-3 py-2 text-right font-mono">{Number(p.contract_value) > 0 ? fmtEur(p.contract_value) : "—"}</td>
-                                                <td className="px-3 py-2 text-center">{p.tasks_done > 0 || p.tasks_open > 0 ? `${p.tasks_done}/${p.tasks_done + p.tasks_open}` : "—"}</td>
-                                                <td className="px-3 py-2 text-center">{p.deliverables_count || "—"}</td>
-                                                <td className="px-3 py-2 text-center">{p.subscriptions_active || "—"}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            {/* Stack distribution */}
-                            {(ops.stack_distribution || []).length > 0 ? (
-                                <div className="rounded-2xl border bg-white p-5">
-                                    <p className="text-xs uppercase tracking-[0.14em] text-slate-500 font-semibold mb-3">Stack tecnologico (uso en proyectos)</p>
-                                    <div className="flex flex-wrap gap-2">
-                                        {ops.stack_distribution.map((s, i) => {
-                                            const CATEGORY_COLORS = { frontend: "bg-blue-100 text-blue-800", backend: "bg-purple-100 text-purple-800", database: "bg-emerald-100 text-emerald-800", hosting: "bg-orange-100 text-orange-800", auth: "bg-red-100 text-red-800", payments: "bg-amber-100 text-amber-800", analytics: "bg-cyan-100 text-cyan-800", ci_cd: "bg-slate-200 text-slate-800" };
-                                            return (
-                                                <span key={i} className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${CATEGORY_COLORS[s.category] || "bg-slate-100 text-slate-600"}`}>
-                                                    {s.technology} <span className="opacity-60">x{s.project_count}</span>
-                                                </span>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-                            ) : null}
-                        </>
-                    )}
+                    <div className="overflow-x-auto rounded-2xl border bg-white">
+                        <table className="w-full text-left text-xs">
+                            <thead className="bg-slate-50 text-[10px] uppercase tracking-[0.1em] text-slate-500"><tr><th className="px-3 py-2">Proyecto</th><th className="px-3 py-2">Estado</th><th className="px-3 py-2 text-right">Presupuesto</th><th className="px-3 py-2 text-right">Horas</th><th className="px-3 py-2 text-right">Coste/mes</th><th className="px-3 py-2 text-right">Contrato</th><th className="px-3 py-2 text-center">Tareas</th><th className="px-3 py-2 text-center">Entregables</th><th className="px-3 py-2 text-center">Subs</th></tr></thead>
+                            <tbody>{(ops.projects || []).map(p => (
+                                <tr key={p.id} className="border-t hover:bg-slate-50">
+                                    <td className="px-3 py-2"><div className="flex items-center gap-2"><div className={`w-2 h-2 rounded-full shrink-0 ${HEALTH_DOT[p.health] || "bg-slate-300"}`} /><div><p className="font-semibold text-slate-900">{p.title}</p><p className="text-[10px] text-slate-400">{p.company_name}</p></div></div></td>
+                                    <td className="px-3 py-2"><span className={`rounded-full px-1.5 py-0.5 text-[9px] font-bold ${p.status === "active" ? "bg-emerald-100 text-emerald-800" : "bg-sky-100 text-sky-800"}`}>{p.status}</span></td>
+                                    <td className="px-3 py-2 text-right font-mono">{p.budget_amount ? fmtEur(p.budget_amount) : "—"}</td>
+                                    <td className="px-3 py-2 text-right font-mono">{Number(p.hours_total).toFixed(1)}h</td>
+                                    <td className="px-3 py-2 text-right font-mono">{Number(p.monthly_cost) > 0 ? fmtEur(p.monthly_cost) : "—"}</td>
+                                    <td className="px-3 py-2 text-right font-mono">{Number(p.contract_value) > 0 ? fmtEur(p.contract_value) : "—"}</td>
+                                    <td className="px-3 py-2 text-center">{p.tasks_done + p.tasks_open > 0 ? `${p.tasks_done}/${p.tasks_done + p.tasks_open}` : "—"}</td>
+                                    <td className="px-3 py-2 text-center">{p.deliverables_count || "—"}</td>
+                                    <td className="px-3 py-2 text-center">{p.subscriptions_active || "—"}</td>
+                                </tr>
+                            ))}</tbody>
+                        </table>
+                    </div>
+                    {(ops.stack_distribution || []).length > 0 ? (
+                        <div className="rounded-2xl border bg-white p-5">
+                            <p className="text-xs uppercase tracking-[0.14em] text-slate-500 font-semibold mb-3">Stack tecnologico</p>
+                            <div className="flex flex-wrap gap-2">{ops.stack_distribution.map((s, i) => {
+                                const CC = { frontend: "bg-blue-100 text-blue-800", backend: "bg-purple-100 text-purple-800", database: "bg-emerald-100 text-emerald-800", hosting: "bg-orange-100 text-orange-800", payments: "bg-amber-100 text-amber-800" };
+                                return <span key={i} className={`rounded-full px-2.5 py-1 text-xs font-semibold ${CC[s.category] || "bg-slate-100 text-slate-600"}`}>{s.technology} <span className="opacity-60">x{s.project_count}</span></span>;
+                            })}</div>
+                        </div>
+                    ) : null}
                 </div>
             ) : null}
 
             {/* ═══ TAB HUB HEALTH ═══ */}
-            {tab === "hub" ? (
+            {tab === "hub" && ops ? (
                 <div className="grid gap-4">
-                    {loading ? <p className="text-sm text-slate-500">Cargando…</p> : !ops ? <p className="text-sm text-slate-400">Sin datos</p> : (
-                        <>
-                            <p className="text-sm text-slate-600">Que tan bien documentados estan tus proyectos. Verde = tiene la info, rojo = falta.</p>
-                            <div className="overflow-x-auto rounded-2xl border bg-white">
-                                <table className="w-full text-left text-xs">
-                                    <thead className="bg-slate-50 text-[10px] uppercase tracking-[0.1em] text-slate-500">
-                                        <tr>
-                                            <th className="px-3 py-2">Proyecto</th>
-                                            <th className="px-3 py-2 text-center">Repos</th>
-                                            <th className="px-3 py-2 text-center">Credenciales</th>
-                                            <th className="px-3 py-2 text-center">Stack</th>
-                                            <th className="px-3 py-2 text-center">Links</th>
-                                            <th className="px-3 py-2 text-center">Contacto</th>
-                                            <th className="px-3 py-2 text-center">Dominio</th>
-                                            <th className="px-3 py-2 text-center">Contrato</th>
-                                            <th className="px-3 py-2 text-center">Costes</th>
-                                            <th className="px-3 py-2 text-center">Score</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {(ops.hub_completeness || []).map((p) => {
-                                            const checks = [p.has_repos, p.has_credentials, p.has_stack, p.has_links, p.has_contact, p.has_domain, p.has_contract, p.has_subscriptions];
-                                            const score = checks.filter(Boolean).length;
-                                            const pct = Math.round((score / checks.length) * 100);
-                                            const dot = (v) => v ? "🟢" : "🔴";
-                                            return (
-                                                <tr key={p.id} className="border-t">
-                                                    <td className="px-3 py-2 font-semibold text-slate-900">{p.title}</td>
-                                                    <td className="px-3 py-2 text-center">{dot(p.has_repos)}</td>
-                                                    <td className="px-3 py-2 text-center">{dot(p.has_credentials)}</td>
-                                                    <td className="px-3 py-2 text-center">{dot(p.has_stack)}</td>
-                                                    <td className="px-3 py-2 text-center">{dot(p.has_links)}</td>
-                                                    <td className="px-3 py-2 text-center">{dot(p.has_contact)}</td>
-                                                    <td className="px-3 py-2 text-center">{dot(p.has_domain)}</td>
-                                                    <td className="px-3 py-2 text-center">{dot(p.has_contract)}</td>
-                                                    <td className="px-3 py-2 text-center">{dot(p.has_subscriptions)}</td>
-                                                    <td className="px-3 py-2 text-center">
-                                                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${pct >= 75 ? "bg-emerald-100 text-emerald-800" : pct >= 50 ? "bg-amber-100 text-amber-800" : "bg-red-100 text-red-800"}`}>{pct}%</span>
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </>
-                    )}
+                    <p className="text-sm text-slate-600">Documentacion de cada proyecto. Verde = completo, rojo = falta.</p>
+                    <div className="overflow-x-auto rounded-2xl border bg-white">
+                        <table className="w-full text-left text-xs">
+                            <thead className="bg-slate-50 text-[10px] uppercase tracking-[0.1em] text-slate-500"><tr><th className="px-3 py-2">Proyecto</th><th className="px-3 py-2 text-center">Repos</th><th className="px-3 py-2 text-center">Creds</th><th className="px-3 py-2 text-center">Stack</th><th className="px-3 py-2 text-center">Links</th><th className="px-3 py-2 text-center">Contacto</th><th className="px-3 py-2 text-center">Dominio</th><th className="px-3 py-2 text-center">Contrato</th><th className="px-3 py-2 text-center">Costes</th><th className="px-3 py-2 text-center">Score</th></tr></thead>
+                            <tbody>{(ops.hub_completeness || []).map(p => {
+                                const checks = [p.has_repos, p.has_credentials, p.has_stack, p.has_links, p.has_contact, p.has_domain, p.has_contract, p.has_subscriptions];
+                                const score = checks.filter(Boolean).length;
+                                const sp = Math.round((score / checks.length) * 100);
+                                const dot = v => v ? "🟢" : "🔴";
+                                return <tr key={p.id} className="border-t"><td className="px-3 py-2 font-semibold">{p.title}</td>{checks.map((c, i) => <td key={i} className="px-3 py-2 text-center">{dot(c)}</td>)}<td className="px-3 py-2 text-center"><span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${sp >= 75 ? "bg-emerald-100 text-emerald-800" : sp >= 50 ? "bg-amber-100 text-amber-800" : "bg-red-100 text-red-800"}`}>{sp}%</span></td></tr>;
+                            })}</tbody>
+                        </table>
+                    </div>
                 </div>
             ) : null}
         </div>
