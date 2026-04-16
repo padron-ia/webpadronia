@@ -7,7 +7,7 @@ import CompaniesList from "../components/admin/CompaniesList";
 import CompanyDetail from "../components/admin/CompanyDetail";
 import ProjectDetail from "../components/admin/ProjectDetail";
 import { listProjects } from "../lib/projectsService";
-import { getExpirationAlerts, getBusinessDashboard } from "../lib/projectHubService";
+import { getExpirationAlerts, getBusinessDashboard, getOperationalMetrics, getBillinMetrics } from "../lib/projectHubService";
 
 const statusOptions = ["all", "new", "contacted", "qualified", "proposal_sent", "won", "lost"];
 const gradeOptions = ["all", "A", "B", "C"];
@@ -46,6 +46,10 @@ const sectionConfig = {
         title: "Proyectos",
         subtitle: "Proyectos activos con hitos, deliverables, equipo y seguimiento"
     },
+    metricas: {
+        title: "Metricas",
+        subtitle: "Vision financiera y operativa del negocio con datos reales"
+    },
     configuracion: {
         title: "Ajustes",
         subtitle: "Datos de la organizacion, equipo y configuracion del sistema"
@@ -60,6 +64,7 @@ const adminNavItems = [
     { label: "Pipeline", href: "/portal/admin/pipeline", icon: "🎯" },
     { type: "group", label: "Operativa" },
     { label: "Proyectos", href: "/portal/admin/proyectos", icon: "📋" },
+    { label: "Metricas", href: "/portal/admin/metricas", icon: "📈" },
     { type: "group", label: "Sistema" },
     { label: "Ajustes", href: "/portal/admin/configuracion", icon: "⚙️" }
 ];
@@ -1066,6 +1071,7 @@ function PortalAdminPage() {
                         ? <ProjectDetail projectId={selectedProjectId} onBack={() => setSelectedProjectId(null)} />
                         : <ProjectsGlobalView onSelectProject={(p) => setSelectedProjectId(p.id)} />
                 ) : null}
+                {currentSection === "metricas" ? <MetricasPanel /> : null}
             </PortalShell>
 
             {selectedLead ? (
@@ -1224,6 +1230,299 @@ function ProjectsGlobalView({ onSelectProject }) {
                     ))}
                 </div>
             )}
+        </div>
+    );
+}
+
+// =================== METRICAS PANEL ===================
+function MetricasPanel() {
+    const [ops, setOps] = useState(null);
+    const [billin, setBillin] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [billinLoading, setBillinLoading] = useState(true);
+    const [billinError, setBillinError] = useState(null);
+    const [tab, setTab] = useState("financiero");
+
+    useEffect(() => {
+        getOperationalMetrics().then(setOps).catch(() => {}).finally(() => setLoading(false));
+        getBillinMetrics().then(setBillin).catch((e) => setBillinError(e.message)).finally(() => setBillinLoading(false));
+    }, []);
+
+    const fmt = (n) => Number(n || 0).toLocaleString("es", { maximumFractionDigits: 2 });
+    const fmtEur = (n) => `${fmt(n)} €`;
+
+    const TABS = [
+        { id: "financiero", label: "Financiero" },
+        { id: "proyectos", label: "Por proyecto" },
+        { id: "hub", label: "Hub health" },
+    ];
+
+    const HEALTH_DOT = { on_track: "bg-emerald-500", at_risk: "bg-amber-500", off_track: "bg-red-500" };
+
+    return (
+        <div className="grid gap-4">
+            <div className="flex gap-1 border-b border-slate-200">
+                {TABS.map(t => (
+                    <button key={t.id} onClick={() => setTab(t.id)}
+                        className={`px-4 py-2 text-sm font-semibold transition ${tab === t.id ? "border-b-2 border-slate-900 text-slate-900" : "text-slate-500 hover:text-slate-900"}`}>
+                        {t.label}
+                    </button>
+                ))}
+            </div>
+
+            {/* ═══ TAB FINANCIERO ═══ */}
+            {tab === "financiero" ? (
+                <div className="grid gap-4">
+                    {billinError ? (
+                        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+                            Billin no conectado: {billinError}. Configura BILLIN_CLIENT_ID y BILLIN_CLIENT_SECRET en Supabase Edge Function secrets.
+                        </div>
+                    ) : billinLoading ? (
+                        <p className="text-sm text-slate-500">Cargando datos de Billin…</p>
+                    ) : billin ? (
+                        <>
+                            {/* KPIs principales */}
+                            <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+                                <div className="rounded-2xl border bg-gradient-to-br from-emerald-900 to-emerald-800 p-5 text-white">
+                                    <p className="text-[10px] uppercase tracking-[0.14em] opacity-60">Facturado total</p>
+                                    <p className="mt-1 text-2xl font-bold">{fmtEur(billin.totalRevenue)}</p>
+                                    <p className="text-xs opacity-50">{billin.totalInvoices} facturas</p>
+                                </div>
+                                <div className="rounded-2xl border bg-white p-5">
+                                    <p className="text-[10px] uppercase tracking-[0.14em] text-slate-500">Este ano</p>
+                                    <p className="mt-1 text-2xl font-bold text-slate-900">{fmtEur(billin.revenueThisYear)}</p>
+                                    <p className="text-xs text-slate-400">{billin.invoicesThisYear} facturas</p>
+                                </div>
+                                <div className="rounded-2xl border bg-white p-5">
+                                    <p className="text-[10px] uppercase tracking-[0.14em] text-slate-500">MRR estimado</p>
+                                    <p className="mt-1 text-2xl font-bold text-slate-900">{fmtEur(billin.mrr)}</p>
+                                    <p className="text-xs text-slate-400">media 3 meses</p>
+                                </div>
+                                <div className="rounded-2xl border p-5" style={{ backgroundColor: billin.pendingAmount > 0 ? "#fef3c7" : "white", borderColor: billin.pendingAmount > 0 ? "#fbbf24" : "#e2e8f0" }}>
+                                    <p className="text-[10px] uppercase tracking-[0.14em]" style={{ color: billin.pendingAmount > 0 ? "#b45309" : "#64748b" }}>Pendiente cobro</p>
+                                    <p className="mt-1 text-2xl font-bold" style={{ color: billin.pendingAmount > 0 ? "#b45309" : "#0f172a" }}>{fmtEur(billin.pendingAmount)}</p>
+                                    <p className="text-xs" style={{ color: billin.pendingAmount > 0 ? "#b45309" : "#94a3b8" }}>{billin.invoicesUnpaid} sin cobrar</p>
+                                </div>
+                            </div>
+
+                            {/* Facturado vs cobrado */}
+                            <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+                                <div className="rounded-xl border bg-white p-3"><p className="text-[10px] uppercase tracking-[0.1em] text-slate-500">Este mes</p><p className="mt-1 text-lg font-bold">{fmtEur(billin.revenueThisMonth)}</p></div>
+                                <div className="rounded-xl border bg-white p-3"><p className="text-[10px] uppercase tracking-[0.1em] text-slate-500">Cobrado total</p><p className="mt-1 text-lg font-bold text-emerald-700">{fmtEur(billin.totalPaid)}</p></div>
+                                <div className="rounded-xl border bg-white p-3"><p className="text-[10px] uppercase tracking-[0.1em] text-slate-500">Ano anterior</p><p className="mt-1 text-lg font-bold">{fmtEur(billin.revenueLastYear)}</p></div>
+                                <div className="rounded-xl border bg-white p-3"><p className="text-[10px] uppercase tracking-[0.1em] text-slate-500">Factura media</p><p className="mt-1 text-lg font-bold">{fmtEur(billin.avgInvoiceValue)}</p></div>
+                                <div className="rounded-xl border bg-white p-3"><p className="text-[10px] uppercase tracking-[0.1em] text-slate-500">Clientes Billin</p><p className="mt-1 text-lg font-bold">{billin.totalClients}</p></div>
+                            </div>
+
+                            {/* Revenue por mes (barras) */}
+                            <div className="rounded-2xl border bg-white p-5">
+                                <p className="text-xs uppercase tracking-[0.14em] text-slate-500 font-semibold mb-4">Facturacion mensual {new Date().getFullYear()}</p>
+                                <div className="flex items-end gap-1" style={{ height: "140px" }}>
+                                    {Object.entries(billin.revenueByMonth || {}).map(([month, amount]) => {
+                                        const max = Math.max(...Object.values(billin.revenueByMonth || {}), 1);
+                                        const pct = (amount / max) * 100;
+                                        const monthNum = parseInt(month.split("-")[1]);
+                                        const isCurrentMonth = monthNum === new Date().getMonth() + 1;
+                                        const monthLabel = ["E","F","M","A","M","J","J","A","S","O","N","D"][monthNum - 1];
+                                        return (
+                                            <div key={month} className="flex-1 flex flex-col items-center gap-1">
+                                                <span className="text-[9px] text-slate-500 font-semibold">{amount > 0 ? `${(amount/1000).toFixed(1)}k` : ""}</span>
+                                                <div className={`w-full rounded-t-md transition-all ${isCurrentMonth ? "bg-emerald-500" : amount > 0 ? "bg-slate-300" : "bg-slate-100"}`}
+                                                    style={{ height: `${Math.max(pct, 2)}%`, minHeight: "2px" }} />
+                                                <span className={`text-[10px] font-semibold ${isCurrentMonth ? "text-emerald-700" : "text-slate-400"}`}>{monthLabel}</span>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* Revenue por cliente + por producto */}
+                            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                                <div className="rounded-2xl border bg-white p-5">
+                                    <p className="text-xs uppercase tracking-[0.14em] text-slate-500 font-semibold mb-3">Por cliente</p>
+                                    <div className="space-y-2">
+                                        {(billin.revenueByClient || []).map((c, i) => {
+                                            const max = billin.revenueByClient[0]?.total || 1;
+                                            return (
+                                                <div key={i}>
+                                                    <div className="flex justify-between text-xs mb-0.5">
+                                                        <span className="font-semibold text-slate-900 truncate">{c.name}</span>
+                                                        <span className="text-slate-600 shrink-0 ml-2">{fmtEur(c.total)} ({c.count})</span>
+                                                    </div>
+                                                    <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+                                                        <div className="h-full rounded-full bg-slate-700" style={{ width: `${(c.total / max) * 100}%` }} />
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                                <div className="rounded-2xl border bg-white p-5">
+                                    <p className="text-xs uppercase tracking-[0.14em] text-slate-500 font-semibold mb-3">Por servicio</p>
+                                    <div className="space-y-2">
+                                        {(billin.revenueByProduct || []).slice(0, 8).map((p, i) => {
+                                            const max = billin.revenueByProduct[0]?.total || 1;
+                                            return (
+                                                <div key={i}>
+                                                    <div className="flex justify-between text-xs mb-0.5">
+                                                        <span className="font-semibold text-slate-900 truncate">{p.name}</span>
+                                                        <span className="text-slate-600 shrink-0 ml-2">{fmtEur(p.total)} ({p.count}x)</span>
+                                                    </div>
+                                                    <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+                                                        <div className="h-full rounded-full bg-emerald-600" style={{ width: `${(p.total / max) * 100}%` }} />
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    ) : null}
+
+                    {/* Costes operativos (siempre visible, desde Supabase) */}
+                    {ops ? (
+                        <div className="rounded-2xl border bg-white p-5">
+                            <p className="text-xs uppercase tracking-[0.14em] text-slate-500 font-semibold mb-3">Costes operativos (suscripciones)</p>
+                            <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 mb-4">
+                                <div className="rounded-xl border bg-slate-50 p-3"><p className="text-[10px] uppercase text-slate-500">Coste mensual</p><p className="mt-1 text-lg font-bold">{fmtEur(ops.total_monthly_cost)}</p></div>
+                                <div className="rounded-xl border bg-slate-50 p-3"><p className="text-[10px] uppercase text-slate-500">Coste anual est.</p><p className="mt-1 text-lg font-bold">{fmtEur(ops.total_yearly_cost)}</p></div>
+                                <div className="rounded-xl border bg-slate-50 p-3"><p className="text-[10px] uppercase text-slate-500">Horas este mes</p><p className="mt-1 text-lg font-bold">{Number(ops.total_hours_this_month || 0).toFixed(1)}h</p></div>
+                            </div>
+                            {(ops.subscriptions_by_service || []).length > 0 ? (
+                                <div className="space-y-1">
+                                    {ops.subscriptions_by_service.map((s, i) => (
+                                        <div key={i} className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-1.5 text-xs">
+                                            <span className="font-semibold text-slate-900">{s.service_name}</span>
+                                            <span className="text-slate-600">{fmtEur(s.total_cost)}/{s.billing_cycle === "monthly" ? "mes" : "ano"} ({s.count} proj)</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : null}
+                        </div>
+                    ) : null}
+                </div>
+            ) : null}
+
+            {/* ═══ TAB POR PROYECTO ═══ */}
+            {tab === "proyectos" ? (
+                <div className="grid gap-3">
+                    {loading ? <p className="text-sm text-slate-500">Cargando…</p> : !ops ? <p className="text-sm text-slate-400">Sin datos</p> : (
+                        <>
+                            <div className="overflow-x-auto rounded-2xl border bg-white">
+                                <table className="w-full text-left text-xs">
+                                    <thead className="bg-slate-50 text-[10px] uppercase tracking-[0.1em] text-slate-500">
+                                        <tr>
+                                            <th className="px-3 py-2">Proyecto</th>
+                                            <th className="px-3 py-2">Estado</th>
+                                            <th className="px-3 py-2 text-right">Presupuesto</th>
+                                            <th className="px-3 py-2 text-right">Horas</th>
+                                            <th className="px-3 py-2 text-right">Coste/mes</th>
+                                            <th className="px-3 py-2 text-right">Contrato</th>
+                                            <th className="px-3 py-2 text-center">Tareas</th>
+                                            <th className="px-3 py-2 text-center">Entregables</th>
+                                            <th className="px-3 py-2 text-center">Subs</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {(ops.projects || []).map((p) => (
+                                            <tr key={p.id} className="border-t hover:bg-slate-50">
+                                                <td className="px-3 py-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className={`w-2 h-2 rounded-full shrink-0 ${HEALTH_DOT[p.health] || "bg-slate-300"}`} />
+                                                        <div>
+                                                            <p className="font-semibold text-slate-900">{p.title}</p>
+                                                            <p className="text-[10px] text-slate-400">{p.company_name}</p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-3 py-2"><span className={`rounded-full px-1.5 py-0.5 text-[9px] font-bold ${p.status === "active" ? "bg-emerald-100 text-emerald-800" : "bg-sky-100 text-sky-800"}`}>{p.status}</span></td>
+                                                <td className="px-3 py-2 text-right font-mono">{p.budget_amount ? fmtEur(p.budget_amount) : "—"}</td>
+                                                <td className="px-3 py-2 text-right font-mono">{Number(p.hours_total).toFixed(1)}h <span className="text-slate-400">({Number(p.hours_this_month).toFixed(1)} mes)</span></td>
+                                                <td className="px-3 py-2 text-right font-mono">{Number(p.monthly_cost) > 0 ? fmtEur(p.monthly_cost) : "—"}</td>
+                                                <td className="px-3 py-2 text-right font-mono">{Number(p.contract_value) > 0 ? fmtEur(p.contract_value) : "—"}</td>
+                                                <td className="px-3 py-2 text-center">{p.tasks_done > 0 || p.tasks_open > 0 ? `${p.tasks_done}/${p.tasks_done + p.tasks_open}` : "—"}</td>
+                                                <td className="px-3 py-2 text-center">{p.deliverables_count || "—"}</td>
+                                                <td className="px-3 py-2 text-center">{p.subscriptions_active || "—"}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {/* Stack distribution */}
+                            {(ops.stack_distribution || []).length > 0 ? (
+                                <div className="rounded-2xl border bg-white p-5">
+                                    <p className="text-xs uppercase tracking-[0.14em] text-slate-500 font-semibold mb-3">Stack tecnologico (uso en proyectos)</p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {ops.stack_distribution.map((s, i) => {
+                                            const CATEGORY_COLORS = { frontend: "bg-blue-100 text-blue-800", backend: "bg-purple-100 text-purple-800", database: "bg-emerald-100 text-emerald-800", hosting: "bg-orange-100 text-orange-800", auth: "bg-red-100 text-red-800", payments: "bg-amber-100 text-amber-800", analytics: "bg-cyan-100 text-cyan-800", ci_cd: "bg-slate-200 text-slate-800" };
+                                            return (
+                                                <span key={i} className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${CATEGORY_COLORS[s.category] || "bg-slate-100 text-slate-600"}`}>
+                                                    {s.technology} <span className="opacity-60">x{s.project_count}</span>
+                                                </span>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            ) : null}
+                        </>
+                    )}
+                </div>
+            ) : null}
+
+            {/* ═══ TAB HUB HEALTH ═══ */}
+            {tab === "hub" ? (
+                <div className="grid gap-4">
+                    {loading ? <p className="text-sm text-slate-500">Cargando…</p> : !ops ? <p className="text-sm text-slate-400">Sin datos</p> : (
+                        <>
+                            <p className="text-sm text-slate-600">Que tan bien documentados estan tus proyectos. Verde = tiene la info, rojo = falta.</p>
+                            <div className="overflow-x-auto rounded-2xl border bg-white">
+                                <table className="w-full text-left text-xs">
+                                    <thead className="bg-slate-50 text-[10px] uppercase tracking-[0.1em] text-slate-500">
+                                        <tr>
+                                            <th className="px-3 py-2">Proyecto</th>
+                                            <th className="px-3 py-2 text-center">Repos</th>
+                                            <th className="px-3 py-2 text-center">Credenciales</th>
+                                            <th className="px-3 py-2 text-center">Stack</th>
+                                            <th className="px-3 py-2 text-center">Links</th>
+                                            <th className="px-3 py-2 text-center">Contacto</th>
+                                            <th className="px-3 py-2 text-center">Dominio</th>
+                                            <th className="px-3 py-2 text-center">Contrato</th>
+                                            <th className="px-3 py-2 text-center">Costes</th>
+                                            <th className="px-3 py-2 text-center">Score</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {(ops.hub_completeness || []).map((p) => {
+                                            const checks = [p.has_repos, p.has_credentials, p.has_stack, p.has_links, p.has_contact, p.has_domain, p.has_contract, p.has_subscriptions];
+                                            const score = checks.filter(Boolean).length;
+                                            const pct = Math.round((score / checks.length) * 100);
+                                            const dot = (v) => v ? "🟢" : "🔴";
+                                            return (
+                                                <tr key={p.id} className="border-t">
+                                                    <td className="px-3 py-2 font-semibold text-slate-900">{p.title}</td>
+                                                    <td className="px-3 py-2 text-center">{dot(p.has_repos)}</td>
+                                                    <td className="px-3 py-2 text-center">{dot(p.has_credentials)}</td>
+                                                    <td className="px-3 py-2 text-center">{dot(p.has_stack)}</td>
+                                                    <td className="px-3 py-2 text-center">{dot(p.has_links)}</td>
+                                                    <td className="px-3 py-2 text-center">{dot(p.has_contact)}</td>
+                                                    <td className="px-3 py-2 text-center">{dot(p.has_domain)}</td>
+                                                    <td className="px-3 py-2 text-center">{dot(p.has_contract)}</td>
+                                                    <td className="px-3 py-2 text-center">{dot(p.has_subscriptions)}</td>
+                                                    <td className="px-3 py-2 text-center">
+                                                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${pct >= 75 ? "bg-emerald-100 text-emerald-800" : pct >= 50 ? "bg-amber-100 text-amber-800" : "bg-red-100 text-red-800"}`}>{pct}%</span>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </>
+                    )}
+                </div>
+            ) : null}
         </div>
     );
 }

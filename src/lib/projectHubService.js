@@ -263,3 +263,24 @@ export const getBusinessDashboard = async () => {
   if (error) throw error;
   return data;
 };
+
+// ─── Operational metrics (detailed per-project) ─────────────
+export const getOperationalMetrics = async () => {
+  if (!supabase) return null;
+  const { data, error } = await supabase.rpc("get_operational_metrics");
+  if (error) throw error;
+  return data;
+};
+
+// ─── Billin financial metrics (via edge function) ───────────
+export const getBillinMetrics = async () => {
+  if (!supabase) return null;
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return null;
+  const projectUrl = import.meta.env.VITE_SUPABASE_URL;
+  const res = await fetch(`${projectUrl}/functions/v1/billin-metrics`, {
+    headers: { Authorization: `Bearer ${session.access_token}` },
+  });
+  if (!res.ok) throw new Error(`Billin metrics failed: ${res.status}`);
+  return res.json();
+};
