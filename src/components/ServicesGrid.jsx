@@ -16,8 +16,8 @@ const services = [
         description: "Lo que hoy lleva 3 horas, la IA lo hace en segundos. Tu gente se dedica a vender."
     },
     {
-        title: "Te ahorras una contratación",
-        description: "No es echar a nadie. Es no necesitar contratar a alguien solo para contestar mensajes."
+        title: "Tu equipo rinde el doble",
+        description: "Las horas que hoy pierden en tareas mecánicas las dedican a lo que de verdad genera dinero."
     },
     {
         title: "Facturas más sin echar más horas",
