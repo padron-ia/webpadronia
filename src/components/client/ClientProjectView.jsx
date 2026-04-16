@@ -4,6 +4,7 @@ import { listDeliverablesByProject } from "../../lib/deliverablesService";
 import { listClientVisibleActivity } from "../../lib/activityService";
 import { listMilestones } from "../../lib/projectOperationsService";
 import { listTasks } from "../../lib/projectOperationsService";
+import DeliverableViewer from "../../content/DeliverableViewer";
 
 const STATUS_LABEL = { kickoff: "Arrancando", active: "En curso", paused: "Pausado", completed: "Completado" };
 const HEALTH_LABEL = { on_track: "En buen camino", at_risk: "En riesgo", off_track: "Fuera de plan" };
@@ -25,6 +26,7 @@ export default function ClientProjectView({ projectId, onBack }) {
     const [activity, setActivity] = useState([]);
     const [loading, setLoading] = useState(true);
     const [tab, setTab] = useState("entregables");
+    const [selectedDeliverable, setSelectedDeliverable] = useState(null);
 
     useEffect(() => {
         const load = async () => {
@@ -53,6 +55,10 @@ export default function ClientProjectView({ projectId, onBack }) {
 
     if (loading) return <div className="flex justify-center py-20"><p className="text-sm text-slate-500">Cargando proyecto…</p></div>;
     if (!project) return <div className="rounded-2xl border bg-slate-50 p-6 text-sm text-slate-600">Proyecto no encontrado. <button onClick={onBack} className="underline ml-2">Volver</button></div>;
+
+    if (selectedDeliverable) {
+        return <DeliverableViewer deliverable={selectedDeliverable} onBack={() => setSelectedDeliverable(null)} />;
+    }
 
     const completedMilestones = milestones.filter(m => m.completed_at).length;
     const totalMilestones = milestones.length;
@@ -110,7 +116,7 @@ export default function ClientProjectView({ projectId, onBack }) {
                     {deliverables.length === 0 ? (
                         <p className="rounded-2xl border bg-slate-50 p-6 text-center text-sm text-slate-600">Los entregables aparecerán aquí conforme vayamos avanzando.</p>
                     ) : deliverables.map((d) => (
-                        <div key={d.id} className="rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-slate-300 hover:shadow-[0_4px_16px_rgba(15,23,42,0.06)]">
+                        <div key={d.id} onClick={() => setSelectedDeliverable(d)} className="cursor-pointer rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-slate-300 hover:shadow-[0_4px_16px_rgba(15,23,42,0.06)]">
                             <div className="flex items-start gap-4">
                                 <span className="text-3xl shrink-0">{TYPE_ICON[d.type] || "📦"}</span>
                                 <div className="flex-1 min-w-0">
