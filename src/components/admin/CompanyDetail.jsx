@@ -9,6 +9,7 @@ import { supabase } from "../../lib/supabaseClient";
 import CompanyForm from "./CompanyForm";
 import ContactForm from "./ContactForm";
 import InviteClientModal from "./InviteClientModal";
+import ProjectDetail from "./ProjectDetail";
 
 const TABS = [
   { id: "info", label: "Información" },
@@ -23,6 +24,7 @@ export default function CompanyDetail({ companyId, onBack }) {
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState("info");
   const [editing, setEditing] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
 
   const reload = async () => {
     if (!companyId) return;
@@ -86,11 +88,17 @@ export default function CompanyDetail({ companyId, onBack }) {
         </div>
       ) : null}
 
-      {tab === "info" ? <InfoTab company={company} /> : null}
-      {tab === "contacts" ? <ContactsTab company={company} /> : null}
-      {tab === "projects" ? <ProjectsTab company={company} /> : null}
-      {tab === "access" ? <AccessTab company={company} /> : null}
-      {tab === "activity" ? <ActivityTab company={company} /> : null}
+      {selectedProjectId ? (
+        <ProjectDetail projectId={selectedProjectId} onBack={() => setSelectedProjectId(null)} />
+      ) : (
+        <>
+          {tab === "info" ? <InfoTab company={company} /> : null}
+          {tab === "contacts" ? <ContactsTab company={company} /> : null}
+          {tab === "projects" ? <ProjectsTab company={company} onOpenProject={(p) => setSelectedProjectId(p.id)} /> : null}
+          {tab === "access" ? <AccessTab company={company} /> : null}
+          {tab === "activity" ? <ActivityTab company={company} /> : null}
+        </>
+      )}
     </div>
   );
 }
@@ -239,7 +247,7 @@ function ContactsTab({ company }) {
 }
 
 // =================== PROJECTS TAB ===================
-function ProjectsTab({ company }) {
+function ProjectsTab({ company, onOpenProject }) {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -326,10 +334,10 @@ function ProjectsTab({ company }) {
         {loading ? <p className="text-sm text-slate-500">Cargando…</p> :
          projects.length === 0 ? <p className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">Sin proyectos todavía.</p> :
          projects.map((p) => (
-          <div key={p.id} className="rounded-2xl border border-slate-200 bg-white p-4">
+          <div key={p.id} className="cursor-pointer rounded-2xl border border-slate-200 bg-white p-4 hover:border-slate-400 transition" onClick={() => onOpenProject?.(p)}>
             <div className="flex items-start justify-between gap-3 flex-wrap">
               <div>
-                <p className="font-semibold text-slate-900">{p.title}</p>
+                <p className="font-semibold text-slate-900">{p.title} →</p>
                 {p.description ? <p className="mt-1 text-sm text-slate-600">{p.description}</p> : null}
                 <p className="mt-2 text-xs text-slate-500">Creado {new Date(p.created_at).toLocaleDateString()}</p>
               </div>
