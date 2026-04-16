@@ -50,8 +50,7 @@ export const listTasks = async ({ projectId, milestoneId, assigneeId, status, cl
   let query = supabase
     .from("tasks")
     .select("id, project_id, milestone_id, title, description, assignee_id, status, priority, due_date, completed_at, client_visible, created_by, created_at, updated_at")
-    .order("position", { ascending: true, nullsFirst: false })
-    .order("due_date", { ascending: true, nullsFirst: false })
+    .order("created_at", { ascending: false })
     .limit(limit);
   if (projectId) query = query.eq("project_id", projectId);
   if (milestoneId) query = query.eq("milestone_id", milestoneId);
