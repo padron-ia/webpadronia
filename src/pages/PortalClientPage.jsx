@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useLocation } from "react-router-dom";
 import ClientShell from "../components/client/ClientShell";
 import ClientDashboard from "../components/client/ClientDashboard";
 import ClientProjectView from "../components/client/ClientProjectView";
@@ -13,6 +13,8 @@ function PortalClientPage() {
     const [loading, setLoading] = useState(true);
     const [selectedProjectId, setSelectedProjectId] = useState(null);
     const navigate = useNavigate();
+    const location = useLocation();
+    const subPath = location.pathname.replace("/portal/cliente", "").replace(/^\/+/, "") || "";
 
     useEffect(() => {
         if (!isSupabaseConfigured || !supabase) {
@@ -92,7 +94,19 @@ function PortalClientPage() {
             companyName={company?.commercial_name || company?.legal_name || null}
             onLogout={handleLogout}
         >
-            {selectedProjectId ? (
+            {subPath === "documentos" ? (
+                <PlaceholderSection
+                    icon="📁"
+                    title="Documentos"
+                    description="Aquí encontrarás los documentos compartidos de tu colaboración: contratos, briefings, materiales y archivos relevantes. Esta sección se activará próximamente."
+                />
+            ) : subPath === "facturas" ? (
+                <PlaceholderSection
+                    icon="🧾"
+                    title="Facturas"
+                    description="Aquí podrás consultar y descargar tus facturas emitidas, ver el estado de cada una y el historial de pagos. Esta sección se activará próximamente."
+                />
+            ) : selectedProjectId ? (
                 <ClientProjectView
                     projectId={selectedProjectId}
                     onBack={() => setSelectedProjectId(null)}
@@ -103,6 +117,16 @@ function PortalClientPage() {
                 />
             )}
         </ClientShell>
+    );
+}
+
+function PlaceholderSection({ icon, title, description }) {
+    return (
+        <div className="rounded-3xl border border-slate-200 bg-white p-10 text-center">
+            <p className="text-4xl mb-4">{icon}</p>
+            <h2 className="text-xl font-semibold text-slate-900">{title}</h2>
+            <p className="mt-2 text-sm text-slate-600 max-w-md mx-auto">{description}</p>
+        </div>
     );
 }
 
