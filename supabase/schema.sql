@@ -951,6 +951,149 @@ create policy "org_settings_select_auth" on public.org_settings
     for select to authenticated using (true);
 
 -- =============================================================================
+-- BLOQUE 10 — Project Hub (repos, credenciales, stack, links)
+-- =============================================================================
+
+-- Ampliar tabla projects
+alter table public.projects add column if not exists project_type text default 'client'
+  check (project_type in ('client', 'internal', 'personal'));
+alter table public.projects add column if not exists domain text;
+alter table public.projects add column if not exists logo_url text;
+
+-- Repositorios
+create table if not exists public.project_repositories (
+    id uuid primary key default gen_random_uuid(),
+    project_id uuid not null references public.projects(id) on delete cascade,
+    label text not null,
+    provider text default 'github' check (provider in ('github', 'gitlab', 'bitbucket', 'other')),
+    repo_url text not null,
+    branch text default 'main',
+    deploy_url text,
+    environment text default 'production' check (environment in ('production', 'staging', 'dev', 'other')),
+    notes text,
+    created_at timestamptz not null default now(),
+    updated_at timestamptz not null default now()
+);
+create index if not exists idx_project_repos_project on public.project_repositories(project_id);
+
+-- Credenciales (encriptadas con pgcrypto)
+create table if not exists public.project_credentials (
+    id uuid primary key default gen_random_uuid(),
+    project_id uuid not null references public.projects(id) on delete cascade,
+    label text not null,
+    service text,
+    credential_type text default 'api_key' check (credential_type in ('api_key', 'password', 'token', 'oauth', 'secret', 'other')),
+    encrypted_value text not null,
+    environment text default 'production' check (environment in ('production', 'staging', 'dev', 'other')),
+    notes text,
+    created_at timestamptz not null default now(),
+    updated_at timestamptz not null default now()
+);
+create index if not exists idx_project_creds_project on public.project_credentials(project_id);
+
+-- Stack tecnológico
+create table if not exists public.project_stack (
+    id uuid primary key default gen_random_uuid(),
+    project_id uuid not null references public.projects(id) on delete cascade,
+    category text not null check (category in ('frontend', 'backend', 'database', 'hosting', 'auth', 'payments', 'analytics', 'ci_cd', 'other')),
+    technology text not null,
+    version text,
+    notes text,
+    created_at timestamptz not null default now(),
+    updated_at timestamptz not null default now()
+);
+create index if not exists idx_project_stack_project on public.project_stack(project_id);
+
+-- Links externos
+create table if not exists public.project_links (
+    id uuid primary key default gen_random_uuid(),
+    project_id uuid not null references public.projects(id) on delete cascade,
+    label text not null,
+    url text not null,
+    link_type text default 'other' check (link_type in ('drive', 'notion', 'figma', 'docs', 'board', 'slack', 'whatsapp', 'other')),
+    notes text,
+    created_at timestamptz not null default now(),
+    updated_at timestamptz not null default now()
+);
+create index if not exists idx_project_links_project on public.project_links(project_id);
+
+-- Triggers updated_at para tablas hub
+do $$
+declare t text;
+begin
+    for t in select tbl from unnest(array[
+        'project_repositories', 'project_credentials', 'project_stack', 'project_links'
+    ]) as tbl
+    loop
+        execute format('drop trigger if exists %I_set_updated_at on public.%I', t, t);
+        execute format('create trigger %I_set_updated_at before update on public.%I for each row execute function public.set_updated_at()', t, t);
+    end loop;
+end;
+$$;
+
+-- Funciones de encrypt/decrypt
+create or replace function public.encrypt_credential(plain_text text)
+returns text language plpgsql security definer set search_path = public as $$
+begin
+    return encode(pgp_sym_encrypt(plain_text, current_setting('app.credential_key', true)), 'base64');
+exception when others then
+    return encode(pgp_sym_encrypt(plain_text, 'padronia_vault_2026'), 'base64');
+end;
+$$;
+
+create or replace function public.decrypt_credential(credential_id uuid)
+returns text language plpgsql security definer set search_path = public as $$
+declare v_encrypted text; v_result text;
+begin
+    if not public.is_admin() then raise exception 'Unauthorized'; end if;
+    select encrypted_value into v_encrypted from public.project_credentials where id = credential_id;
+    if v_encrypted is null then return null; end if;
+    begin
+        v_result := pgp_sym_decrypt(decode(v_encrypted, 'base64'), current_setting('app.credential_key', true));
+    exception when others then
+        v_result := pgp_sym_decrypt(decode(v_encrypted, 'base64'), 'padronia_vault_2026');
+    end;
+    return v_result;
+end;
+$$;
+
+create or replace function public.insert_encrypted_credential(
+    p_project_id uuid, p_label text, p_service text, p_credential_type text,
+    p_plain_value text, p_environment text default 'production', p_notes text default null
+) returns uuid language plpgsql security definer set search_path = public as $$
+declare v_id uuid;
+begin
+    if not public.is_admin() then raise exception 'Unauthorized'; end if;
+    insert into public.project_credentials (project_id, label, service, credential_type, encrypted_value, environment, notes)
+    values (p_project_id, p_label, p_service, p_credential_type, public.encrypt_credential(p_plain_value), p_environment, p_notes)
+    returning id into v_id;
+    return v_id;
+end;
+$$;
+
+-- RLS para tablas hub
+alter table public.project_repositories enable row level security;
+alter table public.project_credentials enable row level security;
+alter table public.project_stack enable row level security;
+alter table public.project_links enable row level security;
+
+drop policy if exists "project_repos_admin_all" on public.project_repositories;
+create policy "project_repos_admin_all" on public.project_repositories
+    for all to authenticated using (public.is_admin()) with check (public.is_admin());
+
+drop policy if exists "project_creds_admin_all" on public.project_credentials;
+create policy "project_creds_admin_all" on public.project_credentials
+    for all to authenticated using (public.is_admin()) with check (public.is_admin());
+
+drop policy if exists "project_stack_admin_all" on public.project_stack;
+create policy "project_stack_admin_all" on public.project_stack
+    for all to authenticated using (public.is_admin()) with check (public.is_admin());
+
+drop policy if exists "project_links_admin_all" on public.project_links;
+create policy "project_links_admin_all" on public.project_links
+    for all to authenticated using (public.is_admin()) with check (public.is_admin());
+
+-- =============================================================================
 -- Seeds mínimos iniciales
 -- =============================================================================
 

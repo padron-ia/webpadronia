@@ -5,6 +5,8 @@ import { resolveRole } from "../lib/portalAuth";
 import { isSupabaseConfigured, supabase } from "../lib/supabaseClient";
 import CompaniesList from "../components/admin/CompaniesList";
 import CompanyDetail from "../components/admin/CompanyDetail";
+import ProjectDetail from "../components/admin/ProjectDetail";
+import { listProjects } from "../lib/projectsService";
 
 const statusOptions = ["all", "new", "contacted", "qualified", "proposal_sent", "won", "lost"];
 const gradeOptions = ["all", "A", "B", "C"];
@@ -97,6 +99,8 @@ function PortalAdminPage() {
     const [bulkScheduleChoice, setBulkScheduleChoice] = useState("24");
     const [selectedLead, setSelectedLead] = useState(null);
     const [selectedCompanyId, setSelectedCompanyId] = useState(null);
+    const [selectedProjectId, setSelectedProjectId] = useState(null);
+    const [allProjects, setAllProjects] = useState([]);
     const [notes, setNotes] = useState([]);
     const [noteDraft, setNoteDraft] = useState("");
     const [nextActionDraft, setNextActionDraft] = useState("");
@@ -906,12 +910,9 @@ function PortalAdminPage() {
                         : <CompaniesList onSelectCompany={(c) => setSelectedCompanyId(c.id)} />
                 ) : null}
                 {currentSection === "proyectos" ? (
-                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center">
-                        <p className="text-3xl mb-3">📋</p>
-                        <p className="text-lg font-semibold text-slate-900">Proyectos</p>
-                        <p className="mt-2 text-sm text-slate-600">Vista completa de proyectos en desarrollo. Los proyectos se crean desde la ficha de cada empresa en la seccion Empresas.</p>
-                        <a href="/portal/admin/empresas" className="mt-4 inline-block rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white">Ir a Empresas</a>
-                    </div>
+                    selectedProjectId
+                        ? <ProjectDetail projectId={selectedProjectId} onBack={() => setSelectedProjectId(null)} />
+                        : <ProjectsGlobalView onSelectProject={(p) => setSelectedProjectId(p.id)} />
                 ) : null}
             </PortalShell>
 
@@ -1000,6 +1001,78 @@ function PortalAdminPage() {
                 </div>
             ) : null}
         </>
+    );
+}
+
+// =================== VISTA GLOBAL PROYECTOS ===================
+function ProjectsGlobalView({ onSelectProject }) {
+    const [projects, setProjects] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [filter, setFilter] = useState("all");
+
+    useEffect(() => {
+        (async () => {
+            setLoading(true);
+            try { setProjects(await listProjects()); } catch {} finally { setLoading(false); }
+        })();
+    }, []);
+
+    const STATUS_LABELS = { kickoff: "Kickoff", active: "Activo", paused: "Pausado", completed: "Completado", archived: "Archivado" };
+    const STATUS_COLORS = { kickoff: "bg-sky-100 text-sky-800", active: "bg-emerald-100 text-emerald-800", paused: "bg-amber-100 text-amber-800", completed: "bg-slate-200 text-slate-700", archived: "bg-slate-100 text-slate-500" };
+    const HEALTH_COLORS = { on_track: "bg-emerald-100 text-emerald-800", at_risk: "bg-amber-100 text-amber-800", off_track: "bg-red-100 text-red-800" };
+    const HEALTH_LABELS = { on_track: "OK", at_risk: "Riesgo", off_track: "Fuera" };
+
+    const filtered = filter === "all" ? projects : projects.filter(p => p.status === filter);
+
+    if (loading) return <p className="text-sm text-slate-500">Cargando proyectos…</p>;
+
+    return (
+        <div className="grid gap-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+                <p className="text-sm text-slate-600">{projects.length} proyecto{projects.length !== 1 ? "s" : ""}</p>
+                <div className="flex gap-1 flex-wrap">
+                    {["all", "active", "kickoff", "paused", "completed", "archived"].map(s => (
+                        <button key={s} onClick={() => setFilter(s)}
+                            className={`rounded-full px-3 py-1 text-xs font-semibold transition ${filter === s ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                            {s === "all" ? "Todos" : STATUS_LABELS[s]}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {filtered.length === 0 ? (
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-8 text-center">
+                    <p className="text-3xl mb-3">📋</p>
+                    <p className="text-sm text-slate-600">Sin proyectos{filter !== "all" ? ` con estado "${STATUS_LABELS[filter]}"` : ""}. Crea uno desde la ficha de una empresa.</p>
+                </div>
+            ) : (
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {filtered.map(p => (
+                        <button key={p.id} onClick={() => onSelectProject(p)}
+                            className="text-left rounded-3xl border border-slate-200 bg-white p-5 hover:border-slate-400 hover:shadow-md transition">
+                            <div className="flex items-start justify-between gap-2">
+                                <div className="min-w-0">
+                                    <p className="font-semibold text-slate-900 truncate">{p.title}</p>
+                                    <p className="mt-0.5 text-xs text-slate-500">{p.companies?.commercial_name || p.companies?.legal_name || "Sin empresa"}</p>
+                                </div>
+                                <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${HEALTH_COLORS[p.health]}`}>
+                                    {HEALTH_LABELS[p.health]}
+                                </span>
+                            </div>
+                            <div className="mt-3 flex items-center gap-2 flex-wrap">
+                                <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${STATUS_COLORS[p.status]}`}>{STATUS_LABELS[p.status]}</span>
+                                {p.code ? <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-mono text-slate-600">{p.code}</span> : null}
+                            </div>
+                            {p.description ? <p className="mt-2 text-xs text-slate-600 line-clamp-2">{p.description}</p> : null}
+                            <div className="mt-3 flex items-center justify-between text-[10px] text-slate-400">
+                                <span>{p.start_date || "Sin fecha"}{p.end_date ? ` → ${p.end_date}` : ""}</span>
+                                <span>{new Date(p.updated_at).toLocaleDateString()}</span>
+                            </div>
+                        </button>
+                    ))}
+                </div>
+            )}
+        </div>
     );
 }
 

@@ -6,6 +6,7 @@ import { listTasks, createTask, updateTask, deleteTask } from "../../lib/project
 import { listTeam, addTeamMember, removeTeamMember } from "../../lib/projectOperationsService";
 import { listTimeEntries, createTimeEntry, totalHoursByProject } from "../../lib/projectOperationsService";
 import { listActivity, logActivity } from "../../lib/activityService";
+import { listRepositories, createRepository, deleteRepository, listCredentials, createCredential, decryptCredential, deleteCredential, listStack, createStackItem, deleteStackItem, listLinks, createLink, deleteLink } from "../../lib/projectHubService";
 import { supabase } from "../../lib/supabaseClient";
 import DeliverableViewer from "../../content/DeliverableViewer";
 
@@ -19,6 +20,10 @@ const DELIVERABLE_TYPES = { audit: "Auditoría", report: "Informe", prototype: "
 const TABS = [
   { id: "resumen", label: "Resumen" },
   { id: "deliverables", label: "Entregables" },
+  { id: "repos", label: "Repos" },
+  { id: "credenciales", label: "Credenciales" },
+  { id: "stack", label: "Stack" },
+  { id: "links", label: "Links" },
   { id: "hitos", label: "Hitos" },
   { id: "tareas", label: "Tareas" },
   { id: "equipo", label: "Equipo" },
@@ -66,6 +71,10 @@ export default function ProjectDetail({ projectId, onBack }) {
 
       {tab === "resumen" ? <ResumenTab project={project} onUpdated={reload} /> : null}
       {tab === "deliverables" ? <DeliverablesTab project={project} /> : null}
+      {tab === "repos" ? <ReposTab project={project} /> : null}
+      {tab === "credenciales" ? <CredencialesTab project={project} /> : null}
+      {tab === "stack" ? <StackTab project={project} /> : null}
+      {tab === "links" ? <LinksTab project={project} /> : null}
       {tab === "hitos" ? <HitosTab project={project} /> : null}
       {tab === "tareas" ? <TareasTab project={project} /> : null}
       {tab === "equipo" ? <EquipoTab project={project} /> : null}
@@ -471,6 +480,301 @@ function ActividadTab({ project }) {
             {a.body ? <p className="mt-1 text-sm text-slate-700 whitespace-pre-wrap">{a.body}</p> : null}
             <p className="mt-1 text-xs text-slate-500">{new Date(a.created_at).toLocaleString()} · {a.type}{a.client_visible ? " · Visible cliente" : ""}</p>
           </div>
+        ))}</div>
+      }
+    </div>
+  );
+}
+
+// =================== REPOS ===================
+function ReposTab({ project }) {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({ label: "", provider: "github", repo_url: "", branch: "main", deploy_url: "", environment: "production", notes: "" });
+
+  const reload = async () => { setLoading(true); try { setItems(await listRepositories(project.id)); } finally { setLoading(false); } };
+  useEffect(() => { reload(); }, [project.id]);
+
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    await createRepository({ project_id: project.id, ...form, notes: form.notes || null });
+    setForm({ label: "", provider: "github", repo_url: "", branch: "main", deploy_url: "", environment: "production", notes: "" });
+    setShowForm(false);
+    reload();
+  };
+
+  const PROVIDER_ICON = { github: "GH", gitlab: "GL", bitbucket: "BB", other: "??" };
+  const ENV_COLOR = { production: "bg-emerald-100 text-emerald-800", staging: "bg-amber-100 text-amber-800", dev: "bg-sky-100 text-sky-800", other: "bg-slate-100 text-slate-600" };
+
+  return (
+    <div className="grid gap-3">
+      <div className="flex justify-between items-center">
+        <p className="text-sm text-slate-600">{items.length} repositorio{items.length !== 1 ? "s" : ""}</p>
+        <button onClick={() => setShowForm(true)} className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white">+ Repositorio</button>
+      </div>
+      {showForm ? (
+        <form onSubmit={handleCreate} className="rounded-3xl border bg-white p-6 grid gap-3 md:grid-cols-3">
+          <label className="block"><Label>Etiqueta *</Label><input required className={inputClass} placeholder="Frontend, Backend, Mobile…" value={form.label} onChange={(e) => setForm(p => ({...p, label: e.target.value}))} /></label>
+          <label className="block"><Label>Proveedor</Label>
+            <select className={inputClass} value={form.provider} onChange={(e) => setForm(p => ({...p, provider: e.target.value}))}>
+              <option value="github">GitHub</option><option value="gitlab">GitLab</option><option value="bitbucket">Bitbucket</option><option value="other">Otro</option>
+            </select>
+          </label>
+          <label className="block"><Label>Entorno</Label>
+            <select className={inputClass} value={form.environment} onChange={(e) => setForm(p => ({...p, environment: e.target.value}))}>
+              <option value="production">Produccion</option><option value="staging">Staging</option><option value="dev">Dev</option><option value="other">Otro</option>
+            </select>
+          </label>
+          <label className="block md:col-span-2"><Label>URL Repo *</Label><input required type="url" className={inputClass} placeholder="https://github.com/org/repo" value={form.repo_url} onChange={(e) => setForm(p => ({...p, repo_url: e.target.value}))} /></label>
+          <label className="block"><Label>Branch</Label><input className={inputClass} value={form.branch} onChange={(e) => setForm(p => ({...p, branch: e.target.value}))} /></label>
+          <label className="block md:col-span-2"><Label>URL Deploy</Label><input type="url" className={inputClass} placeholder="https://app.ejemplo.com" value={form.deploy_url} onChange={(e) => setForm(p => ({...p, deploy_url: e.target.value}))} /></label>
+          <label className="block"><Label>Notas</Label><input className={inputClass} value={form.notes} onChange={(e) => setForm(p => ({...p, notes: e.target.value}))} /></label>
+          <div className="md:col-span-3 flex justify-end gap-3">
+            <button type="button" onClick={() => setShowForm(false)} className="text-sm text-slate-600">Cancelar</button>
+            <button type="submit" className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white">Crear</button>
+          </div>
+        </form>
+      ) : null}
+      {loading ? <p className="text-sm text-slate-500">Cargando…</p> : items.length === 0 ? <p className="rounded-2xl border bg-slate-50 p-4 text-sm text-slate-600">Sin repositorios. Agrega uno para tener todo centralizado.</p> :
+        <div className="grid gap-2">{items.map((r) => (
+          <div key={r.id} className="flex items-center gap-3 rounded-2xl border bg-white p-4">
+            <span className="flex w-10 h-10 items-center justify-center rounded-xl bg-slate-900 text-xs font-bold text-white shrink-0">{PROVIDER_ICON[r.provider]}</span>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <p className="font-semibold text-slate-900">{r.label}</p>
+                <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${ENV_COLOR[r.environment]}`}>{r.environment}</span>
+                <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-mono text-slate-600">{r.branch}</span>
+              </div>
+              <div className="mt-1 flex items-center gap-4 flex-wrap">
+                <a href={r.repo_url} target="_blank" rel="noopener" className="text-xs text-blue-600 hover:underline truncate">{r.repo_url}</a>
+                {r.deploy_url ? <a href={r.deploy_url} target="_blank" rel="noopener" className="text-xs text-emerald-600 hover:underline">Deploy &rarr;</a> : null}
+              </div>
+              {r.notes ? <p className="mt-1 text-xs text-slate-500">{r.notes}</p> : null}
+            </div>
+            <button onClick={async () => { if (confirm("¿Eliminar repositorio?")) { await deleteRepository(r.id); reload(); } }} className="text-xs text-red-500 shrink-0">✕</button>
+          </div>
+        ))}</div>
+      }
+    </div>
+  );
+}
+
+// =================== CREDENCIALES ===================
+function CredencialesTab({ project }) {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [revealed, setRevealed] = useState({});
+  const [form, setForm] = useState({ label: "", service: "", credential_type: "api_key", plain_value: "", environment: "production", notes: "" });
+
+  const reload = async () => { setLoading(true); try { setItems(await listCredentials(project.id)); } finally { setLoading(false); } };
+  useEffect(() => { reload(); }, [project.id]);
+
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    await createCredential({ project_id: project.id, ...form });
+    setForm({ label: "", service: "", credential_type: "api_key", plain_value: "", environment: "production", notes: "" });
+    setShowForm(false);
+    reload();
+  };
+
+  const reveal = async (id) => {
+    try {
+      const val = await decryptCredential(id);
+      setRevealed(p => ({ ...p, [id]: val }));
+      setTimeout(() => setRevealed(p => { const n = {...p}; delete n[id]; return n; }), 8000);
+    } catch { alert("No se pudo desencriptar"); }
+  };
+
+  const copyToClipboard = (text) => { navigator.clipboard.writeText(text); };
+
+  const TYPE_LABELS = { api_key: "API Key", password: "Password", token: "Token", oauth: "OAuth", secret: "Secret", other: "Otro" };
+  const ENV_COLOR = { production: "bg-emerald-100 text-emerald-800", staging: "bg-amber-100 text-amber-800", dev: "bg-sky-100 text-sky-800", other: "bg-slate-100 text-slate-600" };
+
+  return (
+    <div className="grid gap-3">
+      <div className="flex justify-between items-center">
+        <p className="text-sm text-slate-600">{items.length} credencial{items.length !== 1 ? "es" : ""} encriptada{items.length !== 1 ? "s" : ""}</p>
+        <button onClick={() => setShowForm(true)} className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white">+ Credencial</button>
+      </div>
+      {showForm ? (
+        <form onSubmit={handleCreate} className="rounded-3xl border bg-white p-6 grid gap-3 md:grid-cols-3">
+          <label className="block"><Label>Etiqueta *</Label><input required className={inputClass} placeholder="Supabase Anon Key, Billin…" value={form.label} onChange={(e) => setForm(p => ({...p, label: e.target.value}))} /></label>
+          <label className="block"><Label>Servicio</Label><input className={inputClass} placeholder="supabase, billin, vercel…" value={form.service} onChange={(e) => setForm(p => ({...p, service: e.target.value}))} /></label>
+          <label className="block"><Label>Tipo</Label>
+            <select className={inputClass} value={form.credential_type} onChange={(e) => setForm(p => ({...p, credential_type: e.target.value}))}>
+              {Object.entries(TYPE_LABELS).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
+            </select>
+          </label>
+          <label className="block md:col-span-2"><Label>Valor *</Label><input required type="password" className={inputClass} placeholder="Se guardara encriptado" value={form.plain_value} onChange={(e) => setForm(p => ({...p, plain_value: e.target.value}))} /></label>
+          <label className="block"><Label>Entorno</Label>
+            <select className={inputClass} value={form.environment} onChange={(e) => setForm(p => ({...p, environment: e.target.value}))}>
+              <option value="production">Produccion</option><option value="staging">Staging</option><option value="dev">Dev</option><option value="other">Otro</option>
+            </select>
+          </label>
+          <label className="block md:col-span-3"><Label>Notas</Label><input className={inputClass} value={form.notes} onChange={(e) => setForm(p => ({...p, notes: e.target.value}))} /></label>
+          <div className="md:col-span-3 flex justify-end gap-3">
+            <button type="button" onClick={() => setShowForm(false)} className="text-sm text-slate-600">Cancelar</button>
+            <button type="submit" className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white">Guardar encriptado</button>
+          </div>
+        </form>
+      ) : null}
+      {loading ? <p className="text-sm text-slate-500">Cargando…</p> : items.length === 0 ? <p className="rounded-2xl border bg-slate-50 p-4 text-sm text-slate-600">Sin credenciales. Agrega API keys, tokens, passwords aqui de forma segura.</p> :
+        <div className="grid gap-2">{items.map((c) => (
+          <div key={c.id} className="flex items-center gap-3 rounded-2xl border bg-white p-4">
+            <span className="flex w-10 h-10 items-center justify-center rounded-xl bg-amber-100 text-lg shrink-0">🔐</span>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <p className="font-semibold text-slate-900">{c.label}</p>
+                {c.service ? <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600 uppercase">{c.service}</span> : null}
+                <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600">{TYPE_LABELS[c.credential_type]}</span>
+                <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${ENV_COLOR[c.environment]}`}>{c.environment}</span>
+              </div>
+              {revealed[c.id] ? (
+                <div className="mt-1 flex items-center gap-2">
+                  <code className="rounded bg-slate-900 px-3 py-1 text-xs text-emerald-400 font-mono">{revealed[c.id]}</code>
+                  <button onClick={() => copyToClipboard(revealed[c.id])} className="text-xs text-blue-600 hover:underline">Copiar</button>
+                </div>
+              ) : (
+                <p className="mt-1 text-xs text-slate-400 font-mono">••••••••••••</p>
+              )}
+              {c.notes ? <p className="mt-1 text-xs text-slate-500">{c.notes}</p> : null}
+            </div>
+            <div className="flex flex-col gap-1 shrink-0">
+              {!revealed[c.id] ? <button onClick={() => reveal(c.id)} className="text-xs text-blue-600 hover:underline">Mostrar</button> : null}
+              <button onClick={async () => { if (confirm("¿Eliminar credencial?")) { await deleteCredential(c.id); reload(); } }} className="text-xs text-red-500">Eliminar</button>
+            </div>
+          </div>
+        ))}</div>
+      }
+    </div>
+  );
+}
+
+// =================== STACK ===================
+function StackTab({ project }) {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({ category: "frontend", technology: "", version: "", notes: "" });
+
+  const reload = async () => { setLoading(true); try { setItems(await listStack(project.id)); } finally { setLoading(false); } };
+  useEffect(() => { reload(); }, [project.id]);
+
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    await createStackItem({ project_id: project.id, ...form, version: form.version || null, notes: form.notes || null });
+    setForm({ category: "frontend", technology: "", version: "", notes: "" });
+    setShowForm(false);
+    reload();
+  };
+
+  const CATEGORY_LABELS = { frontend: "Frontend", backend: "Backend", database: "Base de datos", hosting: "Hosting", auth: "Auth", payments: "Pagos", analytics: "Analytics", ci_cd: "CI/CD", other: "Otro" };
+  const CATEGORY_COLORS = { frontend: "bg-blue-100 text-blue-800", backend: "bg-purple-100 text-purple-800", database: "bg-emerald-100 text-emerald-800", hosting: "bg-orange-100 text-orange-800", auth: "bg-red-100 text-red-800", payments: "bg-amber-100 text-amber-800", analytics: "bg-cyan-100 text-cyan-800", ci_cd: "bg-slate-200 text-slate-800", other: "bg-slate-100 text-slate-600" };
+
+  const grouped = items.reduce((acc, item) => { (acc[item.category] = acc[item.category] || []).push(item); return acc; }, {});
+
+  return (
+    <div className="grid gap-3">
+      <div className="flex justify-between items-center">
+        <p className="text-sm text-slate-600">{items.length} tecnologia{items.length !== 1 ? "s" : ""}</p>
+        <button onClick={() => setShowForm(true)} className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white">+ Tecnologia</button>
+      </div>
+      {showForm ? (
+        <form onSubmit={handleCreate} className="rounded-3xl border bg-white p-6 grid gap-3 md:grid-cols-4">
+          <label className="block"><Label>Categoria</Label>
+            <select className={inputClass} value={form.category} onChange={(e) => setForm(p => ({...p, category: e.target.value}))}>
+              {Object.entries(CATEGORY_LABELS).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
+            </select>
+          </label>
+          <label className="block"><Label>Tecnologia *</Label><input required className={inputClass} placeholder="React, Supabase, Vercel…" value={form.technology} onChange={(e) => setForm(p => ({...p, technology: e.target.value}))} /></label>
+          <label className="block"><Label>Version</Label><input className={inputClass} placeholder="19.0.0" value={form.version} onChange={(e) => setForm(p => ({...p, version: e.target.value}))} /></label>
+          <label className="block"><Label>Notas</Label><input className={inputClass} value={form.notes} onChange={(e) => setForm(p => ({...p, notes: e.target.value}))} /></label>
+          <div className="md:col-span-4 flex justify-end gap-3">
+            <button type="button" onClick={() => setShowForm(false)} className="text-sm text-slate-600">Cancelar</button>
+            <button type="submit" className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white">Crear</button>
+          </div>
+        </form>
+      ) : null}
+      {loading ? <p className="text-sm text-slate-500">Cargando…</p> : items.length === 0 ? <p className="rounded-2xl border bg-slate-50 p-4 text-sm text-slate-600">Sin stack definido. Documenta las tecnologias del proyecto.</p> :
+        <div className="grid gap-4">
+          {Object.entries(grouped).map(([cat, techs]) => (
+            <div key={cat}>
+              <p className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-500 mb-2">{CATEGORY_LABELS[cat] || cat}</p>
+              <div className="flex flex-wrap gap-2">
+                {techs.map(s => (
+                  <div key={s.id} className={`group inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold ${CATEGORY_COLORS[cat]}`}>
+                    {s.technology}{s.version ? <span className="text-[10px] opacity-70">v{s.version}</span> : null}
+                    <button onClick={async () => { await deleteStackItem(s.id); reload(); }} className="ml-1 opacity-0 group-hover:opacity-100 text-xs transition">✕</button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      }
+    </div>
+  );
+}
+
+// =================== LINKS ===================
+function LinksTab({ project }) {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({ label: "", url: "", link_type: "other", notes: "" });
+
+  const reload = async () => { setLoading(true); try { setItems(await listLinks(project.id)); } finally { setLoading(false); } };
+  useEffect(() => { reload(); }, [project.id]);
+
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    await createLink({ project_id: project.id, ...form, notes: form.notes || null });
+    setForm({ label: "", url: "", link_type: "other", notes: "" });
+    setShowForm(false);
+    reload();
+  };
+
+  const TYPE_ICON = { drive: "📁", notion: "📝", figma: "🎨", docs: "📄", board: "📋", slack: "💬", whatsapp: "📱", other: "🔗" };
+  const TYPE_LABELS = { drive: "Google Drive", notion: "Notion", figma: "Figma", docs: "Documentacion", board: "Board/Kanban", slack: "Slack", whatsapp: "WhatsApp", other: "Otro" };
+
+  return (
+    <div className="grid gap-3">
+      <div className="flex justify-between items-center">
+        <p className="text-sm text-slate-600">{items.length} enlace{items.length !== 1 ? "s" : ""} externo{items.length !== 1 ? "s" : ""}</p>
+        <button onClick={() => setShowForm(true)} className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white">+ Link</button>
+      </div>
+      {showForm ? (
+        <form onSubmit={handleCreate} className="rounded-3xl border bg-white p-6 grid gap-3 md:grid-cols-3">
+          <label className="block"><Label>Etiqueta *</Label><input required className={inputClass} placeholder="Drive del proyecto, Notion board…" value={form.label} onChange={(e) => setForm(p => ({...p, label: e.target.value}))} /></label>
+          <label className="block"><Label>Tipo</Label>
+            <select className={inputClass} value={form.link_type} onChange={(e) => setForm(p => ({...p, link_type: e.target.value}))}>
+              {Object.entries(TYPE_LABELS).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
+            </select>
+          </label>
+          <label className="block"><Label>Notas</Label><input className={inputClass} value={form.notes} onChange={(e) => setForm(p => ({...p, notes: e.target.value}))} /></label>
+          <label className="block md:col-span-3"><Label>URL *</Label><input required type="url" className={inputClass} placeholder="https://…" value={form.url} onChange={(e) => setForm(p => ({...p, url: e.target.value}))} /></label>
+          <div className="md:col-span-3 flex justify-end gap-3">
+            <button type="button" onClick={() => setShowForm(false)} className="text-sm text-slate-600">Cancelar</button>
+            <button type="submit" className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white">Crear</button>
+          </div>
+        </form>
+      ) : null}
+      {loading ? <p className="text-sm text-slate-500">Cargando…</p> : items.length === 0 ? <p className="rounded-2xl border bg-slate-50 p-4 text-sm text-slate-600">Sin enlaces. Agrega links a Drive, Notion, Figma, docs…</p> :
+        <div className="grid gap-2">{items.map((l) => (
+          <a key={l.id} href={l.url} target="_blank" rel="noopener" className="flex items-center gap-3 rounded-2xl border bg-white p-4 hover:border-slate-400 hover:shadow-sm transition group">
+            <span className="text-2xl shrink-0">{TYPE_ICON[l.link_type]}</span>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <p className="font-semibold text-slate-900">{l.label}</p>
+                <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600">{TYPE_LABELS[l.link_type]}</span>
+              </div>
+              <p className="mt-1 text-xs text-blue-600 truncate">{l.url}</p>
+              {l.notes ? <p className="mt-1 text-xs text-slate-500">{l.notes}</p> : null}
+            </div>
+            <button onClick={async (e) => { e.preventDefault(); e.stopPropagation(); if (confirm("¿Eliminar enlace?")) { await deleteLink(l.id); reload(); } }} className="text-xs text-red-500 opacity-0 group-hover:opacity-100 transition shrink-0">✕</button>
+          </a>
         ))}</div>
       }
     </div>
