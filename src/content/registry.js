@@ -16,6 +16,7 @@ const registry = {
   "ofm-health/vision-ofm-care": lazy(() => import("./deliverables/ofm-health/VisionOFMCare")),
   "ofm-health/marco-legal": lazy(() => import("./deliverables/ofm-health/MarcoLegal")),
   "ofm-health/proximos-pasos": lazy(() => import("./deliverables/ofm-health/ProximosPasos")),
+  "ofm-health/por-que-nadie-lo-hace": lazy(() => import("./deliverables/ofm-health/PorQueNadieLoHace")),
   "ofm-health/test-perfil-quiz": lazy(() => import("./prototypes/ofm-health/TestPerfilQuiz"))
 };
 
