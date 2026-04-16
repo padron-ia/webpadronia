@@ -8,6 +8,7 @@ import PortalAdminPage from "./pages/PortalAdminPage";
 import PortalClientPage from "./pages/PortalClientPage";
 import PortalIndexPage from "./pages/PortalIndexPage";
 import PortalLoginPage from "./pages/PortalLoginPage";
+import LegalPage from "./pages/LegalPage";
 
 function App() {
     return (
@@ -21,6 +22,9 @@ function App() {
             <Route path="/portal/admin/*" element={<PortalAdminPage />} />
             <Route path="/portal/cliente/*" element={<PortalClientPage />} />
             <Route path="/portal" element={<PortalIndexPage />} />
+            <Route path="/legal" element={<LegalPage />} />
+            <Route path="/privacidad" element={<LegalPage />} />
+            <Route path="/cookies" element={<LegalPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
     );

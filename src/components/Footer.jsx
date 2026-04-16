@@ -8,7 +8,7 @@ function Footer() {
                 <div data-reveal className="fade-in-section">
                     <img src="/assets/logo-padron-ia-clean.png" alt="Padrón IA" className="h-14 w-auto object-contain" />
                     <p className="mt-3 text-sm text-slate-600">
-                        Más clientes, menos trabajo repetitivo, más dinero en tu bolsillo.
+                        Más clientes, menos trabajo basura, más dinero.
                     </p>
                 </div>
 
@@ -26,9 +26,9 @@ function Footer() {
                         </a>
                     </p>
                     <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
-                        <a href="#" className="premium-link">Aviso legal</a>
-                        <a href="#" className="premium-link">Privacidad</a>
-                        <a href="#" className="premium-link">Cookies</a>
+                        <a href="/legal" className="premium-link">Aviso legal</a>
+                        <a href="/privacidad" className="premium-link">Privacidad</a>
+                        <a href="/cookies" className="premium-link">Cookies</a>
                     </p>
                     <p className="mt-2">© 2026 Padrón IA. Todos los derechos reservados.</p>
                 </div>

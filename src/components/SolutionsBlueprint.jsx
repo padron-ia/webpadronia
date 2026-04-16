@@ -76,32 +76,32 @@ const stageStyles = {
 const stageFilters = ["Todos", "Captacion", "Conversion", "Nurturing", "Operacion"];
 
 const discoveryScript = [
-    "Nos cuentas qué te quita más tiempo y dinero cada semana.",
-    "Identificamos dónde estás dejando dinero en la mesa ahora mismo.",
-    "Te decimos exactamente qué cambiar primero para notar resultados rápido.",
-    "Lo montamos sin que pares tu negocio ni un día.",
-    "Medimos: ¿estás ganando más? ¿Trabajando menos? Si no, ajustamos.",
-    "Cuando funciona, lo ampliamos. Sin complicarte la vida."
+    "Nos cuentas qué te come más tiempo cada semana.",
+    "Vemos dónde estás dejando dinero en la mesa.",
+    "Te decimos qué tocar primero para notar el cambio.",
+    "Lo montamos mientras tu negocio sigue funcionando.",
+    "Medimos: si no mejora, ajustamos.",
+    "Cuando funciona, ampliamos."
 ];
 
 const offers = [
     {
         name: "Resultado rápido",
         timeline: "7-10 días",
-        idealFor: "Para dejar de perder dinero esta misma semana en lo que más te duele.",
-        outcomes: ["Problema principal resuelto", "Primeros resultados medibles", "Sin parar tu negocio"]
+        idealFor: "Un problema concreto resuelto en días. Lo urgente primero.",
+        outcomes: ["Problema principal resuelto", "Primeros resultados medibles", "Tu negocio no para"]
     },
     {
         name: "Máquina de clientes",
         timeline: "2-4 semanas",
-        idealFor: "Para que te entren clientes sin que tú tengas que perseguirlos.",
-        outcomes: ["Más clientes cerrados", "Seguimiento que no se te escapa", "Ingresos predecibles"]
+        idealFor: "Captación + seguimiento funcionando en automático.",
+        outcomes: ["Más cierres", "Seguimiento que no falla", "Ingresos predecibles"]
     },
     {
-        name: "Negocio que funciona sin ti",
+        name: "Tu negocio en piloto automático",
         timeline: "1-2 meses",
-        idealFor: "Para facturar más trabajando menos horas. Sin contratar a nadie.",
-        outcomes: ["Operación en piloto automático", "Tú decides dónde poner tu tiempo", "Crecimiento sin más carga"]
+        idealFor: "Ventas, operaciones y datos conectados. Tú decides, la IA ejecuta.",
+        outcomes: ["Operaciones automatizadas", "Tú decides dónde pones tu tiempo", "Creces sin más carga"]
     }
 ];
 

@@ -1,8 +1,11 @@
 import { useEffect } from "react";
 import FloatingNavbar from "../components/FloatingNavbar";
 import HeroSection from "../components/HeroSection";
+import SocialProof from "../components/SocialProof";
 import ServicesGrid from "../components/ServicesGrid";
+import PortfolioSection from "../components/PortfolioSection";
 import SolutionsBlueprint from "../components/SolutionsBlueprint";
+import FAQSection from "../components/FAQSection";
 import ConsultForm from "../components/ConsultForm";
 import Footer from "../components/Footer";
 import WhatsAppFloatButton from "../components/WhatsAppFloatButton";
@@ -54,8 +57,11 @@ function LandingPage() {
         <main className="min-h-screen bg-slate-50">
             <FloatingNavbar />
             <HeroSection />
+            <SocialProof />
             <ServicesGrid />
+            <PortfolioSection />
             <SolutionsBlueprint />
+            <FAQSection />
             <ConsultForm />
             <Footer />
             <WhatsAppFloatButton />

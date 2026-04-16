@@ -2,18 +2,18 @@ import { buildWhatsAppUrl } from "../lib/contact";
 import { trackLeadEvent } from "../lib/analytics";
 
 function HeroSection() {
-    const quickMessage = "Hola, quiero facturar más sin meter más horas. ¿Podemos hablar?";
+    const quickMessage = "Hola, tengo un negocio y creo que estoy perdiendo ventas por no responder rápido. ¿Me puedes ayudar?";
 
     return (
         <section id="hero" className="premium-gradient-plum relative overflow-hidden px-6 pb-20 pt-40 sm:px-10 lg:px-16">
             <div className="premium-parallax-layer" aria-hidden="true" />
             <div className="relative z-10 mx-auto w-full max-w-6xl">
-                <p data-reveal className="fade-in-section text-xs font-semibold uppercase tracking-[0.22em] text-slate-600">Para dueños de negocios que quieren resultados, no promesas</p>
+                <p data-reveal className="fade-in-section text-xs font-semibold uppercase tracking-[0.22em] text-slate-600">Para dueños de negocio que están hartos de perder el tiempo</p>
                 <h1 data-reveal className="fade-in-section mt-5 max-w-4xl text-5xl leading-[0.92] text-slate-900 sm:text-6xl lg:text-7xl">
-                    Cada hora que pierdes en tareas repetitivas es dinero que no facturas.
+                    Cada hora que pierdes contestando WhatsApps es una hora que no facturas.
                 </h1>
                 <p data-reveal className="fade-in-section mt-6 max-w-2xl text-base leading-relaxed text-slate-700 sm:text-lg">
-                    Tu competencia ya responde en 2 minutos. Tú tardas 3 horas y pierdes al cliente. <strong>Hacemos que tu negocio capte más clientes, retenga a los que ya tiene y funcione sin que tú estés encima de todo.</strong>
+                    Mientras tú tardas 3 horas en responder, tu competencia lo hace en 2 minutos con IA. <strong>Eso no se arregla solo.</strong>
                 </p>
 
                 <div data-reveal className="fade-in-section mt-10">

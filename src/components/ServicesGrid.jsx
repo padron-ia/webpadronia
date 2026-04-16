@@ -1,27 +1,27 @@
 const services = [
     {
-        title: "Dejas de perder clientes por no contestar",
-        description: "Cada persona que te escribe recibe respuesta en segundos. Tú no tocas nada. Ellos compran antes de que tu competencia les coja el teléfono."
+        title: "Dejas de perder clientes por tardar en contestar",
+        description: "La IA responde, filtra quién va en serio y te lo pasa listo. Tú solo cierras."
     },
     {
         title: "Cierras más sin perseguir a nadie",
-        description: "Los interesados reciben seguimiento hasta que compran o dicen que no. Sin que tú mandes un solo mensaje manual."
+        description: "Seguimientos que parecen tuyos, en el momento justo. Sin que tú muevas un dedo."
     },
     {
-        title: "Tus clientes no se van",
-        description: "Detectamos cuándo un cliente se está enfriando y actuamos antes de que se largue. Menos bajas, más ingresos recurrentes."
+        title: "Tus clientes no se van sin avisar",
+        description: "Sabemos quién está a punto de irse. Una llamada a tiempo vale más que diez anuncios."
     },
     {
         title: "Tu equipo deja de hacer trabajo de robot",
-        description: "Las horas que hoy pierden en copiar datos, mandar recordatorios y rellenar Excel las dedican a lo que genera dinero."
+        description: "Lo que hoy lleva 3 horas, la IA lo hace en segundos. Tu gente se dedica a vender."
     },
     {
-        title: "Te ahorras un sueldo (o dos)",
-        description: "Lo que antes necesitaba una persona a jornada completa ahora se hace solo. Mismo resultado, fracción del coste."
+        title: "Te ahorras una contratación",
+        description: "No es echar a nadie. Es no necesitar contratar a alguien solo para contestar mensajes."
     },
     {
-        title: "Facturas más sin trabajar más horas",
-        description: "Tu negocio crece pero tus horas no. Más clientes, más ingresos, misma o menos carga para ti."
+        title: "Facturas más sin echar más horas",
+        description: "Más leads atendidos, menos fugas. Resultado: más dinero, misma jornada."
     }
 ];
 
