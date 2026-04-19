@@ -20,7 +20,9 @@ export default function InviteClientModal({ company, contact, onClose, onInvited
   const [copied, setCopied] = useState("");
   const [magicLink, setMagicLink] = useState("");
 
-  const portalUrl = `${window.location.origin}/portal`;
+  const isProdHost = typeof window !== "undefined" && /padron-ia\.es$/i.test(window.location.hostname);
+  const origin = isProdHost ? window.location.origin : "https://padron-ia.es";
+  const portalUrl = `${origin}/portal`;
   const firstName = (contact?.full_name || "").split(" ")[0] || "";
   const companyName = company?.commercial_name || company?.legal_name || "Padron IA";
   const waMessage = magicLink

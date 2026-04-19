@@ -53,7 +53,9 @@ export const inviteClient = async ({ email, company_id, company_name, contact_id
   if (!supabase) throw new Error("Supabase no configurado");
   if (!email || !company_id) throw new Error("email y company_id son obligatorios");
 
-  const portalUrl = redirectTo || `${window.location.origin}/portal`;
+  const isProdHost = /padron-ia\.es$/i.test(window.location.hostname);
+  const origin = isProdHost ? window.location.origin : "https://padron-ia.es";
+  const portalUrl = redirectTo || `${origin}/portal`;
 
   const { data, error } = await supabase.functions.invoke("invite-client", {
     body: {
