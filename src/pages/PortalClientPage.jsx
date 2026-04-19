@@ -10,6 +10,7 @@ function PortalClientPage() {
     const [session, setSession] = useState(null);
     const [role, setRole] = useState(null);
     const [company, setCompany] = useState(null);
+    const [profileName, setProfileName] = useState(null);
     const [loading, setLoading] = useState(true);
     const [selectedProjectId, setSelectedProjectId] = useState(null);
     const navigate = useNavigate();
@@ -39,6 +40,9 @@ function PortalClientPage() {
             // Cargar empresa y contacto vinculados al usuario
             const primaryCompany = await resolvePrimaryCompany(activeSession.user.id);
             setCompany(primaryCompany || null);
+
+            const { data: prof } = await supabase.from("profiles").select("full_name").eq("id", activeSession.user.id).maybeSingle();
+            setProfileName(prof?.full_name || null);
 
             setLoading(false);
         };
@@ -92,7 +96,7 @@ function PortalClientPage() {
         <ClientShell
             email={session?.user?.email || ""}
             companyName={company?.company?.commercial_name || company?.company?.legal_name || null}
-            contactName={company?.contact?.full_name || null}
+            contactName={company?.contact?.full_name || profileName || null}
             onLogout={handleLogout}
         >
             {subPath === "documentos" ? (
@@ -114,7 +118,7 @@ function PortalClientPage() {
                 />
             ) : (
                 <ClientDashboard
-                    contactName={company?.contact?.full_name || null}
+                    contactName={company?.contact?.full_name || profileName || null}
                     onOpenProject={(project) => setSelectedProjectId(project.id)}
                 />
             )}

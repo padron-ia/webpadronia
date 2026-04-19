@@ -68,8 +68,9 @@ Deno.serve(async (req: Request) => {
     if (!profile || profile.role !== "admin") return json(403, { error: "Solo admins" });
 
     const body = await req.json().catch(() => ({}));
-    const { email, company_name, contact_name, redirect_to } = body as { email?: string; company_name?: string; contact_name?: string; redirect_to?: string; };
+    const { email, company_id, contact_id, access_level, company_name, contact_name, redirect_to } = body as { email?: string; company_id?: string; contact_id?: string; access_level?: string; company_name?: string; contact_name?: string; redirect_to?: string; };
     if (!email) return json(400, { error: "email requerido" });
+    if (!company_id) return json(400, { error: "company_id requerido" });
 
     const basePortal = (redirect_to || "https://padron-ia.es/portal").replace(/\/$/, "");
     const portalUrl = basePortal;
@@ -85,7 +86,28 @@ Deno.serve(async (req: Request) => {
     if (linkErr) return json(500, { error: `No se pudo generar link: ${linkErr.message}` });
 
     const magicLink = linkData?.properties?.action_link;
+    const invitedUserId = linkData?.user?.id;
     if (!magicLink) return json(500, { error: "Link vacío" });
+    if (!invitedUserId) return json(500, { error: "No se pudo obtener user_id" });
+
+    const { error: linkAccessErr } = await admin.from("client_users").upsert({
+      user_id: invitedUserId,
+      company_id,
+      contact_id: contact_id || null,
+      access_level: access_level || "view",
+      invited_by: userData.user.id,
+      invited_at: new Date().toISOString()
+    }, { onConflict: "user_id,company_id" });
+    if (linkAccessErr) return json(500, { error: `No se pudo crear client_users: ${linkAccessErr.message}`, link: magicLink });
+
+    if (invitedUserId) {
+      const { data: existingProfile } = await admin.from("profiles").select("id, full_name, role").eq("id", invitedUserId).maybeSingle();
+      if (!existingProfile) {
+        await admin.from("profiles").insert({ id: invitedUserId, full_name: contact_name || null, role: "client" });
+      } else if (contact_name && !existingProfile.full_name) {
+        await admin.from("profiles").update({ full_name: contact_name }).eq("id", invitedUserId);
+      }
+    }
 
     const subject = `${firstName ? firstName + ", tu" : "Tu"} portal de ${companyName} está listo`;
     const html = renderEmail({ portalUrl, magicLink, companyName, firstName });

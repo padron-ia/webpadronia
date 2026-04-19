@@ -60,6 +60,9 @@ export const inviteClient = async ({ email, company_id, company_name, contact_id
   const { data, error } = await supabase.functions.invoke("invite-client", {
     body: {
       email,
+      company_id,
+      contact_id,
+      access_level,
       company_name,
       contact_name,
       redirect_to: portalUrl
