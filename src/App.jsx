@@ -8,6 +8,7 @@ import PortalAdminPage from "./pages/PortalAdminPage";
 import PortalClientPage from "./pages/PortalClientPage";
 import PortalIndexPage from "./pages/PortalIndexPage";
 import PortalLoginPage from "./pages/PortalLoginPage";
+import PortalSetPasswordPage from "./pages/PortalSetPasswordPage";
 import LegalPage from "./pages/LegalPage";
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
             <Route path="/gestorias" element={<LandingGestorias />} />
             <Route path="/gimnasios" element={<LandingGimnasios />} />
             <Route path="/portal/login" element={<PortalLoginPage />} />
+            <Route path="/portal/set-password" element={<PortalSetPasswordPage />} />
             <Route path="/portal/admin/*" element={<PortalAdminPage />} />
             <Route path="/portal/cliente/*" element={<PortalClientPage />} />
             <Route path="/portal" element={<PortalIndexPage />} />

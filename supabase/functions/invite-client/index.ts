@@ -71,14 +71,16 @@ Deno.serve(async (req: Request) => {
     const { email, company_name, contact_name, redirect_to } = body as { email?: string; company_name?: string; contact_name?: string; redirect_to?: string; };
     if (!email) return json(400, { error: "email requerido" });
 
-    const portalUrl = redirect_to || "https://padron-ia.es/portal";
+    const basePortal = (redirect_to || "https://padron-ia.es/portal").replace(/\/$/, "");
+    const portalUrl = basePortal;
+    const firstLoginUrl = `${basePortal}/set-password`;
     const firstName = (contact_name || "").split(" ")[0] || "";
     const companyName = company_name || "tu empresa";
 
     const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
       type: "magiclink",
       email,
-      options: { redirectTo: portalUrl }
+      options: { redirectTo: firstLoginUrl }
     });
     if (linkErr) return json(500, { error: `No se pudo generar link: ${linkErr.message}` });
 

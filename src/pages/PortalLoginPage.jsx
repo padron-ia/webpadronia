@@ -22,7 +22,7 @@ function PortalLoginPage() {
         }
         setResetStatus("loading");
         const { error: resetError } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-            redirectTo: `${window.location.origin}/portal`
+            redirectTo: `${window.location.origin}/portal/set-password`
         });
         if (resetError) {
             setResetStatus("idle");
