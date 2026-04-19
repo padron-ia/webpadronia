@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { listDocuments, uploadClientFile, getClientFileUrl, removeClientFile } from "../../lib/documentsService";
+import { listInfoRequests, markInfoRequestReceived } from "../../lib/infoRequestsService";
 
 const formatSize = (bytes) => {
     if (!bytes && bytes !== 0) return "";
@@ -25,18 +26,25 @@ const iconFor = (mime = "") => {
 
 export default function ClientDocumentsSection({ companyId, userId }) {
     const [docs, setDocs] = useState([]);
+    const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);
+    const [uploadingRequestId, setUploadingRequestId] = useState(null);
     const [error, setError] = useState("");
     const [confirmDelete, setConfirmDelete] = useState(null);
     const fileInputRef = useRef(null);
+    const requestInputsRef = useRef({});
 
     const reload = async () => {
         if (!companyId) return;
         setLoading(true);
         try {
-            const list = await listDocuments({ companyId });
-            setDocs(list);
+            const [docsList, reqsList] = await Promise.all([
+                listDocuments({ companyId }),
+                listInfoRequests({ companyId })
+            ]);
+            setDocs(docsList);
+            setRequests(reqsList);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -76,6 +84,34 @@ export default function ClientDocumentsSection({ companyId, userId }) {
         window.open(url, "_blank", "noopener");
     };
 
+    const handleRequestUpload = async (request, fileList) => {
+        const file = Array.from(fileList || [])[0];
+        if (!file || !companyId) return;
+        if (file.size > 50 * 1024 * 1024) {
+            setError(`${file.name} supera el límite de 50 MB`);
+            return;
+        }
+        setError("");
+        setUploadingRequestId(request.id);
+        try {
+            const doc = await uploadClientFile({
+                file,
+                companyId,
+                projectId: request.project_id || null,
+                category: "info_request_reply",
+                clientVisible: true,
+                title: `${request.title} – ${file.name}`
+            });
+            await markInfoRequestReceived(request.id, doc.id);
+            await reload();
+        } catch (err) {
+            setError(err.message || "No se pudo subir el archivo");
+        } finally {
+            setUploadingRequestId(null);
+            if (requestInputsRef.current[request.id]) requestInputsRef.current[request.id].value = "";
+        }
+    };
+
     const handleDelete = async (doc) => {
         try {
             await removeClientFile({ id: doc.id, path: doc.file_url });
@@ -86,8 +122,68 @@ export default function ClientDocumentsSection({ companyId, userId }) {
         }
     };
 
+    const pendingRequests = requests.filter((r) => r.status === "pending");
+    const completedRequests = requests.filter((r) => r.status === "received");
+
     return (
         <div className="grid gap-6">
+            {pendingRequests.length > 0 ? (
+                <div className="rounded-3xl bg-amber-50 border border-amber-200 p-6">
+                    <div className="flex items-start gap-3">
+                        <span className="text-2xl">📋</span>
+                        <div className="flex-1">
+                            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-amber-800">Necesitamos esto de ti</p>
+                            <h2 className="mt-1 text-xl text-amber-900 font-semibold">{pendingRequests.length} solicitud{pendingRequests.length === 1 ? "" : "es"} pendiente{pendingRequests.length === 1 ? "" : "s"}</h2>
+                        </div>
+                    </div>
+                    <ul className="mt-4 grid gap-3">
+                        {pendingRequests.map((req) => (
+                            <li key={req.id} className="rounded-2xl bg-white border border-amber-200/70 p-4">
+                                <div className="flex items-start justify-between gap-3">
+                                    <div className="min-w-0">
+                                        <p className="font-semibold text-stone-900">{req.title}</p>
+                                        {req.description ? <p className="mt-1 text-sm text-stone-600 whitespace-pre-line">{req.description}</p> : null}
+                                        {req.due_date ? (
+                                            <p className="mt-1 text-xs text-amber-700">Fecha límite: {formatDate(req.due_date)}</p>
+                                        ) : null}
+                                    </div>
+                                    <div className="shrink-0">
+                                        <input
+                                            ref={(el) => { if (el) requestInputsRef.current[req.id] = el; }}
+                                            type="file"
+                                            className="hidden"
+                                            onChange={(e) => handleRequestUpload(req, e.target.files)}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => requestInputsRef.current[req.id]?.click()}
+                                            disabled={uploadingRequestId === req.id}
+                                            className="rounded-full bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700 disabled:opacity-60"
+                                        >
+                                            {uploadingRequestId === req.id ? "Subiendo…" : "Adjuntar archivo"}
+                                        </button>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            ) : null}
+
+            {completedRequests.length > 0 ? (
+                <div className="rounded-3xl bg-emerald-50/50 border border-emerald-200/60 p-6">
+                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-800">Entregado ✓</p>
+                    <ul className="mt-3 grid gap-2">
+                        {completedRequests.map((req) => (
+                            <li key={req.id} className="flex items-center justify-between gap-3 rounded-xl bg-white px-3 py-2">
+                                <span className="text-sm text-stone-700 truncate">{req.title}</span>
+                                <span className="text-xs text-emerald-700">{req.received_at ? formatDate(req.received_at) : ""}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            ) : null}
+
             <div className="rounded-3xl bg-white shadow-sm border border-stone-200/60 p-6">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div>
