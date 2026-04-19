@@ -21,7 +21,18 @@ export default function InviteClientModal({ company, contact, onClose, onInvited
 
   const portalUrl = `${window.location.origin}/portal`;
   const firstName = (contact?.full_name || "").split(" ")[0] || "";
-  const waMessage = `Hola${firstName ? ` ${firstName}` : ""} 👋\n\nYa tienes acceso al portal privado de ${company?.commercial_name || company?.legal_name || "Padrón IA"}. Ahí podrás ver tu auditoría y el resto de entregables.\n\n🔗 Entra aquí: ${portalUrl}\n📧 Email: ${email}\n\nEn el login pulsa "¿Has olvidado tu contraseña?" para generar la tuya en un segundo. Cualquier duda, me dices.`;
+  const waMessage = [
+    `Hola${firstName ? ` ${firstName}` : ""},`,
+    ``,
+    `Ya tienes acceso al portal privado de ${company?.commercial_name || company?.legal_name || "Padron IA"}. Ahi podras ver tu auditoria y el resto de entregables.`,
+    ``,
+    `Entra aqui: ${portalUrl}`,
+    `Tu email de acceso: ${email}`,
+    ``,
+    `En el login pulsa "He olvidado mi contrasena" para generar tu contrasena en un segundo.`,
+    ``,
+    `Cualquier duda, me dices.`
+  ].join("\n");
 
   const handleCopy = async (text, key) => {
     try {
