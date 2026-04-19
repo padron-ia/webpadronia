@@ -360,6 +360,7 @@ function ProjectsTab({ company, onOpenProject }) {
 function AccessTab({ company }) {
   const [clientUsers, setClientUsers] = useState([]);
   const [pendingInvites, setPendingInvites] = useState([]);
+  const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showInvite, setShowInvite] = useState(false);
   const [finalizeEmail, setFinalizeEmail] = useState("");
@@ -370,6 +371,7 @@ function AccessTab({ company }) {
     try {
       setClientUsers(await listClientUsersByCompany(company.id));
       setPendingInvites(listPendingInvites().filter((p) => p.company_id === company.id));
+      setContacts(await listContacts({ companyId: company.id }));
     } finally {
       setLoading(false);
     }
@@ -445,7 +447,11 @@ function AccessTab({ company }) {
       )}
 
       {showInvite ? (
-        <InviteClientModal company={company} onClose={() => setShowInvite(false)} onInvited={() => { setShowInvite(false); reload(); }} />
+        <InviteClientModal
+          company={company}
+          contact={contacts.find((c) => c.is_primary) || contacts[0] || null}
+          onClose={() => setShowInvite(false)}
+          onInvited={() => { setShowInvite(false); reload(); }} />
       ) : null}
     </div>
   );

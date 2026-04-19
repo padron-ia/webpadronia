@@ -8,7 +8,30 @@ function PortalLoginPage() {
     const [password, setPassword] = useState("");
     const [status, setStatus] = useState("idle");
     const [error, setError] = useState("");
+    const [resetStatus, setResetStatus] = useState("idle");
+    const [resetMessage, setResetMessage] = useState("");
     const navigate = useNavigate();
+
+    const handleResetPassword = async () => {
+        setError("");
+        setResetMessage("");
+        if (!supabase) return;
+        if (!email.trim()) {
+            setError("Introduce tu email arriba y pulsa de nuevo en 'He olvidado mi contraseña'.");
+            return;
+        }
+        setResetStatus("loading");
+        const { error: resetError } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+            redirectTo: `${window.location.origin}/portal`
+        });
+        if (resetError) {
+            setResetStatus("idle");
+            setError(resetError.message);
+            return;
+        }
+        setResetStatus("sent");
+        setResetMessage(`Te hemos enviado un enlace a ${email.trim()} para restablecer tu contraseña. Revisa tu bandeja de entrada (también spam).`);
+    };
 
     useEffect(() => {
         if (!isSupabaseConfigured || !supabase) return;
@@ -85,6 +108,16 @@ function PortalLoginPage() {
                         {status === "loading" ? "Accediendo..." : "Entrar al portal"}
                     </button>
 
+                    <button
+                        type="button"
+                        onClick={handleResetPassword}
+                        disabled={resetStatus === "loading" || !isSupabaseConfigured}
+                        className="text-sm font-semibold text-slate-600 hover:text-slate-900 underline underline-offset-4 disabled:opacity-60"
+                    >
+                        {resetStatus === "loading" ? "Enviando enlace…" : "¿Has olvidado tu contraseña?"}
+                    </button>
+
+                    {resetMessage ? <p className="text-sm text-emerald-700">{resetMessage}</p> : null}
                     {error ? <p className="text-sm text-red-600">{error}</p> : null}
                 </form>
             </div>

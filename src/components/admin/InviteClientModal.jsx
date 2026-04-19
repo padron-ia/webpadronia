@@ -17,6 +17,19 @@ export default function InviteClientModal({ company, contact, onClose, onInvited
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
+  const [copied, setCopied] = useState("");
+
+  const portalUrl = `${window.location.origin}/portal`;
+  const firstName = (contact?.full_name || "").split(" ")[0] || "";
+  const waMessage = `Hola${firstName ? ` ${firstName}` : ""} 👋\n\nYa tienes acceso al portal privado de ${company?.commercial_name || company?.legal_name || "Padrón IA"}. Ahí podrás ver tu auditoría y el resto de entregables.\n\n🔗 Entra aquí: ${portalUrl}\n📧 Email: ${email}\n\nEn el login pulsa "¿Has olvidado tu contraseña?" para generar la tuya en un segundo. Cualquier duda, me dices.`;
+
+  const handleCopy = async (text, key) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(key);
+      setTimeout(() => setCopied(""), 1800);
+    } catch {}
+  };
 
   const handleSend = async (event) => {
     event.preventDefault();
@@ -55,10 +68,45 @@ export default function InviteClientModal({ company, contact, onClose, onInvited
         </div>
 
         {sent ? (
-          <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
-            <p className="font-semibold">Invitación enviada ✓</p>
-            <p className="mt-1">Se ha enviado un magic link a <strong>{email}</strong>. Cuando el cliente haga clic y acceda por primera vez, vuelve a la ficha de esta empresa y pulsa <em>Finalizar invitación</em> para asociar su usuario al portal.</p>
-            <button onClick={onClose} className="mt-4 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white">Cerrar</button>
+          <div className="mt-6 grid gap-4">
+            <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
+              <p className="font-semibold">Acceso generado ✓</p>
+              <p className="mt-1">Se ha creado el acceso para <strong>{email}</strong>. También le hemos enviado un magic link por email, pero puedes pasárselo por WhatsApp con el mensaje de abajo.</p>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Enlace al portal</p>
+                <button type="button" onClick={() => handleCopy(portalUrl, "url")} className="rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-semibold text-slate-700 hover:border-slate-900">
+                  {copied === "url" ? "Copiado ✓" : "Copiar enlace"}
+                </button>
+              </div>
+              <p className="mt-2 break-all text-sm font-mono text-slate-800">{portalUrl}</p>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Mensaje para WhatsApp</p>
+                <div className="flex items-center gap-2">
+                  <button type="button" onClick={() => handleCopy(waMessage, "msg")} className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-700 hover:border-slate-900">
+                    {copied === "msg" ? "Copiado ✓" : "Copiar mensaje"}
+                  </button>
+                  <a
+                    href={`https://wa.me/?text=${encodeURIComponent(waMessage)}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="rounded-full bg-emerald-600 px-3 py-1 text-xs font-semibold text-white hover:bg-emerald-700"
+                  >
+                    Abrir WhatsApp
+                  </a>
+                </div>
+              </div>
+              <pre className="mt-2 whitespace-pre-wrap font-sans text-sm text-slate-700">{waMessage}</pre>
+            </div>
+
+            <div className="flex justify-end">
+              <button onClick={onClose} className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white">Cerrar</button>
+            </div>
           </div>
         ) : (
           <form onSubmit={handleSend} className="mt-6 grid gap-4">
