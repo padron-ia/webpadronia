@@ -49,19 +49,23 @@ const writePending = (list) => {
 /**
  * Envía magic link al cliente y registra la invitación pendiente.
  */
-export const inviteClient = async ({ email, company_id, contact_id = null, access_level = "view", redirectTo }) => {
+export const inviteClient = async ({ email, company_id, company_name, contact_id = null, contact_name, access_level = "view", redirectTo }) => {
   if (!supabase) throw new Error("Supabase no configurado");
   if (!email || !company_id) throw new Error("email y company_id son obligatorios");
 
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: {
-      shouldCreateUser: true,
-      emailRedirectTo: redirectTo || `${window.location.origin}/portal/cliente`
+  const portalUrl = redirectTo || `${window.location.origin}/portal`;
+
+  const { data, error } = await supabase.functions.invoke("invite-client", {
+    body: {
+      email,
+      company_name,
+      contact_name,
+      redirect_to: portalUrl
     }
   });
 
-  if (error) throw error;
+  if (error) throw new Error(error.message || "No se pudo invocar invite-client");
+  if (data?.error) throw new Error(data.error);
 
   const pending = readPending();
   const invite = {
@@ -70,7 +74,8 @@ export const inviteClient = async ({ email, company_id, contact_id = null, acces
     contact_id,
     access_level,
     invited_at: new Date().toISOString(),
-    status: "pending"
+    status: "pending",
+    magic_link: data?.link || null
   };
   writePending([invite, ...pending.filter((p) => p.email !== email.toLowerCase() || p.company_id !== company_id)]);
 

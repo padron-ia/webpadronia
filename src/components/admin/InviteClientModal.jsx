@@ -18,21 +18,29 @@ export default function InviteClientModal({ company, contact, onClose, onInvited
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState("");
+  const [magicLink, setMagicLink] = useState("");
 
   const portalUrl = `${window.location.origin}/portal`;
   const firstName = (contact?.full_name || "").split(" ")[0] || "";
-  const waMessage = [
-    `Hola${firstName ? ` ${firstName}` : ""},`,
-    ``,
-    `Ya tienes acceso al portal privado de ${company?.commercial_name || company?.legal_name || "Padron IA"}. Ahi podras ver tu auditoria y el resto de entregables.`,
-    ``,
-    `Entra aqui: ${portalUrl}`,
-    `Tu email de acceso: ${email}`,
-    ``,
-    `En el login pulsa "He olvidado mi contrasena" para generar tu contrasena en un segundo.`,
-    ``,
-    `Cualquier duda, me dices.`
-  ].join("\n");
+  const companyName = company?.commercial_name || company?.legal_name || "Padron IA";
+  const waMessage = magicLink
+    ? [
+        `Hola${firstName ? ` ${firstName}` : ""},`,
+        ``,
+        `Ya tienes acceso al portal privado de ${companyName}. Ahi podras ver tu auditoria y el resto de entregables.`,
+        ``,
+        `Entra directamente (sin contrasena): ${magicLink}`,
+        ``,
+        `Tambien te hemos mandado el acceso al email ${email}.`,
+        `Cualquier duda, me dices.`
+      ].join("\n")
+    : [
+        `Hola${firstName ? ` ${firstName}` : ""},`,
+        ``,
+        `Ya tienes acceso al portal privado de ${companyName}: ${portalUrl}`,
+        `Email de acceso: ${email}`,
+        `En el login pulsa "He olvidado mi contrasena" para crearla.`
+      ].join("\n");
 
   const handleCopy = async (text, key) => {
     try {
@@ -51,12 +59,15 @@ export default function InviteClientModal({ company, contact, onClose, onInvited
     setSending(true);
     setError("");
     try {
-      await inviteClient({
+      const result = await inviteClient({
         email: email.trim(),
         company_id: company.id,
+        company_name: companyName,
         contact_id: contact?.id || null,
+        contact_name: contact?.full_name || "",
         access_level: accessLevel
       });
+      if (result?.magic_link) setMagicLink(result.magic_link);
       setSent(true);
       onInvited?.(email);
     } catch (err) {
@@ -85,15 +96,28 @@ export default function InviteClientModal({ company, contact, onClose, onInvited
               <p className="mt-1">Se ha creado el acceso para <strong>{email}</strong>. También le hemos enviado un magic link por email, pero puedes pasárselo por WhatsApp con el mensaje de abajo.</p>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <div className="flex items-center justify-between gap-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Enlace al portal</p>
-                <button type="button" onClick={() => handleCopy(portalUrl, "url")} className="rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-semibold text-slate-700 hover:border-slate-900">
-                  {copied === "url" ? "Copiado ✓" : "Copiar enlace"}
-                </button>
+            {magicLink ? (
+              <div className="rounded-2xl border border-indigo-200 bg-indigo-50 p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-xs font-semibold uppercase tracking-[0.1em] text-indigo-700">Magic link (acceso directo sin contraseña)</p>
+                  <button type="button" onClick={() => handleCopy(magicLink, "magic")} className="rounded-full border border-indigo-300 bg-white px-3 py-1 text-xs font-semibold text-indigo-700 hover:border-indigo-900">
+                    {copied === "magic" ? "Copiado ✓" : "Copiar link"}
+                  </button>
+                </div>
+                <p className="mt-2 break-all text-xs font-mono text-indigo-900">{magicLink}</p>
+                <p className="mt-2 text-xs text-indigo-700">Caduca en 24 h. Un clic inicia sesión.</p>
               </div>
-              <p className="mt-2 break-all text-sm font-mono text-slate-800">{portalUrl}</p>
-            </div>
+            ) : (
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Enlace al portal</p>
+                  <button type="button" onClick={() => handleCopy(portalUrl, "url")} className="rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-semibold text-slate-700 hover:border-slate-900">
+                    {copied === "url" ? "Copiado ✓" : "Copiar enlace"}
+                  </button>
+                </div>
+                <p className="mt-2 break-all text-sm font-mono text-slate-800">{portalUrl}</p>
+              </div>
+            )}
 
             <div className="rounded-2xl border border-slate-200 bg-white p-4">
               <div className="flex items-center justify-between gap-3">
