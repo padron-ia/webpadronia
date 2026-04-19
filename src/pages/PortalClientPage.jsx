@@ -3,6 +3,7 @@ import { Navigate, useNavigate, useLocation } from "react-router-dom";
 import ClientShell from "../components/client/ClientShell";
 import ClientDashboard from "../components/client/ClientDashboard";
 import ClientProjectView from "../components/client/ClientProjectView";
+import ClientDocumentsSection from "../components/client/ClientDocumentsSection";
 import { resolveRole, resolvePrimaryCompany } from "../lib/portalAuth";
 import { isSupabaseConfigured, supabase } from "../lib/supabaseClient";
 
@@ -100,11 +101,7 @@ function PortalClientPage() {
             onLogout={handleLogout}
         >
             {subPath === "documentos" ? (
-                <PlaceholderSection
-                    icon="📁"
-                    title="Documentos"
-                    description="Aquí encontrarás los documentos compartidos de tu colaboración: contratos, briefings, materiales y archivos relevantes. Esta sección se activará próximamente."
-                />
+                <ClientDocumentsSection companyId={company?.company?.id || null} userId={session?.user?.id || null} />
             ) : subPath === "facturas" ? (
                 <PlaceholderSection
                     icon="🧾"
