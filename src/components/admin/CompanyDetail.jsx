@@ -239,7 +239,7 @@ function ContactsTab({ company }) {
           company={company}
           contact={inviteTarget}
           onClose={() => setInviteTarget(null)}
-          onInvited={() => setInviteTarget(null)}
+          onInvited={() => {}}
         />
       ) : null}
     </div>
@@ -451,7 +451,7 @@ function AccessTab({ company }) {
           company={company}
           contact={contacts.find((c) => c.is_primary) || contacts[0] || null}
           onClose={() => setShowInvite(false)}
-          onInvited={() => { setShowInvite(false); reload(); }} />
+          onInvited={() => { reload(); }} />
       ) : null}
     </div>
   );
