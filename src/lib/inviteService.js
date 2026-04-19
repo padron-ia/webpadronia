@@ -64,7 +64,16 @@ export const inviteClient = async ({ email, company_id, company_name, contact_id
     }
   });
 
-  if (error) throw new Error(error.message || "No se pudo invocar invite-client");
+  if (error) {
+    let detail = "";
+    try {
+      if (error.context && typeof error.context.text === "function") {
+        const body = await error.context.text();
+        try { detail = JSON.parse(body)?.error || body; } catch { detail = body; }
+      }
+    } catch {}
+    throw new Error(detail || error.message || "No se pudo invocar invite-client");
+  }
   if (data?.error) throw new Error(data.error);
 
   const pending = readPending();
