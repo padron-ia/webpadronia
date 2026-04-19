@@ -25,30 +25,18 @@ export default function InviteClientModal({ company, contact, onClose, onInvited
   const portalUrl = `${origin}/portal`;
   const firstName = (contact?.full_name || "").split(" ")[0] || "";
   const companyName = company?.commercial_name || company?.legal_name || "Padron IA";
-  const waMessage = magicLink
-    ? [
-        `Hola${firstName ? ` ${firstName}` : ""},`,
-        ``,
-        `Ya tienes listo tu espacio privado de ${companyName} en Padrón IA (${portalUrl}).`,
-        ``,
-        `Ahí vas a poder ver tu auditoría y todo lo que vayamos entregando.`,
-        ``,
-        `Para entrar la primera vez y crear tu contraseña, usa este enlace (válido 24 h):`,
-        magicLink,
-        ``,
-        `Después de eso, entras siempre desde ${portalUrl} con tu email y contraseña.`,
-        ``,
-        `También te lo he enviado por email a ${email} por si lo prefieres desde ahí. Cualquier cosa, me dices.`
-      ].join("\n")
-    : [
-        `Hola${firstName ? ` ${firstName}` : ""},`,
-        ``,
-        `Ya tienes listo tu espacio privado de ${companyName} en Padrón IA.`,
-        ``,
-        `Entra aquí: ${portalUrl}`,
-        `Con tu email: ${email}`,
-        `En el login pulsa "He olvidado mi contraseña" para crear la tuya en un segundo.`
-      ].join("\n");
+  const waMessage = [
+    `Hola${firstName ? ` ${firstName}` : ""},`,
+    ``,
+    `Ya tienes listo tu espacio privado de ${companyName} en Padrón IA:`,
+    portalUrl,
+    ``,
+    `Te acabo de enviar al email (${email}) el enlace para entrar la primera vez y crear tu contraseña.`,
+    ``,
+    `Si no lo ves, pulsa "He olvidado mi contraseña" en el portal y te llegará otro al momento.`,
+    ``,
+    `Cualquier cosa, me dices.`
+  ].join("\n");
 
   const handleCopy = async (text, key) => {
     try {
