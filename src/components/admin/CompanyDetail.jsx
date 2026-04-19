@@ -10,6 +10,7 @@ import CompanyForm from "./CompanyForm";
 import ContactForm from "./ContactForm";
 import InviteClientModal from "./InviteClientModal";
 import InfoRequestsManager from "./InfoRequestsManager";
+import DocumentsManager from "./DocumentsManager";
 import ProjectDetail from "./ProjectDetail";
 
 const TABS = [
@@ -17,6 +18,7 @@ const TABS = [
   { id: "contacts", label: "Contactos" },
   { id: "projects", label: "Proyectos" },
   { id: "access", label: "Acceso al portal" },
+  { id: "documents", label: "Documentos" },
   { id: "requests", label: "Solicitudes" },
   { id: "activity", label: "Actividad" }
 ];
@@ -98,6 +100,7 @@ export default function CompanyDetail({ companyId, onBack }) {
           {tab === "contacts" ? <ContactsTab company={company} /> : null}
           {tab === "projects" ? <ProjectsTab company={company} onOpenProject={(p) => setSelectedProjectId(p.id)} /> : null}
           {tab === "access" ? <AccessTab company={company} /> : null}
+          {tab === "documents" ? <DocumentsManager companyId={company.id} /> : null}
           {tab === "requests" ? <InfoRequestsManager companyId={company.id} /> : null}
           {tab === "activity" ? <ActivityTab company={company} /> : null}
         </>
