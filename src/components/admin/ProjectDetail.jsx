@@ -10,6 +10,8 @@ import { listRepositories, createRepository, deleteRepository, listCredentials, 
 import { listContracts } from "../../lib/contractsService";
 import { supabase } from "../../lib/supabaseClient";
 import DeliverableViewer from "../../content/DeliverableViewer";
+import DocumentsManager from "./DocumentsManager";
+import InfoRequestsManager from "./InfoRequestsManager";
 
 const STATUS_LABELS = { kickoff: "Kickoff", active: "Activo", paused: "Pausado", completed: "Completado", archived: "Archivado" };
 const HEALTH_LABELS = { on_track: "En buen camino", at_risk: "En riesgo", off_track: "Fuera de plan" };
@@ -31,6 +33,8 @@ const TABS = [
   { id: "tareas", label: "Tareas" },
   { id: "equipo", label: "Equipo" },
   { id: "horas", label: "Horas" },
+  { id: "documentos", label: "Documentos" },
+  { id: "solicitudes", label: "Solicitudes" },
   { id: "actividad", label: "Actividad" }
 ];
 
@@ -86,6 +90,8 @@ export default function ProjectDetail({ projectId, onBack }) {
       {tab === "tareas" ? <TareasTab project={project} /> : null}
       {tab === "equipo" ? <EquipoTab project={project} /> : null}
       {tab === "horas" ? <HorasTab project={project} /> : null}
+      {tab === "documentos" ? <DocumentsManager companyId={project.company_id} projectId={project.id} /> : null}
+      {tab === "solicitudes" ? <InfoRequestsManager companyId={project.company_id} projectId={project.id} /> : null}
       {tab === "actividad" ? <ActividadTab project={project} /> : null}
     </div>
   );
