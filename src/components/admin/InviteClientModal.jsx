@@ -29,19 +29,25 @@ export default function InviteClientModal({ company, contact, onClose, onInvited
     ? [
         `Hola${firstName ? ` ${firstName}` : ""},`,
         ``,
-        `Ya tienes acceso al portal privado de ${companyName}. Ahi podras ver tu auditoria y el resto de entregables.`,
+        `Ya tienes listo tu espacio privado de ${companyName} en Padrón IA (${portalUrl}).`,
         ``,
-        `Entra directamente (sin contrasena): ${magicLink}`,
+        `Ahí vas a poder ver tu auditoría y todo lo que vayamos entregando.`,
         ``,
-        `Tambien te hemos mandado el acceso al email ${email}.`,
-        `Cualquier duda, me dices.`
+        `Para entrar la primera vez y crear tu contraseña, usa este enlace (válido 24 h):`,
+        magicLink,
+        ``,
+        `Después de eso, entras siempre desde ${portalUrl} con tu email y contraseña.`,
+        ``,
+        `También te lo he enviado por email a ${email} por si lo prefieres desde ahí. Cualquier cosa, me dices.`
       ].join("\n")
     : [
         `Hola${firstName ? ` ${firstName}` : ""},`,
         ``,
-        `Ya tienes acceso al portal privado de ${companyName}: ${portalUrl}`,
-        `Email de acceso: ${email}`,
-        `En el login pulsa "He olvidado mi contrasena" para crearla.`
+        `Ya tienes listo tu espacio privado de ${companyName} en Padrón IA.`,
+        ``,
+        `Entra aquí: ${portalUrl}`,
+        `Con tu email: ${email}`,
+        `En el login pulsa "He olvidado mi contraseña" para crear la tuya en un segundo.`
       ].join("\n");
 
   const handleCopy = async (text, key) => {
