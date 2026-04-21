@@ -19,7 +19,8 @@ const registry = {
   "ofm-health/por-que-nadie-lo-hace": lazy(() => import("./deliverables/ofm-health/PorQueNadieLoHace")),
   "ofm-health/test-perfil-quiz": lazy(() => import("./prototypes/ofm-health/TestPerfilQuiz")),
   // Interno — no compartir con cliente
-  "ofm-health/briefing-interno-odile": lazy(() => import("./deliverables/ofm-health/BriefingInternoOdile"))
+  "ofm-health/briefing-interno-odile": lazy(() => import("./deliverables/ofm-health/BriefingInternoOdile")),
+  "ofm-health/checklist-accesos-odile": lazy(() => import("./deliverables/ofm-health/ChecklistAccesosOdile"))
 };
 
 export default registry;
