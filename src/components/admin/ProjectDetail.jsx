@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getProject, updateProject } from "../../lib/projectsService";
-import { listDeliverablesByProject, createDeliverable, deleteDeliverable } from "../../lib/deliverablesService";
+import { listDeliverablesByProject, createDeliverable, updateDeliverable, deleteDeliverable } from "../../lib/deliverablesService";
 import { listMilestones, createMilestone, completeMilestone, deleteMilestone } from "../../lib/projectOperationsService";
 import { listTasks, createTask, updateTask, deleteTask } from "../../lib/projectOperationsService";
 import { listTeam, addTeamMember, removeTeamMember } from "../../lib/projectOperationsService";
@@ -152,17 +152,46 @@ function DeliverablesTab({ project }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [viewing, setViewing] = useState(null);
-  const [form, setForm] = useState({ title: "", type: "report", description: "", content_type: "internal", content_ref: "", slug: "" });
+  const emptyForm = { title: "", type: "report", description: "", content_type: "internal", content_ref: "", slug: "", client_visible: false, status: "draft" };
+  const [form, setForm] = useState(emptyForm);
 
   const reload = async () => { setLoading(true); try { setItems(await listDeliverablesByProject(project.id)); } finally { setLoading(false); } };
   useEffect(() => { reload(); }, [project.id]);
 
-  const handleCreate = async (e) => {
+  const openCreate = () => {
+    setEditingId(null);
+    setForm(emptyForm);
+    setShowForm(true);
+  };
+
+  const openEdit = (d) => {
+    setEditingId(d.id);
+    setForm({
+      title: d.title || "",
+      type: d.type || "report",
+      description: d.description || "",
+      content_type: d.content_type || "internal",
+      content_ref: d.content_ref || "",
+      slug: d.slug || "",
+      client_visible: !!d.client_visible,
+      status: d.status || "draft"
+    });
+    setShowForm(true);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const slug = form.slug || form.title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9\s-]/g,"").trim().replace(/\s+/g,"-").slice(0,60);
-    await createDeliverable({ project_id: project.id, ...form, slug });
-    setForm({ title: "", type: "report", description: "", content_type: "internal", content_ref: "", slug: "" });
+    const payload = {
+      ...form,
+      content_ref: (form.content_ref || "").trim(),
+      slug: (form.slug || form.title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9\s-]/g,"").trim().replace(/\s+/g,"-").slice(0,60))
+    };
+    if (editingId) await updateDeliverable(editingId, payload);
+    else await createDeliverable({ project_id: project.id, ...payload });
+    setForm(emptyForm);
+    setEditingId(null);
     setShowForm(false);
     reload();
   };
@@ -179,11 +208,23 @@ function DeliverablesTab({ project }) {
     <div className="grid gap-3">
       <div className="flex justify-between items-center">
         <p className="text-sm text-slate-600">{items.length} entregable{items.length !== 1 ? "s" : ""} · Haz clic para abrir</p>
-        <button onClick={() => setShowForm(true)} className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white">+ Añadir</button>
+        <div className="flex gap-2">
+          <a
+            href={`/portal/admin/presenter/${project.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-full border border-slate-900 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-900 hover:text-white transition"
+            title="Abre el modo presentación en pestaña nueva"
+          >
+            ▶ Presentar
+          </a>
+          <button onClick={openCreate} className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white">+ Añadir</button>
+        </div>
       </div>
 
       {showForm ? (
-        <form onSubmit={handleCreate} className="rounded-3xl border border-slate-200 bg-white p-6 grid gap-3 md:grid-cols-2">
+        <form onSubmit={handleSubmit} className="rounded-3xl border border-slate-200 bg-white p-6 grid gap-3 md:grid-cols-2">
+          <p className="md:col-span-2 text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">{editingId ? "Editando entregable" : "Nuevo entregable"}</p>
           <label className="block md:col-span-2"><span className="text-xs font-semibold uppercase text-slate-500">Título *</span>
             <input required className={inputClass} value={form.title} onChange={(e) => setForm(p => ({...p, title: e.target.value}))} />
           </label>
@@ -202,14 +243,26 @@ function DeliverablesTab({ project }) {
             </select>
           </label>
           <label className="block md:col-span-2"><span className="text-xs font-semibold uppercase text-slate-500">Referencia contenido</span>
-            <input className={inputClass} placeholder="slug interno, URL o ruta" value={form.content_ref} onChange={(e) => setForm(p => ({...p, content_ref: e.target.value}))} />
+            <input className={inputClass} placeholder="slug interno, URL o ruta" value={form.content_ref} onChange={(e) => setForm(p => ({...p, content_ref: e.target.value.trim()}))} />
           </label>
           <label className="block md:col-span-2"><span className="text-xs font-semibold uppercase text-slate-500">Descripción</span>
             <textarea rows={2} className={inputClass} value={form.description} onChange={(e) => setForm(p => ({...p, description: e.target.value}))} />
           </label>
+          <label className="block"><span className="text-xs font-semibold uppercase text-slate-500">Estado</span>
+            <select className={inputClass} value={form.status} onChange={(e) => setForm(p => ({...p, status: e.target.value}))}>
+              <option value="draft">Borrador</option>
+              <option value="review">En revisión</option>
+              <option value="published">Publicado</option>
+              <option value="archived">Archivado</option>
+            </select>
+          </label>
+          <label className="flex items-center gap-2 pt-6">
+            <input type="checkbox" checked={!!form.client_visible} onChange={(e) => setForm(p => ({...p, client_visible: e.target.checked}))} />
+            <span className="text-sm text-slate-700">Visible para cliente</span>
+          </label>
           <div className="md:col-span-2 flex justify-end gap-3">
-            <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 text-sm text-slate-600">Cancelar</button>
-            <button type="submit" className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white">Crear</button>
+            <button type="button" onClick={() => { setShowForm(false); setEditingId(null); setForm(emptyForm); }} className="px-4 py-2 text-sm text-slate-600">Cancelar</button>
+            <button type="submit" className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white">{editingId ? "Guardar cambios" : "Crear"}</button>
           </div>
         </form>
       ) : null}
@@ -230,7 +283,10 @@ function DeliverablesTab({ project }) {
               {d.description ? <p className="mt-1 text-sm text-slate-600">{d.description}</p> : null}
               {d.content_ref ? <p className="mt-1 text-xs text-slate-400 font-mono">{d.content_ref}</p> : null}
             </div>
-            <button onClick={(e) => { e.stopPropagation(); handleDelete(d.id); }} className="text-xs text-red-500 hover:text-red-700 shrink-0">Eliminar</button>
+            <div className="flex flex-col gap-1.5 shrink-0">
+              <button onClick={(e) => { e.stopPropagation(); openEdit(d); }} className="text-xs font-semibold text-slate-600 hover:text-slate-900">Editar</button>
+              <button onClick={(e) => { e.stopPropagation(); handleDelete(d.id); }} className="text-xs text-red-500 hover:text-red-700">Eliminar</button>
+            </div>
           </div>
         ))}
       </div>
