@@ -1,4 +1,7 @@
+import { useEffect, useMemo, useState } from "react";
 import { ContentLayout, Section, Callout } from "../../components/ContentBlocks";
+
+const STORAGE_KEY = "checklist-accesos-odile-v1";
 
 const PRIORITY = {
   blocker: { label: "Bloqueante", className: "bg-rose-100 text-rose-700 border-rose-200" },
@@ -166,11 +169,56 @@ function Pill({ priority }) {
 }
 
 export default function ChecklistAccesosOdile() {
+  const [checked, setChecked] = useState({});
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) setChecked(JSON.parse(raw));
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(checked));
+    } catch {}
+  }, [checked]);
+
+  const toggle = (key) => setChecked((prev) => ({ ...prev, [key]: !prev[key] }));
+
+  const totals = useMemo(() => {
+    const all = SECTIONS.flatMap((s) => s.items.map((_, i) => `${s.n}-${i}`));
+    const done = all.filter((k) => checked[k]).length;
+    return { done, total: all.length, pct: all.length ? Math.round((done / all.length) * 100) : 0 };
+  }, [checked]);
+
+  const clear = () => {
+    if (confirm("¿Borrar todo lo marcado?")) setChecked({});
+  };
+
   return (
     <ContentLayout
       title="Checklist de accesos, stack e info a pedir a Odile"
       subtitle="Lo que necesito que Odile entregue para ejecutar la Auditoría Digital Integral. Priorizado por bloqueante / importante / cuando toque. Uso interno — no visible para el cliente."
     >
+      <div className="rounded-2xl border border-stone-200 bg-white p-4 flex items-center justify-between gap-4">
+        <div className="flex-1">
+          <div className="flex items-center gap-3">
+            <p className="text-sm font-semibold text-stone-900">Progreso</p>
+            <p className="text-sm text-stone-600">{totals.done} / {totals.total} ítems · {totals.pct}%</p>
+          </div>
+          <div className="mt-2 h-2 rounded-full bg-stone-100 overflow-hidden">
+            <div className="h-full bg-emerald-500 transition-all" style={{ width: `${totals.pct}%` }} />
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={clear}
+          className="shrink-0 rounded-lg border border-stone-200 px-3 py-1.5 text-xs text-stone-600 hover:bg-stone-50"
+        >
+          Reset
+        </button>
+      </div>
       <Callout type="info" title="Cómo usar esta checklist">
         <p>
           En la llamada con Odile priorizar las secciones marcadas como <strong>Bloqueantes</strong> (1, 2, 4 y 8): sin ellas no se puede avanzar.
@@ -193,12 +241,34 @@ export default function ChecklistAccesosOdile() {
                     <Pill priority={s.priority} />
                   </div>
                   <ul className="mt-3 space-y-1.5">
-                    {s.items.map((it, i) => (
-                      <li key={i} className="flex gap-2 text-sm text-stone-700 leading-relaxed">
-                        <span className="mt-1 h-3 w-3 shrink-0 rounded-sm border border-stone-300 bg-white" />
-                        <span>{it}</span>
-                      </li>
-                    ))}
+                    {s.items.map((it, i) => {
+                      const key = `${s.n}-${i}`;
+                      const done = !!checked[key];
+                      return (
+                        <li key={i}>
+                          <button
+                            type="button"
+                            onClick={() => toggle(key)}
+                            className="w-full flex gap-2 text-left text-sm leading-relaxed rounded-md px-1 py-0.5 -mx-1 hover:bg-stone-50 transition-colors"
+                          >
+                            <span
+                              className={`mt-1 h-3.5 w-3.5 shrink-0 rounded-sm border flex items-center justify-center transition-colors ${
+                                done
+                                  ? "bg-emerald-500 border-emerald-500 text-white"
+                                  : "bg-white border-stone-300"
+                              }`}
+                            >
+                              {done ? (
+                                <svg viewBox="0 0 16 16" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="3">
+                                  <path d="M3 8l3 3 7-7" />
+                                </svg>
+                              ) : null}
+                            </span>
+                            <span className={done ? "text-stone-400 line-through" : "text-stone-700"}>{it}</span>
+                          </button>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               </div>

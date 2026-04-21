@@ -1,0 +1,574 @@
+- generic [ref=e4]:
+  - generic [ref=e6]:
+    - link "Ir al contenido" [ref=e8] [cursor=pointer]:
+      - /url: "#main"
+      - generic [ref=e9]:
+        - text: Ir al contenido
+        - img [ref=e10]
+    - generic [ref=e12]:
+      - banner [ref=e13]
+      - main [ref=e15]:
+        - generic [ref=e17]:
+          - group [disabled] [ref=e18]:
+            - generic [ref=e20]:
+              - generic [ref=e29]:
+                - generic [ref=e34]:
+                  - img "📊 Icono de la página" [ref=e35]
+                  - img "📊 Icono de la página" [ref=e36]
+                - heading "📊 KPI Command Center — La Guía Definitiva para Medir KPIs de tu Negocio High-Ticket" [level=1] [ref=e41]:
+                  - img "📊" [ref=e42]
+                  - text: KPI Command Center — La Guía Definitiva para Medir KPIs de tu Negocio High-Ticket
+              - generic [ref=e44]:
+                - figure [ref=e48]
+                - separator [disabled] [ref=e56]
+                - figure [ref=e60]
+                - blockquote [ref=e67]:
+                  - generic [ref=e69]:
+                    - img "🔥" [ref=e70]
+                    - text: Esta guía es solo el comienzo. Aprendé a construir tu propio software de KPIs como un verdadero pro — con clases en video, sesiones en vivo y los prompts exactos que yo uso.
+                - blockquote [ref=e72]:
+                  - generic [ref=e74]:
+                    - text: Entrá a
+                    - link "nicolassosa.com" [disabled] [ref=e75] [cursor=pointer]:
+                      - /url: http://nicolassosa.com/
+                    - text: e inscribite en la comunidad High Value.
+                - blockquote [ref=e83]:
+                  - generic [ref=e85]:
+                    - text: ¿Preferís asesoramiento e implementación 1 a 1? Agendá una llamada →
+                    - link "highvalue.digital" [disabled] [ref=e86] [cursor=pointer]:
+                      - /url: http://highvalue.digital/
+                - separator [disabled] [ref=e89]
+                - heading "📊 KPI Command Center" [level=2] [ref=e94]:
+                  - img "📊" [ref=e95]
+                  - text: KPI Command Center
+                - heading "La guía definitiva para construir tu propio sistema de medición de KPIs para un negocio high-ticket — sin programar" [level=3] [ref=e100]
+                - generic [ref=e106]: Si tu negocio es coaching, infoproductos o servicios 1-a-1 con closers, este es el sistema que reemplaza tu Google Sheets con 20 pestañas por una app real que mide más de 60 métricas, te da rankings del equipo, proyección de cierre de mes, y todo se carga en menos de 60 segundos por día.
+                - generic [ref=e112]: "Lo más loco: no vas a escribir una sola línea de código. Vas a copiar un PRD (Product Requirements Document), se lo vas a pegar a Claude Code, y tu aplicación se va a construir sola."
+                - figure [ref=e116]
+                - separator [disabled] [ref=e124]
+                - heading "👋 Quién soy" [level=2] [ref=e129]:
+                  - img "👋" [ref=e130]
+                  - text: Quién soy
+                - generic [ref=e136]:
+                  - text: Soy Nicolás Sosa —
+                  - link "@soynicolassosa" [disabled] [ref=e137] [cursor=pointer]:
+                    - /url: https://instagram.com/soynicolassosa
+                  - text: — y ayudo a emprendedores de negocios high-ticket a construir su propio stack tecnológico con IA, sin depender de desarrolladores.
+                - generic [ref=e143]: Todo lo que te enseño en esta guía lo usé para construir KPI Command Center — el sistema de medición interno que uso con mi equipo. Ahora te lo doy para que lo implementes en tu negocio en una tarde.
+                - blockquote [ref=e145]:
+                  - generic [ref=e147]: "Si querés más recursos, cursos y ser parte de una comunidad donde compartimos todo esto:"
+                - blockquote [ref=e149]:
+                  - generic [ref=e151]:
+                    - img "👉" [ref=e152]
+                    - text: Entrá a
+                    - link "nicolassosa.com" [disabled] [ref=e153] [cursor=pointer]:
+                      - /url: http://nicolassosa.com/
+                    - text: e inscribite.
+                - generic [ref=e159]:
+                  - text: "Si queres que lo implementemos en tu negocio agenda con nuestro equipo en:"
+                  - link "https://highvalue.digital" [disabled] [ref=e160] [cursor=pointer]:
+                    - /url: https://highvalue.digital/
+                - separator [disabled] [ref=e163]
+                - heading "🎯 Qué vas a construir" [level=2] [ref=e168]:
+                  - img "🎯" [ref=e169]
+                  - text: Qué vas a construir
+                - generic [ref=e175]: "Un sistema web completo con 10 módulos que cubren todo el ciclo operativo de un negocio high-ticket:"
+                - heading "1️⃣ Dashboard personalizable (estilo Hyros)" [level=3] [ref=e180]:
+                  - img "1️⃣" [ref=e181]
+                  - text: Dashboard personalizable (estilo Hyros)
+                - figure [ref=e185]
+                - generic [ref=e196]: "Cada usuario arma sus propios dashboards con widgets arrastrables. Ves en tiempo real: Cash Collected, Revenue, Sales, Quality Bookings, Close Rate, Show Up Rate y todo lo que configures. Varios dashboards por usuario (General, Marketing, Ventas, Financiero)."
+                - heading "2️⃣ Carga de datos en menos de 60 segundos" [level=3] [ref=e201]:
+                  - img "2️⃣" [ref=e202]
+                  - text: Carga de datos en menos de 60 segundos
+                - figure [ref=e206]
+                - generic [ref=e217]:
+                  - text: Tap mode para contadores (touch el
+                  - generic [ref=e218]: +
+                  - text: y listo) o modo formulario para montos. Cada persona del equipo carga solo lo que le corresponde según su rol. Review modal con preview de los deltas antes de guardar.
+                - figure [ref=e222]
+                - heading "3️⃣ Finanzas con por-cobrar y vencidos" [level=3] [ref=e232]:
+                  - img "3️⃣" [ref=e233]
+                  - text: Finanzas con por-cobrar y vencidos
+                - figure [ref=e237]
+                - generic [ref=e248]: Cash del mes, Por cobrar, Vencidos y Cash all-time. Lista de pagos esperados con botón rápido "Pagó" para marcar como cobrado y actualizar el LTV del cliente automáticamente.
+                - heading "4️⃣ Proyección de cierre de mes" [level=3] [ref=e253]:
+                  - img "4️⃣" [ref=e254]
+                  - text: Proyección de cierre de mes
+                - figure [ref=e258]
+                - generic [ref=e269]: Ponés tu objetivo de facturación, precio promedio, split de canales — y el sistema calcula cuántos QBs, llamadas, mensajes e inversión Meta necesitás por día para llegar. Botón "Aplicar como targets del mes" y los widgets de progress se actualizan solos.
+                - heading "5️⃣ Reuniones con checklist automático" [level=3] [ref=e274]:
+                  - img "5️⃣" [ref=e275]
+                  - text: Reuniones con checklist automático
+                - generic [ref=e281]: "Cada reunión que entra (manual o desde Calendly) tiene un checklist de 3 pasos: Asistió → Cerró → Pago. Al completarlo, el sistema escribe show_ups, sales y cash_collected en los KPIs del día automáticamente. Si hubo reserva, crea el pago pendiente a 14 días solo."
+                - heading "6️⃣ Clientes (CRM integrado)" [level=3] [ref=e286]:
+                  - img "6️⃣" [ref=e287]
+                  - text: Clientes (CRM integrado)
+                - generic [ref=e293]: Lista de contactos con LTV, timeline cronológico de reuniones y pagos, notas, atribución por canal (orgánico/paga) y asignación closer/setter.
+                - heading "7️⃣ Ranking del equipo" [level=3] [ref=e298]:
+                  - img "7️⃣" [ref=e299]
+                  - text: Ranking del equipo
+                - figure [ref=e303]
+                - generic [ref=e314]: "Leaderboards de closers (por cash collected), setters (por revenue generado) y cohortes (LTV por canal, LTV por mes de primer pago). Corona dorada al #1."
+                - heading "8️⃣ Actividad del equipo (heatmap GitHub-style)" [level=3] [ref=e319]:
+                  - img "8️⃣" [ref=e320]
+                  - text: Actividad del equipo (heatmap GitHub-style)
+                - generic [ref=e326]: Vista de 180 días con colores por % del equipo que cargó cada día. Sabés al toque quién está siendo disciplinado y quién no.
+                - heading "9️⃣ Grilla estilo Excel del mes completo" [level=3] [ref=e331]:
+                  - img "9️⃣" [ref=e332]
+                  - text: Grilla estilo Excel del mes completo
+                - generic [ref=e338]: 60+ métricas en filas, 31 días en columnas, subtotales semanales en azul, totales mensuales destacados. Exportable a CSV.
+                - heading "🔟 Integraciones (Calendly ya implementada)" [level=3] [ref=e343]:
+                  - img "🔟" [ref=e344]
+                  - text: Integraciones (Calendly ya implementada)
+                - generic [ref=e350]: "Las reuniones de Calendly entran solas al sistema con webhooks. Próximas fases: GHL, Google Calendar, Stripe."
+                - separator [disabled] [ref=e353]
+                - heading "🧠 Cómo funciona la magia" [level=2] [ref=e358]:
+                  - img "🧠" [ref=e359]
+                  - text: Cómo funciona la magia
+                - figure [ref=e363]
+                - generic [ref=e374]: "El truco de esta guía es simple:"
+                - generic [ref=e378]:
+                  - generic [ref=e380]: "1."
+                  - generic [ref=e383]: Te doy un PRD (Product Requirements Document) que describe TODA la aplicación al detalle — 13 módulos, schema de base de datos completo, 47 métricas base, reglas críticas de implementación.
+                - generic [ref=e387]:
+                  - generic [ref=e389]: "2."
+                  - generic [ref=e392]: Se lo pegás a Claude Code (o Antigravity) en un solo prompt.
+                - generic [ref=e396]:
+                  - generic [ref=e398]: "3."
+                  - generic [ref=e401]: Claude construye la app entera leyendo el PRD como especificación técnica.
+                - generic [ref=e405]:
+                  - generic [ref=e407]: "4."
+                  - generic [ref=e410]: Configurás tu Supabase (base de datos gratis) con 3 clicks.
+                - generic [ref=e414]:
+                  - generic [ref=e416]: "5."
+                  - generic [ref=e419]: Encendés el proyecto y ya tenés tu KPI Command Center andando.
+                - generic [ref=e425]: No programás. Copiás, pegás, esperás, configurás. Listo.
+                - separator [disabled] [ref=e428]
+                - heading "📋 Qué necesitás antes de empezar" [level=2] [ref=e433]:
+                  - img "📋" [ref=e434]
+                  - text: Qué necesitás antes de empezar
+                - generic [ref=e438]:
+                  - generic [ref=e440]: •
+                  - generic [ref=e443]: Una computadora (Windows, Mac o Linux)
+                - generic [ref=e447]:
+                  - generic [ref=e449]: •
+                  - generic [ref=e452]: Conexión a internet
+                - generic [ref=e456]:
+                  - generic [ref=e458]: •
+                  - generic [ref=e461]:
+                    - text: Una cuenta de
+                    - link "Anthropic" [disabled] [ref=e462] [cursor=pointer]:
+                      - /url: https://console.anthropic.com/
+                    - text: (para Claude Code )
+                - generic [ref=e466]:
+                  - generic [ref=e468]: •
+                  - generic [ref=e471]:
+                    - text: Una cuenta de
+                    - link "Supabase" [disabled] [ref=e472] [cursor=pointer]:
+                      - /url: https://supabase.com/
+                    - text: (base de datos — gratis, te alcanza para empezar)
+                - generic [ref=e476]:
+                  - generic [ref=e478]: •
+                  - generic [ref=e481]:
+                    - text: Ganas de seguir una guía bien hecha
+                    - img "🚀" [ref=e482]
+                - generic [ref=e488]: "Tiempo estimado: 60-90 minutos de principio a fin. La mayor parte es esperar a que Claude termine de construir — podés mirar un video mientras."
+                - separator [disabled] [ref=e491]
+                - heading "🔧 PASO 1 — Instalar Claude Code (o usar Antigravity)" [level=2] [ref=e496]:
+                  - img "🔧" [ref=e497]
+                  - text: PASO 1 — Instalar Claude Code (o usar Antigravity)
+                - figure [ref=e501]
+                - generic [ref=e512]: "Tenés 2 opciones para darle el PRD a Claude:"
+                - heading "Opción A — Antigravity (la recomendada si nunca programaste)" [level=3] [ref=e517]
+                - generic [ref=e523]: Antigravity es el IDE visual de Claude. Tiene interfaz gráfica con botones, no necesitás terminal. Para la gente que recién empieza, es el camino más corto.
+                - generic [ref=e527]:
+                  - generic [ref=e529]: "1."
+                  - generic [ref=e532]:
+                    - text: Andá a
+                    - link "antigravity.ai" [disabled] [ref=e533] [cursor=pointer]:
+                      - /url: http://antigravity.ai/
+                    - text: (o el IDE oficial de Anthropic)
+                - generic [ref=e537]:
+                  - generic [ref=e539]: "2."
+                  - generic [ref=e542]: Descargá la versión para tu sistema operativo
+                - generic [ref=e546]:
+                  - generic [ref=e548]: "3."
+                  - generic [ref=e551]: Instalalo como cualquier programa
+                - generic [ref=e555]:
+                  - generic [ref=e557]: "4."
+                  - generic [ref=e560]: Al abrirlo, te pide loguearte con tu cuenta de Anthropic → listo
+                - heading "Opción B — Claude Code (terminal, más pro)" [level=3] [ref=e565]
+                - generic [ref=e571]: Si ya tenés algo de manejo con la terminal, esta es la vía más directa y potente.
+                - generic [ref=e577]: "En Windows:"
+                - generic [ref=e581]:
+                  - generic [ref=e583]: •
+                  - generic [ref=e586]:
+                    - text: Instalá Node.js desde
+                    - link "nodejs.org" [disabled] [ref=e587] [cursor=pointer]:
+                      - /url: http://nodejs.org/
+                    - text: (botón verde LTS)
+                - generic [ref=e591]:
+                  - generic [ref=e593]: •
+                  - generic [ref=e596]:
+                    - text: Abrí PowerShell (Windows+R, escribí
+                    - generic [ref=e597]: powershell
+                    - text: )
+                - generic [ref=e601]:
+                  - generic [ref=e603]: •
+                  - generic [ref=e606]:
+                    - text: "Pegá:"
+                    - generic [ref=e607]: npm install -g @anthropic-ai/claude-code
+                - generic [ref=e611]:
+                  - generic [ref=e613]: •
+                  - generic [ref=e616]:
+                    - text: "Verificá con:"
+                    - generic [ref=e617]: claude --version
+                - generic [ref=e623]: "En Mac:"
+                - generic [ref=e627]:
+                  - generic [ref=e629]: •
+                  - generic [ref=e632]:
+                    - text: Instalá Node.js desde
+                    - link "nodejs.org" [disabled] [ref=e633] [cursor=pointer]:
+                      - /url: http://nodejs.org/
+                - generic [ref=e637]:
+                  - generic [ref=e639]: •
+                  - generic [ref=e642]:
+                    - text: Abrí Terminal (Cmd+Espacio, escribí
+                    - generic [ref=e643]: Terminal
+                    - text: )
+                - generic [ref=e647]:
+                  - generic [ref=e649]: •
+                  - generic [ref=e652]:
+                    - text: "Pegá:"
+                    - generic [ref=e653]: npm install -g @anthropic-ai/claude-code
+                - generic [ref=e657]:
+                  - generic [ref=e659]: •
+                  - generic [ref=e662]:
+                    - text: "Si tira error de permisos, usá:"
+                    - generic [ref=e663]: sudo npm install -g @anthropic-ai/claude-code
+                - blockquote [ref=e665]:
+                  - generic [ref=e667]:
+                    - img "💡" [ref=e668]
+                    - text: ¿Cuál elijo? Si nunca tocaste una terminal en tu vida, andá con Antigravity. Si ya hiciste algo de vibe coding antes o no tenés miedo a la terminal, Claude Code es más rápido.
+                - separator [disabled] [ref=e671]
+                - heading "🔑 PASO 2 — Loguearte con tu cuenta de Claude (sin API Key)" [level=2] [ref=e676]:
+                  - img "🔑" [ref=e677]
+                  - text: PASO 2 — Loguearte con tu cuenta de Claude (sin API Key)
+                - generic [ref=e683]: "Acá te saco un peso de encima: no necesitás API Key de Anthropic. No necesitás poner tarjeta. No vas a pagar por uso."
+                - generic [ref=e689]:
+                  - text: Vamos a usar la extensión oficial de Claude Code que ya viene dentro de Antigravity. Esta extensión se autentica con tu cuenta de Claude (la misma con la que entrás a
+                  - link "claude.ai" [disabled] [ref=e690] [cursor=pointer]:
+                    - /url: http://claude.ai/
+                  - text: ), y consume de tu plan Pro o Max — no de la API.
+                - heading "Cómo loguearte (30 segundos):" [level=3] [ref=e695]
+                - generic [ref=e699]:
+                  - generic [ref=e701]: "1."
+                  - generic [ref=e704]: Abrí Antigravity
+                - generic [ref=e708]:
+                  - generic [ref=e710]: "2."
+                  - generic [ref=e713]: Cuando abras el panel de Claude Code por primera vez, te va a pedir que te loguees
+                - generic [ref=e717]:
+                  - generic [ref=e719]: "3."
+                  - generic [ref=e722]: Te lleva al navegador → entrás con tu mail/Google de tu cuenta de Claude
+                - generic [ref=e726]:
+                  - generic [ref=e728]: "4."
+                  - generic [ref=e731]: Autorizás el acceso y listo, volvés a Antigravity ya conectado
+                - blockquote [ref=e733]:
+                  - generic [ref=e735]:
+                    - img "✅" [ref=e736]
+                    - text: "Traducido: todo lo que Claude construya para vos (leer el PRD, crear archivos, instalar dependencias, correr migraciones) sale de tu plan Pro/Max. Construir esta app no te cuesta un centavo extra."
+                - blockquote [ref=e738]:
+                  - generic [ref=e740]:
+                    - img "⚠️" [ref=e741]
+                    - text: Si no tenés plan Pro o Max todavía, contratalo por 20 USD/mes en
+                    - link "claude.ai/upgrade" [disabled] [ref=e742] [cursor=pointer]:
+                      - /url: http://claude.ai/upgrade
+                    - text: . Con ese plan alcanza sobradamente para construir todo este dashboard.
+                - separator [disabled] [ref=e745]
+                - heading "🗄️ PASO 3 — Crear tu cuenta de Supabase" [level=2] [ref=e750]:
+                  - img "🗄️" [ref=e751]
+                  - text: PASO 3 — Crear tu cuenta de Supabase
+                - figure [ref=e755]
+                - generic [ref=e766]: Supabase es la base de datos donde se guardan todos tus KPIs, contactos, reuniones y pagos. Es gratis hasta que tu negocio sea muy grande.
+                - heading "Paso a paso:" [level=3] [ref=e771]
+                - generic [ref=e775]:
+                  - generic [ref=e777]: "1."
+                  - generic [ref=e780]:
+                    - text: Andá a
+                    - link "supabase.com" [disabled] [ref=e781] [cursor=pointer]:
+                      - /url: http://supabase.com/
+                    - text: y hacé click en "Start your project"
+                - generic [ref=e785]:
+                  - generic [ref=e787]: "2."
+                  - generic [ref=e790]: Registrate con tu email o con GitHub
+                - generic [ref=e794]:
+                  - generic [ref=e796]: "3."
+                  - generic [ref=e799]: Una vez dentro del dashboard, hacé click en "New Project"
+                - generic [ref=e803]:
+                  - generic [ref=e805]: "4."
+                  - generic [ref=e806]:
+                    - generic [ref=e808]: "Completá:"
+                    - generic [ref=e812]:
+                      - generic [ref=e814]: •
+                      - generic [ref=e817]:
+                        - text: "Name:"
+                        - generic [ref=e818]: kpi-command
+                        - text: (o el nombre que quieras)
+                    - generic [ref=e822]:
+                      - generic [ref=e824]: •
+                      - generic [ref=e827]: "Database Password: generá una fuerte y guardala en un lugar seguro"
+                    - generic [ref=e831]:
+                      - generic [ref=e833]: •
+                      - generic [ref=e836]: "Region: elegí la más cercana a vos (ej. São Paulo si estás en Sudamérica)"
+                    - generic [ref=e840]:
+                      - generic [ref=e842]: •
+                      - generic [ref=e845]: "Plan: Free"
+                - generic [ref=e849]:
+                  - generic [ref=e851]: "5."
+                  - generic [ref=e854]: Click en "Create new project" y esperá 2-3 minutos a que se provisione
+                - heading "Copiá las 3-4 variables que vas a necesitar:" [level=3] [ref=e859]
+                - generic [ref=e865]: "Una vez listo el proyecto, andá a Settings → API y copiá:"
+                - generic [ref=e869]:
+                  - generic [ref=e871]: •
+                  - generic [ref=e874]:
+                    - text: Project URL (algo como
+                    - generic [ref=e875]: https://xxxxx.supabase.co
+                    - text: )
+                - generic [ref=e879]:
+                  - generic [ref=e881]: •
+                  - generic [ref=e884]:
+                    - text: anon/public key (empieza con
+                    - generic [ref=e885]: eyJ...
+                    - text: )
+                - generic [ref=e889]:
+                  - generic [ref=e891]: •
+                  - generic [ref=e894]:
+                    - text: service_role key (empieza con
+                    - generic [ref=e895]: eyJ...
+                    - text: también — esta es secreta, no la compartas)
+                - generic [ref=e901]:
+                  - text: Después, andá a Settings → Database → Connection string → Transaction pooler y copiá la URL completa. La vas a necesitar como
+                  - generic [ref=e902]: DATABASE_URL
+                  - text: .
+                - blockquote [ref=e904]:
+                  - generic [ref=e906]:
+                    - img "💡" [ref=e907]
+                    - text: Guardá las 4 cosas en un bloc de notas — las vas a usar en 2 minutos.
+                - separator [disabled] [ref=e910]
+                - heading "🚀 PASO 4 — Iniciar Claude Code y pegarle el PRD" [level=2] [ref=e915]:
+                  - img "🚀" [ref=e916]
+                  - text: PASO 4 — Iniciar Claude Code y pegarle el PRD
+                - generic [ref=e922]: Ahora viene la parte mágica.
+                - heading "Si usás Antigravity:" [level=3] [ref=e927]
+                - generic [ref=e931]:
+                  - generic [ref=e933]: "1."
+                  - generic [ref=e936]: Abrí Antigravity
+                - generic [ref=e940]:
+                  - generic [ref=e942]: "2."
+                  - generic [ref=e945]: "Creá un nuevo proyecto: File → New Project → \"kpi-command\""
+                - generic [ref=e949]:
+                  - generic [ref=e951]: "3."
+                  - generic [ref=e954]: "Vas a ver un chat. Pegá este mensaje exacto (prompt inicial):"
+                - figure [ref=e957]:
+                  - generic [ref=e962]: "> Cargando el código de JavaScript…"
+                - heading "Si usás Claude Code desde terminal:" [level=3] [ref=e967]
+                - generic [ref=e971]:
+                  - generic [ref=e973]: "1."
+                  - generic [ref=e976]: Abrí la terminal
+                - generic [ref=e980]:
+                  - generic [ref=e982]: "2."
+                  - generic [ref=e985]: "Creá la carpeta y entrá:"
+                - figure [ref=e988]:
+                  - generic [ref=e993]: "> Cargando el código de JavaScript…"
+                - generic [ref=e997]:
+                  - generic [ref=e999]: "1."
+                  - generic [ref=e1002]: "Iniciá Claude:"
+                - figure [ref=e1005]:
+                  - generic [ref=e1010]: "> Cargando el código de JavaScript…"
+                - generic [ref=e1014]:
+                  - generic [ref=e1016]: "1."
+                  - generic [ref=e1019]: Pegá el mismo mensaje de arriba con el PRD.
+                - separator [disabled] [ref=e1022]
+                - heading "📜 PASO 5 — El PRD completo" [level=2] [ref=e1027]:
+                  - img "📜" [ref=e1028]
+                  - text: PASO 5 — El PRD completo
+                - generic [ref=e1034]: Este es el corazón de la guía. Copiá TODO lo que va desde el próximo título hasta el separador final ("Autor del documento…") y pegaselo a Claude como continuación del prompt del Paso 4.
+                - blockquote [ref=e1036]:
+                  - generic [ref=e1038]:
+                    - img "💡" [ref=e1039]
+                    - text: "Tip para copiar rápido: hacé click antes del título \"PRD — KPI Command Center\" y arrastrá hasta el final (o usá Shift+click). Copiás con Ctrl+C / Cmd+C."
+                - separator [disabled] [ref=e1042]
+                - heading "PRD — KPI Command Center (single-tenant)" [level=2] [ref=e1047]
+                - generic [ref=e1053]: Sistema web para la gestión operativa y financiera de una empresa de venta high-ticket (coaches, infoproductores, servicios 1-a-1 con closers). Reemplaza un Google Sheets con pestañas múltiples por una app que mide KPIs diarios, organiza reuniones y pagos, y muestra rankings del equipo.
+                - generic [ref=e1059]: Este documento describe una instalación para una sola empresa (no SaaS). Si ya existe una versión multi-tenant, acá se simplifica todo a un solo espacio.
+                - heading "1. Problema y objetivo" [level=3] [ref=e1064]
+                - generic [ref=e1070]: Problema. Los equipos de venta high-ticket dependen de planillas con ~60 métricas por mes, fórmulas frágiles y sin vista histórica. Cargar data toma 10 min/día por persona; la proyección de cierre de mes no se actualiza sola; los pagos con reserva se olvidan; no hay visibilidad sobre performance por closer ni atribución por canal.
+                - generic [ref=e1076]: "Objetivo. Sistema único donde:"
+                - generic [ref=e1080]:
+                  - generic [ref=e1082]: •
+                  - generic [ref=e1085]: El equipo cargue KPIs en menos de 60 segundos (tap mode para contadores, form mode para montos).
+                - generic [ref=e1089]:
+                  - generic [ref=e1091]: •
+                  - generic [ref=e1094]: Owner vea rankings, LTV, cohortes, actividad del equipo y salud financiera.
+                - generic [ref=e1098]:
+                  - generic [ref=e1100]: •
+                  - generic [ref=e1103]: Cada reunión agendada se resuelve con un checklist que auto-escribe show-ups, sales y cash collected, más pagos pendientes si hubo reserva.
+                - generic [ref=e1107]:
+                  - generic [ref=e1109]: •
+                  - generic [ref=e1112]: Integración con Calendly (opcional) para que las reuniones entren solas.
+                - generic [ref=e1118]: Métrica de éxito. <60 seg para carga diaria por rol · dashboards en tiempo real · cero doble-carga entre reuniones y KPIs.
+                - heading "2. Usuarios y roles" [level=3] [ref=e1123]
+                - generic [ref=e1129]: Multi-usuario (un solo espacio compartido). No hay multi-empresa.
+                - table [ref=e1140]:
+                  - rowgroup [ref=e1141]:
+                    - row "Rol Qué ve / puede hacer" [disabled] [ref=e1142]:
+                      - columnheader "Rol" [disabled] [ref=e1143]:
+                        - generic [ref=e1145]: Rol
+                      - columnheader "Qué ve / puede hacer" [disabled] [ref=e1146]:
+                        - generic [ref=e1148]: Qué ve / puede hacer
+                    - row "Owner Todo. Único rol con can_edit_roles por default." [disabled] [ref=e1149]:
+                      - cell "Owner" [ref=e1150]:
+                        - generic [ref=e1152]: Owner
+                      - cell "Todo. Único rol con can_edit_roles por default." [ref=e1153]:
+                        - generic [ref=e1155]: Todo. Único rol con can_edit_roles por default.
+                    - row "Closer Sus reuniones, sus contactos, su dashboard. Edita categorías Ventas y Cash." [disabled] [ref=e1156]:
+                      - cell "Closer" [ref=e1157]:
+                        - generic [ref=e1159]: Closer
+                      - cell "Sus reuniones, sus contactos, su dashboard. Edita categorías Ventas y Cash." [ref=e1160]:
+                        - generic [ref=e1162]: Sus reuniones, sus contactos, su dashboard. Edita categorías Ventas y Cash.
+                    - row "Setter Sus reuniones agendadas, los contactos que agendó. Edita Marketing y Ventas." [disabled] [ref=e1163]:
+                      - cell "Setter" [ref=e1164]:
+                        - generic [ref=e1166]: Setter
+                      - cell "Sus reuniones agendadas, los contactos que agendó. Edita Marketing y Ventas." [ref=e1167]:
+                        - generic [ref=e1169]: Sus reuniones agendadas, los contactos que agendó. Edita Marketing y Ventas.
+                    - row "Marketing Investment, ROI, CPB, CPQBSU, ROAS. Edita Marketing." [disabled] [ref=e1170]:
+                      - cell "Marketing" [ref=e1171]:
+                        - generic [ref=e1173]: Marketing
+                      - cell "Investment, ROI, CPB, CPQBSU, ROAS. Edita Marketing." [ref=e1174]:
+                        - generic [ref=e1176]: Investment, ROI, CPB, CPQBSU, ROAS. Edita Marketing.
+                    - row "Operativo Igual que owner en visualización + carga de todas las categorías." [disabled] [ref=e1177]:
+                      - cell "Operativo" [ref=e1178]:
+                        - generic [ref=e1180]: Operativo
+                      - cell "Igual que owner en visualización + carga de todas las categorías." [ref=e1181]:
+                        - generic [ref=e1183]: Igual que owner en visualización + carga de todas las categorías.
+                    - row "Viewer Solo lectura del dashboard." [disabled] [ref=e1184]:
+                      - cell "Viewer" [ref=e1185]:
+                        - generic [ref=e1187]: Viewer
+                      - cell "Solo lectura del dashboard." [ref=e1188]:
+                        - generic [ref=e1190]: Solo lectura del dashboard.
+                    - row "Custom Owner puede crear roles con combinación libre de los siguientes permisos." [disabled] [ref=e1191]:
+                      - cell "Custom" [ref=e1192]:
+                        - generic [ref=e1194]: Custom
+                      - cell "Owner puede crear roles con combinación libre de los siguientes permisos." [ref=e1195]:
+                        - generic [ref=e1197]: Owner puede crear roles con combinación libre de los siguientes permisos.
+                - generic [ref=e1203]: "Permissions (JSON por rol):"
+                - figure [ref=e1206]:
+                  - generic [ref=e1211]: "> Cargando el código de TypeScript…"
+                - generic [ref=e1217]: "Flujo de onboarding. La primera vez que entra el Owner, un wizard obligatorio de 5 pasos captura:"
+                - generic [ref=e1221]:
+                  - generic [ref=e1223]: "1."
+                  - generic [ref=e1226]: Canales de captación (orgánico / paga / ambos)
+                - generic [ref=e1230]:
+                  - generic [ref=e1232]: "2."
+                  - generic [ref=e1235]: CRM de reuniones (Calendly / GHL / Google Calendar / ninguno)
+                - generic [ref=e1239]:
+                  - generic [ref=e1241]: "3."
+                  - generic [ref=e1244]: ¿Hay closers? (sí / yo vendo)
+                - generic [ref=e1248]:
+                  - generic [ref=e1250]: "4."
+                  - generic [ref=e1253]: ¿Hay setters? Si sí, scope (qualifier_only / outbound_also)
+                - generic [ref=e1257]:
+                  - generic [ref=e1259]: "5."
+                  - generic [ref=e1262]: ¿Stripe? (sí / después / no)
+                - generic [ref=e1268]: Las respuestas se guardan como settings y condicionan qué métricas aparecen (ej. si no hay paga, se ocultan investment_vsl, cpb, roi, etc.).
+                - heading "3. Features por módulo" [level=3] [ref=e1273]
+                - heading "3.1 Dashboard (/)" [level=4] [ref=e1278]
+                - generic [ref=e1284]: Lienzo drag-and-drop con widgets personalizables (estilo Hyros). Cada usuario tiene sus propios dashboards.
+                - generic [ref=e1290]: "Propiedades del canvas:"
+                - generic [ref=e1294]:
+                  - generic [ref=e1296]: •
+                  - generic [ref=e1299]: Grid 12 columnas × N filas
+                - generic [ref=e1303]:
+                  - generic [ref=e1305]: •
+                  - generic [ref=e1308]: react-grid-layout (subpath /legacy para WidthProvider HOC)
+                - generic [ref=e1312]:
+                  - generic [ref=e1314]: •
+                  - generic [ref=e1317]: Modo Editar activa drag + resize; modo Ver solo muestra
+                - generic [ref=e1321]:
+                  - generic [ref=e1323]: •
+                  - generic [ref=e1326]: Cada usuario puede tener múltiples dashboards (p.ej. General, Marketing, Ventas, Financiero). Uno marcado como is_default.
+                - generic [ref=e1330]:
+                  - generic [ref=e1332]: •
+                  - generic [ref=e1335]: "Date range compartido para todos los widgets del dashboard: Hoy / Semana / Mes / Últimos 7d / 30d / 90d / Rango custom."
+                - generic [ref=e1341]: "Tipos de widget:"
+                - table [ref=e1352]:
+                  - rowgroup [ref=e1353]:
+                    - row "Tipo Métricas Extra" [disabled] [ref=e1354]:
+                      - columnheader "Tipo" [disabled] [ref=e1355]:
+                        - generic [ref=e1357]: Tipo
+                      - columnheader "Métricas" [disabled] [ref=e1358]:
+                        - generic [ref=e1360]: Métricas
+                      - columnheader "Extra" [disabled] [ref=e1361]:
+                        - generic [ref=e1363]: Extra
+                    - row "big_number 1 Delta vs período anterior, texto grande con glow" [disabled] [ref=e1364]:
+                      - cell "big_number" [ref=e1365]:
+                        - generic [ref=e1367]: big_number
+                      - cell "1" [ref=e1368]:
+                        - generic [ref=e1370]: "1"
+                      - cell "Delta vs período anterior, texto grande con glow" [ref=e1371]:
+                        - generic [ref=e1373]: Delta vs período anterior, texto grande con glow
+                    - row "sparkline 1 Trend mini + headline agregado" [disabled] [ref=e1374]:
+                      - cell "sparkline" [ref=e1375]:
+                        - generic [ref=e1377]: sparkline
+                      - cell "1" [ref=e1378]:
+                        - generic [ref=e1380]: "1"
+                      - cell "Trend mini + headline agregado" [ref=e1381]:
+                        - generic [ref=e1383]: Trend mini + headline agregado
+                    - row "bar 1 Serie temporal, ghost max bar (Hyros-style)" [disabled] [ref=e1384]:
+                      - cell "bar" [ref=e1385]:
+                        - generic [ref=e1387]: bar
+                      - cell "1" [ref=e1388]:
+                        - generic [ref=e1390]: "1"
+                      - cell "Serie temporal, ghost max bar (Hyros-style)" [ref=e1391]:
+                        - generic [ref=e1393]: Serie temporal, ghost max bar (Hyros-style)
+                    - row "line 1+ Multi-metric, opcionalmente con leyenda" [disabled] [ref=e1394]:
+                      - cell "line" [ref=e1395]:
+                        - generic [ref=e1397]: line
+                      - cell "1+" [ref=e1398]:
+                        - generic [ref=e1400]: 1+
+                      - cell "Multi-metric, opcionalmente con leyenda" [ref=e1401]:
+                        - generic [ref=e1403]: Multi-metric, opcionalmente con leyenda
+                    - row "area 1+ Stack opcional" [disabled] [ref=e1404]:
+                      - cell "area" [ref=e1405]:
+                        - generic [ref=e1407]: area
+                      - cell "1+" [ref=e1408]:
+                        - generic [ref=e1410]: 1+
+                      - cell "Stack opcional" [ref=e1411]:
+                        - generic [ref=e1413]: Stack opcional
+                    - row "pie N Composición %" [disabled] [ref=e1414]:
+                      - cell "pie" [ref=e1415]:
+                        - generic [ref=e1417]: pie
+                      - cell "N" [ref=e1418]:
+                        - generic [ref=e1420]: "N"
+                      - cell "Composición %" [ref=e1421]:
+                        - generic [ref=e1423]: Composición %
+                    - row "progress 1 vs target mensual, color por % cumplimiento" [disabled] [ref=e1424]:
+                      - cell "progress" [ref=e1425]:
+                        - generic [ref=e1427]: progress
+                      - cell "1" [ref=e1428]:
+                        - generic [ref=e1430]: "1"
+                      - cell "vs target mensual, color por % cumplimiento" [ref=e1431]:
+                        - generic [ref=e1433]: vs target mensual, color por % cumplimiento
+                    - row "metric_stack N Grid de valores pequeños (tipo \"Total Stats\" de Hyros)" [disabled] [ref=e1434]:
+                      - cell "metric_stack" [ref=e1435]:
+                        - generic [ref=e1437]: metric_stack
+                      - cell "N" [ref=e1438]:
+                        - generic [ref=e1440]: "N"
+                      - cell "Grid de valores pequeños (tipo \"Total Stats\" de Hyros)" [ref=e1441]:
+                        - generic [ref=e1443]: Grid de valores pequeños (tipo "Total Stats" de Hyros)
+          - status [ref=e1446]:
+            - generic [ref=e1447]: Cargando…
+            - img [ref=e1448]
+  - status [ref=e1452]
+  - alert [ref=e1453]
