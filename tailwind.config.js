@@ -7,18 +7,27 @@ export default {
     theme: {
         extend: {
             colors: {
-                moss: {
-                    green: "#2E4036",
+                // Identidad índigo v0 (Padrón IA) — 2026-07-14
+                ink: "#1B1E3A",        // índigo profundo: brand dark, fondos oscuros, texto fuerte
+                indigo: {
+                    deep: "#1B1E3A",
+                    soft: "#252A52",   // partner de degradado
                 },
-                clay: "#2563EB",
-                cream: "#F2F0E9",
-                coal: "#1A1A1A",
+                lavender: "#8F9BFF",   // acento sobre fondo OSCURO + decoración (sobre claro falla contraste: usar iris)
+                iris: "#5A67E8",       // acento de TEXTO sobre fondo claro (4.18:1 sobre bone, pasa WCAG texto grande)
+                pearl: "#C9A86A",      // acento secundario (cuentagotas)
+                bone: "#F2F3FB",       // blanco roto: fondos claros
+                // Aliases legacy → mapeados a índigo para reskin sin tocar componentes:
+                clay: "#8F9BFF",       // era azul #2563EB → ahora lavanda (selection, scrollbar, acentos)
+                cream: "#F2F3FB",      // era crema → ahora blanco roto
+                coal: "#1B1E3A",       // era negro → ahora índigo
+                moss: { green: "#1B1E3A" },
             },
             fontFamily: {
-                sans: ["'Plus Jakarta Sans'", "sans-serif"],
-                outfit: ["Outfit", "sans-serif"],
-                serif: ["'Cormorant Garamond'", "serif"],
-                mono: ["'Space Mono'", "monospace"], // Using Space Mono for telemetry as it feels premium
+                sans: ["Inter", "system-ui", "sans-serif"],
+                outfit: ["Inter", "sans-serif"],   // alias: titulares usan Inter (fuera Outfit)
+                serif: ["Inter", "sans-serif"],     // alias: fuera Cormorant
+                mono: ["'Space Mono'", "monospace"], // se conserva para cifras/telemetría (ángulo "sistemas reales con números")
             },
             borderRadius: {
                 '3xl': '2rem',

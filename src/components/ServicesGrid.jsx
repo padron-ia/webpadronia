@@ -1,27 +1,27 @@
 const services = [
     {
-        title: "Dejas de perder clientes por tardar en contestar",
-        description: "La IA responde, filtra quién va en serio y te lo pasa listo. Tú solo cierras."
+        title: "Recuperas las horas que se van en lo repetitivo",
+        description: "Cuadrar, copiar datos de un sitio a otro, contestar siempre lo mismo. Todo eso pasa a hacerse solo."
     },
     {
-        title: "Cierras más sin perseguir a nadie",
-        description: "Seguimientos que parecen tuyos, en el momento justo. Sin que tú muevas un dedo."
+        title: "Dejas de perder cosas por hacerlas a mano",
+        description: "Menos descuadres, menos pedidos parados, menos «se me pasó». El sistema no se despista."
     },
     {
-        title: "Tus clientes no se van sin avisar",
-        description: "Sabemos quién está a punto de irse. Una llamada a tiempo vale más que diez anuncios."
+        title: "Te enteras de lo que importa sin ir a mirar",
+        description: "Un aviso al móvil cuando algo necesita tu atención. Verde si todo va bien, rojo si hay que mirar algo."
     },
     {
-        title: "Tu equipo deja de hacer trabajo de robot",
-        description: "Lo que hoy lleva 3 horas, la IA lo hace en segundos. Tu gente se dedica a vender."
+        title: "Tu equipo hace trabajo de persona, no de robot",
+        description: "Lo aburrido lo hace la máquina. Tu gente se dedica a lo que de verdad requiere cabeza: vender, atender, cuidar."
     },
     {
-        title: "Tu equipo rinde el doble",
-        description: "Las horas que hoy pierden en tareas mecánicas las dedican a lo que de verdad genera dinero."
+        title: "Creces sin ampliar estructura",
+        description: "Más volumen con la misma plantilla. La operativa aguanta porque ya no depende de manos disponibles."
     },
     {
-        title: "Facturas más sin echar más horas",
-        description: "Más leads atendidos, menos fugas. Resultado: más dinero, misma jornada."
+        title: "Todo con sus números a la vista",
+        description: "Medimos lo que ahorras. Si un sistema no da resultado, se ajusta. Sin humo y sin cifras infladas."
     }
 ];
 
@@ -32,7 +32,7 @@ function ServicesGrid() {
             <div className="relative z-10 mx-auto w-full max-w-6xl">
                 <div className="max-w-3xl">
                     <p data-reveal className="fade-in-section text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">Resultados</p>
-                    <h2 data-reveal className="fade-in-section mt-4 text-3xl text-slate-900 sm:text-4xl lg:text-5xl">Esto es lo que cambia en tu negocio desde el primer mes</h2>
+                    <h2 data-reveal className="fade-in-section mt-4 text-3xl text-ink sm:text-4xl lg:text-5xl">Lo que cambia cuando la parte repetitiva se automatiza</h2>
                 </div>
 
                 <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -42,7 +42,7 @@ function ServicesGrid() {
                             data-reveal
                             className="fade-in-section glow-card rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-[0_8px_25px_rgba(15,23,42,0.05)]"
                         >
-                            <h3 className="text-xl text-slate-900">{service.title}</h3>
+                            <h3 className="text-xl text-ink">{service.title}</h3>
                             <p className="mt-3 leading-relaxed text-slate-600">{service.description}</p>
                         </article>
                     ))}
