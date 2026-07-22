@@ -10,6 +10,7 @@ import PortalIndexPage from "./pages/PortalIndexPage";
 import PortalLoginPage from "./pages/PortalLoginPage";
 import PortalSetPasswordPage from "./pages/PortalSetPasswordPage";
 import PresenterPage from "./pages/PresenterPage";
+import CentroPersonalPage from "./pages/CentroPersonalPage";
 import LegalPage from "./pages/LegalPage";
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
             <Route path="/portal/admin/*" element={<PortalAdminPage />} />
             <Route path="/portal/cliente/*" element={<PortalClientPage />} />
             <Route path="/portal" element={<PortalIndexPage />} />
+            <Route path="/centro" element={<CentroPersonalPage />} />
             <Route path="/legal" element={<LegalPage />} />
             <Route path="/privacidad" element={<LegalPage />} />
             <Route path="/cookies" element={<LegalPage />} />
