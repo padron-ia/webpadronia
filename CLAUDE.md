@@ -31,9 +31,21 @@ Cada entregable vive en la tabla `public.deliverables` y se renderiza según su 
 ### 2. Storage bucket
 
 - Bucket único: `client-files` (privado).
-- Convención de path: `projects/<project_id>/<filename>`.
+- **Convención de path: `<company_id>/<timestamp>-<slug-fichero>`.** ⚠️ La primera carpeta **tiene
+  que ser el `company_id`** — no es una preferencia de orden, es lo que exige la política RLS del
+  bucket:
+  ```sql
+  ((storage.foldername(name))[1])::uuid IN (SELECT user_company_ids())
+  ```
+  Si la primera carpeta no es un UUID (p. ej. `projects/…`), el cast revienta y **el cliente nunca
+  puede descargar el fichero**. Corregido el 24-jul-2026: este documento decía justo lo contrario y
+  provocó 4 ficheros inalcanzables, hoy archivados en `_archivo-2026-04/`.
+- Punto único de subida: `uploadClientFile()` en [src/lib/documentsService.js](src/lib/documentsService.js).
+  **No construyas paths a mano en otro sitio**; si necesitas subir algo, usa esa función.
 - Registro en `public.documents` con `file_url` = path relativo (no URL completa).
 - `client_visible=false` para material interno, `true` para material que ve el cliente desde el portal.
+- Prefijos reservados que ningún cliente puede alcanzar (no son UUID, sólo `is_admin()`):
+  `_archivo-<periodo>/` para material retirado de circulación.
 
 ### 3. Multi-cliente (single-tenant por company)
 
@@ -60,5 +72,8 @@ Cada entregable vive en la tabla `public.deliverables` y se renderiza según su 
 
 - Usar `content_type='markdown'` en deliverables (no soportado, usar `internal` con componente o subir el `.md` como documento).
 - Olvidar el `npm run build` tras editar `registry.js`.
-- Confundir rutas: documentos van a `projects/<project_id>/...` siempre, no a `company/<company_id>/...`.
+- ⚠️ **Confundir rutas de Storage**: los documentos van a **`<company_id>/…`**, NUNCA a
+  `projects/<project_id>/…`. Lo exige la política RLS del bucket (ver §2). Hasta el 24-jul-2026
+  este documento afirmaba lo contrario y era falso.
 - Subir archivos a Storage sin crear el row correspondiente en `public.documents` (no aparece en el CRM).
+- Marcar `client_visible=true` sin pasar por la compuerta de publicación (ver §6).
