@@ -1,0 +1,179 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  titulo: string;
+  descripcion: string;
+  ruta?: string;
+}
+
+const { titulo, descripcion, ruta = "/" } = Astro.props;
+const canonica = new URL(ruta, Astro.site ?? "https://padron-ia.es").href;
+
+// Datos estructurados: lo que hace que Google entienda quién eres, no solo qué pone.
+const negocio = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  name: "Padrón IA",
+  url: "https://padron-ia.es",
+  founder: { "@type": "Person", name: "Jesús Martínez Padrón" },
+  description:
+    "Automatización de procesos repetitivos para pymes: tiendas online, escuelas de formación y despachos profesionales.",
+  areaServed: "ES",
+  availableLanguage: "es",
+  telephone: "+34664401328",
+  address: { "@type": "PostalAddress", addressLocality: "Hinojares", addressRegion: "Jaén", addressCountry: "ES" }
+};
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{titulo}</title>
+    <meta name="description" content={descripcion} />
+    <link rel="canonical" href={canonica} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Padrón IA" />
+    <meta property="og:title" content={titulo} />
+    <meta property="og:description" content={descripcion} />
+    <meta property="og:url" content={canonica} />
+    <meta property="og:locale" content="es_ES" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Mono:wght@400;700&display=swap"
+    />
+
+    <script type="application/ld+json" set:html={JSON.stringify(negocio)} />
+
+    <!-- Analítica sin cookies: no pide consentimiento y no guarda datos personales. -->
+    <script
+      defer
+      src="https://monitorizacion-umami.pqtiji.easypanel.host/script.js"
+      data-website-id="a7c240cd-f901-4a2f-a636-a9821e28fb21"></script>
+  </head>
+
+  <body>
+    <a class="solo-lectores" href="#contenido">Saltar al contenido</a>
+
+    <header class="cabecera">
+      <div class="contenedor cabecera__caja">
+        <a href="/" class="logotipo" aria-label="Padrón IA, inicio">
+          PADRÓN<span>·IA</span>
+        </a>
+        <a href="#hablamos" class="boton boton--discreto cabecera__cta">Hablamos</a>
+      </div>
+    </header>
+
+    <main id="contenido">
+      <slot />
+    </main>
+
+    <footer class="pie">
+      <div class="contenedor pie__caja">
+        <div>
+          <p class="logotipo logotipo--pie">PADRÓN<span>·IA</span></p>
+          <p class="pie__frase">
+            Las máquinas están para lo repetitivo. Las personas, para trabajo de persona.
+          </p>
+        </div>
+        <nav class="pie__enlaces" aria-label="Enlaces legales y de acceso">
+          <a href="/legal">Aviso legal</a>
+          <a href="/privacidad">Privacidad</a>
+          <a href="/cookies">Cookies</a>
+          <a href="/portal/login">Portal de cliente</a>
+        </nav>
+      </div>
+      <div class="contenedor pie__firma">
+        <p>© 2026 Jesús Martínez Padrón</p>
+        <p><a href="https://wa.me/34664401328">+34 664 40 13 28</a></p>
+      </div>
+    </footer>
+
+    <style>
+      .cabecera {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        background: color-mix(in srgb, var(--bone) 88%, transparent);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--linea);
+      }
+
+      .cabecera__caja {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding-block: 0.9rem;
+      }
+
+      .logotipo {
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        font-size: 1.05rem;
+        text-decoration: none;
+        color: var(--ink);
+      }
+
+      .logotipo span { color: var(--iris); }
+
+      .cabecera__cta { padding: 0.6rem 1.1rem; }
+
+      .pie {
+        background: var(--ink);
+        color: var(--sobre-oscuro);
+        padding-block: clamp(2.5rem, 5vw, 4rem) 2rem;
+      }
+
+      .pie__caja {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        justify-content: space-between;
+        align-items: start;
+      }
+
+      .logotipo--pie { color: var(--bone); margin-bottom: 0.6rem; }
+      .logotipo--pie span { color: var(--lavender); }
+
+      .pie__frase {
+        color: var(--sobre-oscuro-suave);
+        max-width: 32ch;
+        font-size: var(--t-s);
+      }
+
+      .pie__enlaces {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        font-size: var(--t-s);
+      }
+
+      .pie__enlaces a { color: var(--sobre-oscuro-suave); text-decoration: none; }
+      .pie__enlaces a:hover { color: var(--bone); text-decoration: underline; }
+
+      .pie__firma {
+        margin-top: 2.5rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid var(--ink-line);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1.5rem;
+        justify-content: space-between;
+        font-size: var(--t-xs);
+        color: var(--sobre-oscuro-suave);
+        font-family: var(--mono);
+      }
+
+      .pie__firma a { color: var(--sobre-oscuro-suave); }
+    </style>
+  </body>
+</html>

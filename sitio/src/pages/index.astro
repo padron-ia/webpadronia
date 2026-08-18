@@ -1,0 +1,432 @@
+---
+import Base from "../layouts/Base.astro";
+
+const casos = [
+  {
+    sector: "Tienda online",
+    titular: "El almacén se cuenta solo cada noche",
+    problema:
+      "Una persona cuadraba el inventario a mano cada semana —lo que decía la web contra lo que había en las estanterías— y aun así se colaban descuadres.",
+    montado:
+      "Un sistema que cuenta y compara cada noche, y avisa al equipo en el móvil si algo no encaja, antes de que abra la tienda.",
+    hechos: ["Recuento semanal a mano: 0", "Aviso antes de abrir", "Funcionando cada noche"]
+  },
+  {
+    sector: "Escuela online",
+    titular: "Las renovaciones dejan de perseguirse",
+    problema:
+      "Altas, renovaciones y seguimiento de cada alumna se llevaban a mano. Se escapaba quién no entraba y a quién le tocaba renovar.",
+    montado:
+      "Renovaciones y avisos automáticos, con cada paso trazado. El equipo habla con quien de verdad lo necesita, no con todos.",
+    hechos: ["Seguimiento por alumna", "Avisos diarios al equipo", "Nada se cae entre grietas"]
+  },
+  {
+    sector: "Despacho profesional",
+    titular: "Todo el despacho en un sitio",
+    problema:
+      "Clientes, casos y documentación repartidos entre hojas de cálculo, correos y cabezas. Buscar algo costaba media mañana.",
+    montado:
+      "Un CRM a medida que centraliza clientes, casos y documentos, con aviso de lo que vence antes de que venza.",
+    hechos: ["Una sola fuente", "Vencimientos avisados", "Menos trabajo de secretaría"]
+  }
+];
+
+const pasos = [
+  { n: "01", t: "Me cuentas qué te come el tiempo", d: "Quince minutos. Sin presupuesto de por medio." },
+  { n: "02", t: "Miro qué se hace a mano y no debería", d: "Primero el problema, luego la herramienta. Nunca al revés." },
+  { n: "03", t: "Te digo qué automatizar primero", d: "Lo que más te duele y antes se nota. Con lo que cuesta y en cuánto tiempo." },
+  { n: "04", t: "Lo monto sin parar tu negocio", d: "Se estrena por partes, no de golpe." },
+  { n: "05", t: "Medimos", d: "Si no mejora, se ajusta. Con sus números y sus fallos a la vista." }
+];
+
+const preguntas = [
+  {
+    q: "No entiendo de tecnología. ¿Esto es para mí?",
+    a: "Sí. Si sabes usar WhatsApp, sabes usar esto. Yo lo monto y lo mantengo; tú ves los resultados. Cuando algo se rompe, lo arreglo yo."
+  },
+  {
+    q: "¿Cuánto cuesta?",
+    a: "Depende de lo que haya que montar: no es lo mismo un aviso nocturno que reorganizar la operación de un negocio entero. En la primera conversación te doy un número, no un rango vago."
+  },
+  {
+    q: "¿Y si resulta que no me hace falta?",
+    a: "Te lo digo. No todas las mejoras de un negocio te las va a dar la IA, y prefiero decírtelo antes que cobrarte por descubrirlo."
+  },
+  {
+    q: "Ya uso mi software de gestión. ¿Se integra?",
+    a: "Trabajo con lo que ya tengas: tu tienda, tu CRM, tus hojas, tu WhatsApp. No se tira lo que funciona, se conecta."
+  },
+  {
+    q: "¿Qué pasa con los datos de mis clientes?",
+    a: "Son tuyos. Servidores en Europa, nada se comparte con terceros y, si algún día dejamos de trabajar juntos, te llevas todo."
+  }
+];
+---
+
+<Base
+  titulo="Padrón IA · automatizo lo repetitivo de tu negocio"
+  descripcion="Monto sistemas que hacen cada noche la parte aburrida de tu negocio —inventario, renovaciones, avisos— para que tú y tu equipo hagáis trabajo de persona. Sistemas reales, con sus números a la vista."
+>
+  <!-- ── Hero ─────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="contenedor">
+      <p class="rotulo">Para quien está harto de hacer trabajo de máquina</p>
+      <h1>
+        Las máquinas están para lo repetitivo.<br />
+        <span class="hero__acento">Las personas, para trabajo de persona.</span>
+      </h1>
+      <p class="parrafo hero__sub">
+        Monto sistemas que hacen la parte aburrida de tu negocio cada noche, sin quejarse y sin
+        equivocarse. Para que tú y tu equipo os dediquéis a lo que sí requiere cabeza.
+      </p>
+      <div class="hero__acciones">
+        <a class="boton" href="#hablamos">Cuéntame qué te come el tiempo</a>
+        <p class="hero__nota">15 minutos. Sin presupuesto de por medio.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Prueba ───────────────────────────────────────── -->
+  <section class="seccion seccion--oscura franja">
+    <div class="contenedor franja__caja">
+      <p class="franja__frase">
+        Ahora mismo, mientras lees esto, hay sistemas míos contando un almacén, avisando de una
+        renovación y ordenando el trabajo de un despacho. <strong>No son demos.</strong>
+      </p>
+      <dl class="franja__cifras">
+        <div>
+          <dt>Sistemas en producción</dt>
+          <dd class="cifra">8+</dd>
+        </div>
+        <div>
+          <dt>Sectores</dt>
+          <dd class="cifra">3</dd>
+        </div>
+        <div>
+          <dt>Funcionando</dt>
+          <dd class="franja__texto">cada noche</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ── Casos ────────────────────────────────────────── -->
+  <section class="seccion" id="casos">
+    <div class="contenedor">
+      <p class="rotulo">Lo que hay montado</p>
+      <h2 class="titulo-seccion">Tres negocios reales, sin nombres</h2>
+      <p class="parrafo">
+        Cada negocio es de quien es, así que no verás logos. Sí verás qué pasaba antes, qué monté y
+        qué cambió.
+      </p>
+
+      <div class="casos">
+        {casos.map((c) => (
+          <article class="caso">
+            <p class="rotulo">{c.sector}</p>
+            <h3>{c.titular}</h3>
+            <p class="caso__linea"><span>Antes</span> {c.problema}</p>
+            <p class="caso__linea"><span>Monté</span> {c.montado}</p>
+            <ul class="caso__hechos">
+              {c.hechos.map((h) => <li class="cifra">{h}</li>)}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Método ───────────────────────────────────────── -->
+  <section class="seccion seccion--oscura" id="como">
+    <div class="contenedor">
+      <p class="rotulo">Cómo trabajo</p>
+      <h2 class="titulo-seccion">Primero el problema, luego la herramienta</h2>
+      <ol class="pasos">
+        {pasos.map((p) => (
+          <li class="paso">
+            <span class="paso__n cifra">{p.n}</span>
+            <div>
+              <h3>{p.t}</h3>
+              <p class="parrafo">{p.d}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ── Quién ────────────────────────────────────────── -->
+  <section class="seccion" id="quien">
+    <div class="contenedor quien">
+      <div>
+        <p class="rotulo">Quién está detrás</p>
+        <h2 class="titulo-seccion">Jesús Martínez Padrón</h2>
+        <p class="parrafo">
+          No tengo una agencia detrás: tengo negocios funcionando. Opero cada día la infraestructura
+          de una tienda online con cientos de pedidos, de una escuela de formación con cientos de
+          alumnas y de despachos profesionales. Lo que te monto es lo mismo que mantengo yo.
+        </p>
+        <p class="parrafo">
+          Por eso no te voy a prometer que la IA te cambia la vida en 24 horas. La IA es un
+          amplificador: si tu operación es un caos, tendrás el caos más rápido y más caro.
+        </p>
+      </div>
+      <aside class="tarjeta-cita">
+        <p>
+          «No todas las mejoras de tu negocio te las va a dar la IA. Sin saber cuál es tu problema,
+          no puedes pedirle a nadie que te ayude a buscar una solución.»
+        </p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ── Preguntas ────────────────────────────────────── -->
+  <section class="seccion preguntas-seccion" id="preguntas">
+    <div class="contenedor">
+      <p class="rotulo">Lo que me preguntan siempre</p>
+      <h2 class="titulo-seccion">Antes de que lo preguntes</h2>
+      <div class="preguntas">
+        {preguntas.map((p) => (
+          <details class="pregunta">
+            <summary>{p.q}</summary>
+            <p class="parrafo">{p.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Cierre ───────────────────────────────────────── -->
+  <section class="seccion seccion--oscura cierre" id="hablamos">
+    <div class="contenedor cierre__caja">
+      <p class="rotulo">Empieza por aquí</p>
+      <h2 class="cierre__titulo">
+        Cuéntame qué parte de tu negocio se hace a mano y debería hacerse sola.
+      </h2>
+      <p class="parrafo">
+        Me lo cuentas en quince minutos y te digo si se puede automatizar, qué tocaría primero y
+        cuánto cuesta. Si no encaja, te lo digo y no te cobro por averiguarlo.
+      </p>
+      <div class="cierre__acciones">
+        <a
+          class="boton"
+          href="https://wa.me/34664401328?text=Hola%20Jes%C3%BAs%2C%20quiero%20contarte%20qu%C3%A9%20parte%20de%20mi%20negocio%20se%20hace%20a%20mano."
+          >Escríbeme por WhatsApp</a
+        >
+        <a class="enlace-acento" href="mailto:jesusmartinezpadron@gmail.com">o por correo</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ── Hero ── */
+  .hero {
+    padding-block: clamp(3.5rem, 2rem + 9vw, 8rem) clamp(3rem, 2rem + 5vw, 6rem);
+    background:
+      radial-gradient(80rem 40rem at 15% -10%, rgba(90, 103, 232, 0.12), transparent 60%),
+      var(--bone);
+  }
+
+  .hero h1 { margin-block: 1.1rem 1.5rem; max-width: 20ch; }
+  .hero__acento { color: var(--iris); }
+  .hero__sub { font-size: var(--t-m); }
+
+  .hero__acciones {
+    margin-top: 2.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.9rem 1.4rem;
+  }
+
+  .hero__nota { font-size: var(--t-s); color: var(--texto-tenue); }
+
+  /* ── Franja de prueba ── */
+  .franja { padding-block: clamp(2.5rem, 2rem + 3vw, 4rem); }
+
+  .franja__caja {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 60rem) {
+    .franja__caja { grid-template-columns: 1.4fr 1fr; align-items: center; }
+  }
+
+  .franja__frase {
+    font-size: var(--t-m);
+    color: var(--sobre-oscuro);
+    max-width: 46ch;
+  }
+
+  .franja__frase strong { color: var(--lavender); font-weight: 600; }
+
+  .franja__cifras {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.75rem 2.5rem;
+    margin: 0;
+  }
+
+  .franja__cifras dt {
+    font-size: var(--t-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--sobre-oscuro-suave);
+    margin-bottom: 0.3rem;
+  }
+
+  .franja__cifras dd {
+    margin: 0;
+    font-size: 1.6rem;
+    color: var(--lavender);
+    font-weight: 700;
+  }
+
+  /* El mono es para cifras. Una palabra en mono se lee como error, no como dato. */
+  .franja__texto { font-family: var(--sans); font-size: 1.35rem; }
+
+  /* ── Casos ── */
+  .titulo-seccion { margin-block: 0.9rem 1.1rem; }
+
+  .casos {
+    margin-top: 3rem;
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 52rem) {
+    .casos { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .caso {
+    border: 1px solid var(--linea);
+    border-radius: 18px;
+    padding: 1.75rem 1.6rem;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .caso h3 { margin-block: 0.15rem 0.3rem; }
+
+  .caso__linea {
+    font-size: var(--t-s);
+    color: var(--texto-suave);
+  }
+
+  .caso__linea span {
+    display: block;
+    font-family: var(--mono);
+    font-size: var(--t-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--texto-tenue);
+    margin-bottom: 0.25rem;
+  }
+
+  .caso__hechos {
+    list-style: none;
+    margin: 0.4rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: var(--t-xs);
+    color: var(--iris);
+    border-top: 1px solid var(--linea);
+    padding-top: 0.9rem;
+  }
+
+  /* ── Pasos ── */
+  .pasos {
+    margin: 3rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 1.75rem;
+  }
+
+  @media (min-width: 52rem) {
+    .pasos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.25rem 3rem; }
+  }
+
+  .paso {
+    display: flex;
+    gap: 1.1rem;
+    align-items: start;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--ink-line);
+  }
+
+  .paso__n {
+    color: var(--lavender);
+    font-size: var(--t-s);
+    padding-top: 0.35rem;
+  }
+
+  .paso h3 { color: var(--sobre-oscuro); margin-bottom: 0.35rem; }
+
+  /* ── Quién ── */
+  .quien { display: grid; gap: 2.5rem; }
+
+  @media (min-width: 58rem) {
+    .quien { grid-template-columns: 1.5fr 1fr; align-items: start; }
+  }
+
+  .quien .parrafo + .parrafo { margin-top: 1rem; }
+
+  .tarjeta-cita {
+    background: var(--ink);
+    color: var(--sobre-oscuro);
+    border-radius: 18px;
+    padding: 1.9rem 1.75rem;
+    font-size: var(--t-m);
+    line-height: 1.45;
+    border-left: 4px solid var(--pearl);
+  }
+
+  /* ── Preguntas ── */
+  .preguntas-seccion { background: #fff; }
+
+  .preguntas {
+    margin-top: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    max-width: 52rem;
+  }
+
+  .pregunta { border-bottom: 1px solid var(--linea); }
+
+  .pregunta summary {
+    cursor: pointer;
+    list-style: none;
+    padding-block: 1.15rem;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .pregunta summary::-webkit-details-marker { display: none; }
+
+  .pregunta summary::after {
+    content: "+";
+    font-family: var(--mono);
+    color: var(--iris);
+    font-size: 1.3rem;
+    line-height: 1;
+  }
+
+  .pregunta[open] summary::after { content: "–"; }
+
+  .pregunta > .parrafo { padding-bottom: 1.35rem; font-size: var(--t-s); }
+
+  /* ── Cierre ── */
+  .cierre__caja { display: flex; flex-direction: column; gap: 1.1rem; align-items: start; }
+  .cierre__titulo { max-width: 22ch; }
+  .cierre__acciones { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; margin-top: 1rem; }
+</style>

@@ -1,0 +1,183 @@
+/* ─────────────────────────────────────────────────────────────
+   Identidad Padrón IA · índigo v0
+   Fuente: brand-context/visual/identidad-visual.md (12-jul-2026)
+   Regla dura de contraste: acento sobre claro = iris; sobre índigo = lavanda.
+   La lavanda sobre blanco roto da 2.42:1 y falla WCAG. No usarla ahí.
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+    /* Color */
+    --ink: #1B1E3A;
+    --ink-2: #252A52;
+    --ink-line: #333861;
+    --lavender: #8F9BFF;
+    --iris: #5A67E8;
+    --bone: #F2F3FB;
+    --pearl: #C9A86A;
+
+    /* Neutros con sesgo hacia el índigo: un gris puro se ve sin elegir */
+    --texto: #1B1E3A;
+    --texto-suave: #4A5070;
+    --texto-tenue: #6E7496;
+    --sobre-oscuro: #F2F3FB;
+    --sobre-oscuro-suave: #AEB4D2;
+    --linea: #DCDFEE;
+
+    /* Tipografía */
+    --sans: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "Space Mono", ui-monospace, Consolas, monospace;
+
+    /* Escala tipográfica */
+    --t-xs: 0.75rem;
+    --t-s: 0.875rem;
+    --t-base: 1.0625rem;
+    --t-m: 1.25rem;
+    --t-l: clamp(1.5rem, 1.1rem + 1.8vw, 2.125rem);
+    --t-xl: clamp(2rem, 1.3rem + 3.2vw, 3.25rem);
+    --t-hero: clamp(2.5rem, 1.4rem + 5vw, 4.5rem);
+
+    /* Ritmo vertical */
+    --seccion: clamp(4rem, 3rem + 5vw, 7.5rem);
+    --ancho: 68rem;
+    --ancho-texto: 40rem;
+}
+
+* { box-sizing: border-box; }
+
+html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+body {
+    margin: 0;
+    background: var(--bone);
+    color: var(--texto);
+    font-family: var(--sans);
+    font-size: var(--t-base);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+    margin: 0;
+    font-weight: 800;
+}
+
+h1 { font-size: var(--t-hero); }
+h2 { font-size: var(--t-xl); }
+h3 { font-size: var(--t-m); letter-spacing: -0.01em; font-weight: 700; }
+
+p { margin: 0; }
+a { color: inherit; }
+
+img, video { max-width: 100%; height: auto; display: block; }
+
+:focus-visible {
+    outline: 3px solid var(--iris);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+/* ── Piezas compartidas ─────────────────────────────────── */
+
+.contenedor {
+    width: 100%;
+    max-width: var(--ancho);
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 5vw, 2.5rem);
+}
+
+.seccion { padding-block: var(--seccion); }
+
+.seccion--oscura {
+    background: var(--ink);
+    color: var(--sobre-oscuro);
+}
+
+.rotulo {
+    font-family: var(--mono);
+    font-size: var(--t-xs);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--texto-tenue);
+}
+
+.seccion--oscura .rotulo { color: var(--lavender); }
+
+.parrafo {
+    color: var(--texto-suave);
+    max-width: var(--ancho-texto);
+}
+
+.seccion--oscura .parrafo { color: var(--sobre-oscuro-suave); }
+
+/* Cifra en mono: los números son el activo de la marca */
+.cifra {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+}
+
+/* Botones: el contraste manda. Sobre claro, índigo sólido.
+   Sobre índigo, perla dorada — el único momento de color de la pantalla. */
+.boton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--ink);
+    color: var(--bone);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: var(--t-s);
+    padding: 0.95rem 1.6rem;
+    border-radius: 999px;
+    border: 1px solid var(--ink);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.boton:hover { transform: translateY(-2px); background: var(--ink-2); }
+
+.seccion--oscura .boton {
+    background: var(--pearl);
+    border-color: var(--pearl);
+    color: var(--ink);
+}
+
+.seccion--oscura .boton:hover { background: #D9BC85; border-color: #D9BC85; }
+
+.boton--discreto {
+    background: transparent;
+    color: var(--texto);
+    border-color: var(--linea);
+}
+
+.boton--discreto:hover { background: transparent; border-color: var(--ink); }
+
+.enlace-acento {
+    color: var(--iris);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+}
+
+.seccion--oscura .enlace-acento { color: var(--lavender); }
+
+.solo-lectores {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
