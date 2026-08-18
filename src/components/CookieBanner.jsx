@@ -16,8 +16,6 @@ function CookieBanner() {
     const decline = () => {
         localStorage.setItem("cookie_consent", "declined");
         setVisible(false);
-        // Disable analytics if declined
-        window["ga-disable-GA_MEASUREMENT_ID"] = true;
     };
 
     if (!visible) return null;
@@ -29,7 +27,7 @@ function CookieBanner() {
                     <div className="flex-1">
                         <p className="text-sm font-semibold text-ink">Esta web usa cookies</p>
                         <p className="mt-1 text-xs text-slate-600">
-                            Usamos cookies técnicas (necesarias) y analíticas (Google Analytics, Facebook Pixel) para mejorar tu experiencia.{" "}
+                            Solo usamos cookies técnicas necesarias para que la web funcione. No usamos analítica ni publicidad, y no compartimos nada con terceros.{" "}
                             <a href="/cookies" className="underline text-ink">Más info</a>
                         </p>
                     </div>
