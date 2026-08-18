@@ -1,0 +1,9 @@
+# padron-ia.es
+User-agent: *
+Allow: /
+
+# Zonas privadas: portal de cliente y panel personal.
+Disallow: /portal
+Disallow: /centro
+
+Sitemap: https://padron-ia.es/sitemap.xml
