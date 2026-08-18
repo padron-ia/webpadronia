@@ -1,0 +1,38 @@
+---
+import Vertical from "../components/Vertical.astro";
+
+const bloques = [
+  {
+    t: "Un solo sitio",
+    d: "Clientes, casos y documentos donde deben estar, no repartidos entre tres sitios y una cabeza."
+  },
+  {
+    t: "Lo que vence, avisa",
+    d: "Contratos, plazos y renovaciones saltan antes de la fecha, no el día después."
+  },
+  {
+    t: "La documentación entra sola",
+    d: "Menos correos persiguiendo papeles que el cliente ya mandó a otro sitio."
+  }
+];
+
+const caso = {
+  titular: "Un despacho con los casos repartidos por todas partes",
+  antes:
+    "Clientes y expedientes entre hojas de cálculo, correos y carpetas de escritorio. Buscar algo costaba media mañana y lo que vencía se descubría tarde.",
+  monte:
+    "Un CRM a medida que centraliza clientes, casos y documentación, con aviso de lo que vence antes de que venza."
+};
+---
+
+<Vertical
+  sector="Despachos y gestorías"
+  ruta="/despachos"
+  titulo="Automatización para despachos y gestorías · Padrón IA"
+  descripcion="Clientes, casos y documentación en un solo sitio, con aviso de lo que vence antes de que venza. CRM a medida para despachos profesionales."
+  pregunta="¿Cuánto tarda tu equipo en encontrar el expediente de un cliente?"
+  preguntaAcento="¿Y qué pasa con lo que vence la semana que viene?"
+  entradilla="Entre hojas de cálculo, correos y carpetas de escritorio. Buscar algo cuesta media mañana, y lo que caduca caduca sin avisar, porque no hay nadie mirando esa fecha."
+  bloques={bloques}
+  caso={caso}
+/>

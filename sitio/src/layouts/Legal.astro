@@ -1,0 +1,39 @@
+---
+import Base from "./Base.astro";
+interface Props { titulo: string; ruta: string; descripcion: string; actualizado: string; }
+const { titulo, ruta, descripcion, actualizado } = Astro.props;
+---
+
+<Base titulo={`${titulo} · Padrón IA`} descripcion={descripcion} ruta={ruta}>
+  <article class="seccion legal">
+    <div class="contenedor legal__caja">
+      <p class="rotulo">Información legal</p>
+      <h1 class="legal__titulo">{titulo}</h1>
+      <slot />
+      <p class="legal__fecha">Última actualización: {actualizado}</p>
+    </div>
+  </article>
+</Base>
+
+<style is:global>
+  .legal__caja { max-width: 44rem; }
+  .legal__titulo { font-size: var(--t-xl); margin-block: 0.8rem 2rem; }
+  .legal h2 {
+    font-size: var(--t-m);
+    margin-block: 2.25rem 0.75rem;
+    letter-spacing: -0.01em;
+  }
+  .legal p, .legal li { color: var(--texto-suave); }
+  .legal p + p { margin-top: 0.9rem; }
+  .legal ul { margin: 0.75rem 0 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.4rem; }
+  .legal a { color: var(--iris); }
+  .legal__fecha {
+    margin-top: 3rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--linea);
+    font-family: var(--mono);
+    font-size: var(--t-xs);
+    color: var(--texto-tenue);
+  }
+  .legal__dato { font-family: var(--mono); font-size: var(--t-s); }
+</style>

@@ -1,0 +1,38 @@
+---
+import Vertical from "../components/Vertical.astro";
+
+const bloques = [
+  {
+    t: "Las renovaciones se avisan solas",
+    d: "Cada alumna con su fecha, y el equipo enterado antes de que venza, no después."
+  },
+  {
+    t: "El seguimiento no depende de la memoria",
+    d: "Quién ha entrado, quién no y desde cuándo. Hablas con quien de verdad lo necesita."
+  },
+  {
+    t: "Los accesos y materiales, automáticos",
+    d: "Alta, acceso y documentación sin que nadie tenga que acordarse de mandarlos."
+  }
+];
+
+const caso = {
+  titular: "Una escuela con cientos de alumnas",
+  antes:
+    "Altas, renovaciones y seguimiento se llevaban a mano. Se escapaba quién no entraba y a quién le tocaba renovar, y las bajas se descubrían tarde.",
+  monte:
+    "Renovaciones, avisos y seguimiento funcionando solos, con cada paso trazado. El equipo dejó de perseguir a todo el mundo para hablar solo con quien lo necesitaba."
+};
+---
+
+<Vertical
+  sector="Escuelas y formación online"
+  ruta="/escuela"
+  titulo="Automatización para escuelas online · Padrón IA"
+  descripcion="Renovaciones avisadas a tiempo, seguimiento por alumno y accesos que se dan solos. Sistemas funcionando en escuelas con cientos de alumnas."
+  pregunta="¿A quién le toca renovar esta semana?"
+  preguntaAcento="¿Y quién lleva quince días sin entrar?"
+  entradilla="Si la respuesta está en la cabeza de alguien o en una hoja de cálculo, se escapa gente. Y las que se van casi nunca avisan: dejan de entrar, y te enteras cuando ya no hay nada que hacer."
+  bloques={bloques}
+  caso={caso}
+/>

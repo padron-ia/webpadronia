@@ -1,0 +1,38 @@
+---
+import Vertical from "../components/Vertical.astro";
+
+const bloques = [
+  {
+    t: "El recuento, de madrugada",
+    d: "El sistema cuenta y compara mientras la tienda está cerrada. Nadie dedica una mañana a eso."
+  },
+  {
+    t: "El aviso, antes de abrir",
+    d: "Si algo no cuadra, el equipo lo sabe en el móvil antes del primer pedido del día."
+  },
+  {
+    t: "Y queda registrado",
+    d: "Cada recuento y cada diferencia quedan guardados. Si un día falla, se ve dónde y cuándo."
+  }
+];
+
+const caso = {
+  titular: "Una tienda con cientos de pedidos al mes",
+  antes:
+    "Una persona cuadraba el inventario a mano cada semana. Horas de trabajo, y aun así se colaban descuadres que aparecían tarde, cuando ya había un pedido esperando.",
+  monte:
+    "Un sistema que cuenta y compara cada noche y avisa al equipo en el móvil si algo no encaja, antes de que la tienda abra. El recuento manual semanal desapareció."
+};
+---
+
+<Vertical
+  sector="Tiendas online"
+  ruta="/tienda"
+  titulo="Automatización para tiendas online · Padrón IA"
+  descripcion="El stock se cuadra solo cada noche y el equipo recibe un aviso antes de abrir si algo no encaja. Sistemas funcionando en tiendas con cientos de pedidos al mes."
+  pregunta="¿Cuántas horas al mes se te van cuadrando el stock?"
+  preguntaAcento="¿Y cuántos descuadres se cuelan igual?"
+  entradilla="Lo que dice la web contra lo que hay en la estantería. Alguien lo repasa a mano cada semana, tarda una mañana, y aun así se escapa algo: un pedido parado, una unidad que no estaba, un aviso que nadie mandó."
+  bloques={bloques}
+  caso={caso}
+/>
