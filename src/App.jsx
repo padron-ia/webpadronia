@@ -1,9 +1,8 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
-import LandingEntrenadores from "./pages/LandingEntrenadores";
-import LandingRestaurantes from "./pages/LandingRestaurantes";
+import LandingTienda from "./pages/LandingTienda";
+import LandingEscuela from "./pages/LandingEscuela";
 import LandingGestorias from "./pages/LandingGestorias";
-import LandingGimnasios from "./pages/LandingGimnasios";
 import PortalAdminPage from "./pages/PortalAdminPage";
 import PortalClientPage from "./pages/PortalClientPage";
 import PortalIndexPage from "./pages/PortalIndexPage";
@@ -17,10 +16,10 @@ function App() {
     return (
         <Routes>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/entrenadores" element={<LandingEntrenadores />} />
-            <Route path="/restaurantes" element={<LandingRestaurantes />} />
+            <Route path="/tienda" element={<LandingTienda />} />
+            <Route path="/escuela" element={<LandingEscuela />} />
             <Route path="/gestorias" element={<LandingGestorias />} />
-            <Route path="/gimnasios" element={<LandingGimnasios />} />
+            {/* /gimnasios, /entrenadores, /restaurantes (era fitness, fuera de ICP) jubilados 2026-07-14: el catch-all los manda a / */}
             <Route path="/portal/login" element={<PortalLoginPage />} />
             <Route path="/portal/set-password" element={<PortalSetPasswordPage />} />
             <Route path="/portal/admin/presenter/:projectId" element={<PresenterPage />} />

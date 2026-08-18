@@ -7,23 +7,23 @@ const faqs = [
     },
     {
         q: "¿Cuánto tarda en funcionar?",
-        a: "Depende de lo que necesites. Un problema concreto lo resolvemos en 7-10 días. Un sistema completo de captación, en 2-4 semanas. Te lo decimos en la primera llamada."
+        a: "Depende de lo que necesites. Un problema concreto lo resolvemos en 7-10 días. Un proceso entero en automático, en 2-4 semanas. Te lo decimos en la primera llamada, sin humo."
     },
     {
         q: "¿Y si no funciona?",
-        a: "Medimos todo. Si algo no da resultados, ajustamos. No te vamos a cobrar por algo que no funciona. Si en 30 días no ves mejora, hablamos."
+        a: "Medimos todo. Si algo no da resultados, lo ajustamos. No te cobramos por algo que no funciona. Si en 30 días no ves mejora, hablamos."
     },
     {
         q: "¿Cuánto cuesta?",
-        a: "Cada negocio es distinto. No es lo mismo montar un chatbot para un gym que automatizar la gestión de 200 clientes. Cuéntanos qué necesitas y te damos un número concreto."
+        a: "Cada negocio es distinto. No es lo mismo automatizar el inventario de una tienda que las renovaciones de una escuela. Cuéntanos qué necesitas y te damos un número concreto."
     },
     {
         q: "Ya uso [software X]. ¿Se integra?",
-        a: "Trabajamos con lo que ya tengas: Timp, Harbiz, tu CRM, tu web, tu WhatsApp Business. No tiramos lo que funciona, lo conectamos."
+        a: "Trabajamos con lo que ya tengas: tu tienda (Shopify, WooCommerce…), tu CRM, tu web, tu WhatsApp o tu email, tus hojas de cálculo. No tiramos lo que funciona, lo conectamos."
     },
     {
         q: "¿Vais a reemplazar a mi equipo?",
-        a: "No. Vamos a liberar a tu equipo del trabajo que no requiere cerebro para que hagan lo que sí lo requiere: vender, atender, fidelizar."
+        a: "No. Liberamos a tu equipo del trabajo que no requiere cabeza para que hagan lo que sí: vender, atender, cuidar."
     },
     {
         q: "¿Qué pasa con los datos de mis clientes?",
@@ -45,7 +45,7 @@ function FAQSection() {
                     <p data-reveal className="fade-in-section text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">
                         Preguntas frecuentes
                     </p>
-                    <h2 data-reveal className="fade-in-section mt-4 text-3xl text-slate-900 sm:text-4xl">
+                    <h2 data-reveal className="fade-in-section mt-4 text-3xl text-ink sm:text-4xl">
                         Lo que nos preguntan siempre
                     </h2>
                 </div>
@@ -61,7 +61,7 @@ function FAQSection() {
                                 onClick={() => setOpen(open === i ? null : i)}
                                 className="flex w-full items-center justify-between gap-4 px-6 py-4 text-left"
                             >
-                                <span className="text-base font-semibold text-slate-900">{faq.q}</span>
+                                <span className="text-base font-semibold text-ink">{faq.q}</span>
                                 <span className={`shrink-0 text-xl text-slate-400 transition-transform ${open === i ? "rotate-45" : ""}`}>+</span>
                             </button>
                             {open === i ? (
