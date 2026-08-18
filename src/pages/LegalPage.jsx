@@ -13,7 +13,7 @@ En cumplimiento del artículo 10 de la Ley 34/2002, de 11 de julio, de Servicios
 Titular: Jesús Martínez Padrón
 NIF: 45714596A
 Domicilio: Ronda del Santo Cristo del Perdón 5, 23486 Hinojares, Jaén
-Email: hola@padronia.com
+Email: jesusmartinezpadron@gmail.com
 Teléfono: +34 664 40 13 28
 
 OBJETO
@@ -42,7 +42,7 @@ RESPONSABLE DEL TRATAMIENTO
 
 Jesús Martínez Padrón
 NIF: 45714596A
-Email: hola@padronia.com
+Email: jesusmartinezpadron@gmail.com
 
 FINALIDAD DEL TRATAMIENTO
 
@@ -67,7 +67,7 @@ Los datos se conservarán mientras exista interés mutuo y, en todo caso, durant
 
 DERECHOS
 
-Puedes ejercer tus derechos de acceso, rectificación, supresión, portabilidad, limitación y oposición escribiendo a hola@padronia.com, adjuntando copia de tu DNI.
+Puedes ejercer tus derechos de acceso, rectificación, supresión, portabilidad, limitación y oposición escribiendo a jesusmartinezpadron@gmail.com, adjuntando copia de tu DNI.
 
 Si consideras que el tratamiento no se ajusta a la normativa, puedes presentar reclamación ante la AEPD (www.aepd.es).
         `
