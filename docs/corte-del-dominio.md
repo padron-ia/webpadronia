@@ -85,3 +85,39 @@ landing anterior tal cual.
 - Los números reales de los tres casos.
 - El panel en vivo puede pasar de «responde / no responde» a «qué han hecho»: eso requiere
   decidir qué cifra concreta se publica de cada cliente.
+
+
+---
+
+## Diario de ejecución (18-ago-2026)
+
+**Pasos 1 a 3, hechos y verificados. El paso 4 (mover el dominio) sigue pendiente.**
+
+- ✅ **DNS**: `portal.padron-ia.es` → `217.65.146.132`, TTL 300. Resuelve.
+- ✅ **Servicio `sitio_padron_ia`**: Git + rama `master` + ruta `/sitio` + Dockerfile.
+  Dominio temporal `nuevo-sitio-padron-ia.3pkgp0.easypanel.host`.
+- ✅ **Portal en su subdominio**: `https://portal.padron-ia.es/portal/login` responde 200,
+  y la raíz del subdominio redirige sola a `padron-ia.es` (verificado en navegador).
+- ✅ **`padron-ia.es` intacta** durante todo el proceso.
+
+### Tres fallos que cazó la verificación por pasos
+
+1. **Las cabeceras de seguridad no salían.** `add_header` no se hereda en nginx: cualquier
+   bloque `location` con cabeceras propias descarta las del padre, y la raíz acaba en el
+   bloque de HTML. Solución: `seguridad.conf` incluido en los seis bloques.
+2. **Los 301 mandaban de `https` a `http`.** Traefik termina el TLS y habla con nginx en
+   claro. Solución: `absolute_redirect off` → redirecciones relativas.
+3. **El portal daba 403 en su subdominio.** `vite preview` solo sirve los hosts de
+   `allowedHosts`, y `portal.padron-ia.es` no estaba.
+
+### Gotcha del entorno
+
+**Los clics en EasyPanel y en Hostinger se pierden a menudo.** Un registro DNS y un
+despliegue entero se quedaron sin guardar sin dar ningún error. Verificar SIEMPRE contra
+el resultado real (la lista de registros, el historial de despliegues), y para desplegar
+usar el disparador por URL que expone cada servicio en su pestaña de Implementaciones,
+que no falla:
+
+```bash
+curl "http://217.65.146.132:3000/api/deploy/<token del servicio>"
+```
