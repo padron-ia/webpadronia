@@ -70,14 +70,16 @@ const preguntas = [
   <!-- ── Hero ─────────────────────────────────────────── -->
   <section class="hero">
     <div class="contenedor">
-      <p class="rotulo">Para quien está harto de hacer trabajo de máquina</p>
+      <p class="rotulo">Tiendas online · Escuelas de formación · Despachos</p>
       <h1>
-        Las máquinas están para lo repetitivo.<br />
-        <span class="hero__acento">Las personas, para trabajo de persona.</span>
+        Lo que a tu equipo le lleva media mañana,
+        <span class="hero__acento">un sistema lo hace de madrugada</span> — y te avisa si algo
+        no cuadra.
       </h1>
       <p class="parrafo hero__sub">
-        Monto sistemas que hacen la parte aburrida de tu negocio cada noche, sin quejarse y sin
-        equivocarse. Para que tú y tu equipo os dediquéis a lo que sí requiere cabeza.
+        Cuadrar el stock. Perseguir renovaciones. Buscar un documento que estaba en tres sitios.
+        Eso deja de hacerse a mano y pasa a hacerse solo, cada noche. Tú te enteras por el móvil,
+        y solo cuando hay algo que mirar.
       </p>
       <div class="hero__acciones">
         <a class="boton" href="#hablamos">Cuéntame qué te come el tiempo</a>
@@ -136,6 +138,35 @@ const preguntas = [
     </div>
   </section>
 
+  <!-- ── Qué te llevas ────────────────────────────────── -->
+  <section class="seccion llevas-seccion" id="que-te-llevas">
+    <div class="contenedor">
+      <p class="rotulo">Qué te llevas</p>
+      <h2 class="titulo-seccion">Qué cambia el lunes por la mañana</h2>
+      <p class="parrafo">
+        No te llevas «una IA». Te llevas esto, funcionando y mantenido.
+      </p>
+      <ul class="llevas">
+        <li>
+          <h3>Un trabajo que ya no hace nadie</h3>
+          <p class="parrafo">La tarea que hoy ocupa horas cada semana deja de estar en la lista de alguien.</p>
+        </li>
+        <li>
+          <h3>Un aviso en el móvil cuando hay que mirar algo</h3>
+          <p class="parrafo">Verde si todo va bien, rojo si algo no cuadra. No tienes que entrar a comprobar nada.</p>
+        </li>
+        <li>
+          <h3>Un sitio donde ver qué ha pasado</h3>
+          <p class="parrafo">Cada cosa que hace el sistema queda registrada. Si algo falla, se ve dónde y cuándo.</p>
+        </li>
+        <li>
+          <h3>Alguien que lo arregla cuando se rompe</h3>
+          <p class="parrafo">Yo. No un ticket de soporte ni un manual para que lo mantengas tú.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
   <!-- ── Método ───────────────────────────────────────── -->
   <section class="seccion seccion--oscura" id="como">
     <div class="contenedor">
@@ -152,6 +183,46 @@ const preguntas = [
           </li>
         ))}
       </ol>
+    </div>
+  </section>
+
+  <!-- ── Cuánto y cuándo ──────────────────────────────── -->
+  <section class="seccion precios-seccion" id="cuanto">
+    <div class="contenedor">
+      <p class="rotulo">Cuánto cuesta y cuánto tarda</p>
+      <h2 class="titulo-seccion">Para que no tengas que preguntarlo</h2>
+      <p class="parrafo">
+        Cada negocio es distinto, pero no tanto como para no darte un orden de magnitud antes de
+        que cojas el teléfono.
+      </p>
+      <div class="tramos">
+        <article class="tramo">
+          <p class="tramo__plazo cifra">7–10 días</p>
+          <h3>Un problema concreto</h3>
+          <p class="parrafo">Lo que más te duele ahora mismo, resuelto y funcionando. El aviso nocturno, el descuadre, el seguimiento que no se hace.</p>
+          <p class="tramo__precio cifra">PENDIENTE €</p>
+        </article>
+        <article class="tramo">
+          <p class="tramo__plazo cifra">2–4 semanas</p>
+          <h3>Un proceso entero en automático</h3>
+          <p class="parrafo">Inventario, renovaciones o atención: el proceso completo, de principio a fin, midiéndose.</p>
+          <p class="tramo__precio cifra">PENDIENTE €</p>
+        </article>
+        <article class="tramo">
+          <p class="tramo__plazo cifra">1–2 meses</p>
+          <h3>Tu operativa conectada</h3>
+          <p class="parrafo">Varios procesos hablándose entre ellos, con sus números a la vista. Tú decides, los sistemas ejecutan.</p>
+          <p class="tramo__precio cifra">PENDIENTE €</p>
+        </article>
+      </div>
+      <div class="garantia">
+        <h3>Y si no funciona</h3>
+        <p class="parrafo">
+          Se mide desde el primer día. Si a los 30 días no ves diferencia, lo ajusto sin coste o lo
+          paramos: no quiero cobrarte por algo que no te sirve. Lo que montamos es tuyo —el código,
+          los datos y los accesos— y si algún día dejamos de trabajar juntos, te lo llevas entero.
+        </p>
+      </div>
     </div>
   </section>
 
@@ -424,6 +495,69 @@ const preguntas = [
   .pregunta[open] summary::after { content: "–"; }
 
   .pregunta > .parrafo { padding-bottom: 1.35rem; font-size: var(--t-s); }
+
+
+  /* ── Qué te llevas ── */
+  .llevas-seccion { background: #fff; }
+
+  .llevas {
+    margin: 3rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 1.5rem 3rem;
+  }
+
+  @media (min-width: 52rem) { .llevas { grid-template-columns: repeat(2, 1fr); } }
+
+  .llevas li {
+    border-top: 2px solid var(--ink);
+    padding-top: 1rem;
+  }
+
+  .llevas h3 { margin-bottom: 0.35rem; }
+
+  /* ── Tramos ── */
+  .tramos {
+    margin-top: 3rem;
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 52rem) { .tramos { grid-template-columns: repeat(3, 1fr); } }
+
+  .tramo {
+    border: 1px solid var(--linea);
+    border-radius: 18px;
+    padding: 1.75rem 1.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    background: #fff;
+  }
+
+  .tramo__plazo {
+    color: var(--iris);
+    font-size: var(--t-s);
+    letter-spacing: 0.04em;
+  }
+
+  .tramo__precio {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--linea);
+    font-size: var(--t-m);
+    font-weight: 700;
+  }
+
+  .garantia {
+    margin-top: 2.5rem;
+    border-left: 4px solid var(--pearl);
+    padding-left: 1.5rem;
+    max-width: 46rem;
+  }
+
+  .garantia h3 { margin-bottom: 0.5rem; }
 
   /* ── Cierre ── */
   .cierre__caja { display: flex; flex-direction: column; gap: 1.1rem; align-items: start; }
