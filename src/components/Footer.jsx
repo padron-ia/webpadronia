@@ -6,11 +6,9 @@ function Footer() {
         <footer id="contacto" className="border-t border-slate-200 bg-white px-6 py-12 sm:px-10 lg:px-16">
             <div className="mx-auto flex w-full max-w-6xl flex-col items-start justify-between gap-6 md:flex-row md:items-center">
                 <div data-reveal className="fade-in-section">
-                    <span className="text-lg font-extrabold tracking-[0.12em] text-ink">
-                        PADRÓN<span className="text-iris">·IA</span>
-                    </span>
+                    <img src="/assets/logo-padron-ia-clean.png" alt="Padrón IA" className="h-14 w-auto object-contain" />
                     <p className="mt-3 text-sm text-slate-600">
-                        Automatizamos lo repetitivo. Tú y tu equipo hacéis trabajo de persona.
+                        Más clientes, menos trabajo basura, más dinero.
                     </p>
                 </div>
 
@@ -18,8 +16,8 @@ function Footer() {
                     <p>
                         WhatsApp:{" "}
                         <a
-                            className="premium-link font-semibold text-ink"
-                            href={buildWhatsAppUrl("Hola, quiero automatizar la parte repetitiva de mi negocio. ¿Podemos hablar?")}
+                            className="premium-link font-semibold text-slate-900"
+                            href={buildWhatsAppUrl("Hola, quiero facturar más sin meter más horas. ¿Podemos hablar?")}
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={() => trackLeadEvent("lead_whatsapp_click", { placement: "footer" })}

@@ -5,23 +5,23 @@ import FloatingNavbar from "../components/FloatingNavbar";
 import WhatsAppFloatButton from "../components/WhatsAppFloatButton";
 import CookieBanner from "../components/CookieBanner";
 
-function LandingGestorias() {
+function LandingRestaurantes() {
     return (
         <div className="min-h-screen bg-white">
             <FloatingNavbar />
             <main>
                 <section className="premium-gradient-plum py-40 px-6 sm:px-10 lg:px-16 text-center">
                     <h1 className="text-5xl lg:text-7xl text-slate-900 leading-[0.92]">
-                        Tu equipo pierde 3 horas al día <br /> contestando las mismas preguntas de siempre.
+                        Mesas vacías por cancelaciones. <br /> Teléfono que nadie coge en hora punta.
                     </h1>
                     <p className="mt-6 text-xl text-slate-700 max-w-2xl mx-auto">
-                        "¿Ya habéis presentado mi trimestral?" "¿Me podéis mandar la factura?" "¿Qué documentos necesitáis?" Lo mismo, todos los días, de todos los clientes. <strong>Hacemos que esas respuestas se den solas, la documentación llegue a tiempo y tu equipo trabaje en lo que factura, no en lo que repite.</strong>
+                        Mientras tu equipo sirve mesas, pierdes reservas porque nadie contesta el teléfono. Y las que tienes se cancelan porque nadie confirmó. <strong>Hacemos que las reservas se confirmen solas, las cancelaciones se repongan al instante y tu equipo sirva en vez de contestar llamadas.</strong>
                     </p>
                     <div className="mt-10 flex flex-col items-center gap-4">
                         <a href="#consultoria" className="premium-button bg-slate-900 text-white px-8 py-4 rounded-full font-bold text-lg">
-                            Quiero que mi equipo deje de hacer trabajo de robot
+                            Quiero más mesas llenas y menos cancelaciones
                         </a>
-                        <p className="text-sm font-medium text-slate-500">En el primer mes medimos: consultas repetidas eliminadas, tiempo recuperado y capacidad liberada para nuevo trabajo facturable.</p>
+                        <p className="text-sm font-medium text-slate-500">En el primer mes medimos: reservas confirmadas, cancelaciones reducidas y llamadas que ya no tiene que coger nadie.</p>
                     </div>
                 </section>
                 <SolutionsBlueprint />
@@ -34,4 +34,4 @@ function LandingGestorias() {
     );
 }
 
-export default LandingGestorias;
+export default LandingRestaurantes;

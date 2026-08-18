@@ -3,16 +3,15 @@
 @tailwind utilities;
 
 :root {
-    /* Identidad índigo v0 — Padrón IA (2026-07-14) */
-    --brand-deep: #1B1E3A;   /* índigo profundo */
-    --brand-plum: #252A52;   /* índigo suave (partner de degradado) */
-    --brand-rose: #8F9BFF;   /* lavanda (acento) */
-    --brand-white: #F2F3FB;  /* blanco roto */
+    --brand-deep: #431844;
+    --brand-plum: #7D255B;
+    --brand-rose: #965972;
+    --brand-white: #FEFEFE;
 }
 
 @layer base {
     body {
-        @apply font-sans bg-bone text-ink antialiased overflow-x-hidden;
+        @apply font-sans bg-slate-50 text-slate-900 antialiased overflow-x-hidden;
     }
 
     h1,
@@ -20,7 +19,7 @@
     h3,
     h4,
     h5 {
-        @apply font-sans tracking-tight;
+        @apply font-outfit tracking-tight;
     }
 }
 
@@ -42,9 +41,9 @@
 
 .bg-hero-grid {
     background-image:
-        radial-gradient(circle at 0% 0%, rgba(143, 155, 255, 0.18), transparent 45%),
-        radial-gradient(circle at 100% 0%, rgba(37, 42, 82, 0.12), transparent 35%),
-        linear-gradient(to bottom, #f5f6fc, #F2F3FB);
+        radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.14), transparent 45%),
+        radial-gradient(circle at 100% 0%, rgba(59, 130, 246, 0.1), transparent 35%),
+        linear-gradient(to bottom, #f8fbff, #f8fafc);
 }
 
 .premium-button {
@@ -89,7 +88,7 @@
     position: absolute;
     inset: -1px;
     border-radius: inherit;
-    background: linear-gradient(125deg, rgba(143, 155, 255, 0.38), rgba(37, 42, 82, 0.22), rgba(27, 30, 58, 0.2));
+    background: linear-gradient(125deg, rgba(125, 37, 91, 0.35), rgba(150, 89, 114, 0.25), rgba(67, 24, 68, 0.22));
     opacity: 0;
     z-index: -1;
     filter: blur(10px);
@@ -98,8 +97,8 @@
 
 .glow-card:hover {
     transform: translateY(-4px);
-    border-color: rgba(143, 155, 255, 0.45);
-    box-shadow: 0 16px 35px rgba(27, 30, 58, 0.14);
+    border-color: rgba(125, 37, 91, 0.28);
+    box-shadow: 0 16px 35px rgba(15, 23, 42, 0.11);
 }
 
 .glow-card:hover::after {
@@ -114,16 +113,16 @@
 
 .premium-gradient-plum {
     background-image:
-        radial-gradient(circle at 8% 15%, rgba(143, 155, 255, 0.20), transparent 45%),
-        radial-gradient(circle at 85% 10%, rgba(37, 42, 82, 0.16), transparent 42%),
-        linear-gradient(160deg, var(--brand-white) 0%, #eef0fb 40%, #F2F3FB 100%);
+        radial-gradient(circle at 8% 15%, rgba(125, 37, 91, 0.18), transparent 45%),
+        radial-gradient(circle at 85% 10%, rgba(150, 89, 114, 0.2), transparent 42%),
+        linear-gradient(160deg, var(--brand-white) 0%, #f8f3f7 40%, #f8fafc 100%);
 }
 
 .premium-gradient-rose {
     background-image:
-        radial-gradient(circle at 5% 82%, rgba(143, 155, 255, 0.16), transparent 35%),
-        radial-gradient(circle at 96% 10%, rgba(37, 42, 82, 0.14), transparent 40%),
-        linear-gradient(150deg, var(--brand-white) 0%, #eef0fb 46%, #F2F3FB 100%);
+        radial-gradient(circle at 5% 82%, rgba(125, 37, 91, 0.12), transparent 35%),
+        radial-gradient(circle at 96% 10%, rgba(150, 89, 114, 0.18), transparent 40%),
+        linear-gradient(150deg, var(--brand-white) 0%, #f8f4f6 46%, #f7f9fc 100%);
 }
 
 .premium-parallax-layer {
@@ -131,8 +130,8 @@
     inset: -15% -5%;
     z-index: 0;
     background:
-        radial-gradient(circle, rgba(27, 30, 58, 0.12) 0%, rgba(27, 30, 58, 0) 62%),
-        radial-gradient(circle, rgba(143, 155, 255, 0.16) 0%, rgba(143, 155, 255, 0) 58%);
+        radial-gradient(circle, rgba(67, 24, 68, 0.14) 0%, rgba(67, 24, 68, 0) 62%),
+        radial-gradient(circle, rgba(150, 89, 114, 0.14) 0%, rgba(150, 89, 114, 0) 58%);
     background-size: 42% 42%, 35% 35%;
     background-position: 8% 25%, 88% 72%;
     animation: parallaxFloat 14s ease-in-out infinite;
@@ -140,8 +139,8 @@
 }
 
 .intro-video-frame {
-    border: 1px solid rgba(37, 42, 82, 0.28);
-    box-shadow: 0 24px 70px rgba(27, 30, 58, 0.20);
+    border: 1px solid rgba(67, 24, 68, 0.22);
+    box-shadow: 0 24px 70px rgba(67, 24, 68, 0.17);
 }
 
 .whatsapp-float {

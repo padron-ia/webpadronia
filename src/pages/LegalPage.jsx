@@ -13,7 +13,7 @@ En cumplimiento del artículo 10 de la Ley 34/2002, de 11 de julio, de Servicios
 Titular: Jesús Martínez Padrón
 NIF: 45714596A
 Domicilio: Ronda del Santo Cristo del Perdón 5, 23486 Hinojares, Jaén
-Email: jesusmartinezpadron@gmail.com
+Email: hola@padronia.com
 Teléfono: +34 664 40 13 28
 
 OBJETO
@@ -42,7 +42,7 @@ RESPONSABLE DEL TRATAMIENTO
 
 Jesús Martínez Padrón
 NIF: 45714596A
-Email: jesusmartinezpadron@gmail.com
+Email: hola@padronia.com
 
 FINALIDAD DEL TRATAMIENTO
 
@@ -67,7 +67,7 @@ Los datos se conservarán mientras exista interés mutuo y, en todo caso, durant
 
 DERECHOS
 
-Puedes ejercer tus derechos de acceso, rectificación, supresión, portabilidad, limitación y oposición escribiendo a jesusmartinezpadron@gmail.com, adjuntando copia de tu DNI.
+Puedes ejercer tus derechos de acceso, rectificación, supresión, portabilidad, limitación y oposición escribiendo a hola@padronia.com, adjuntando copia de tu DNI.
 
 Si consideras que el tratamiento no se ajusta a la normativa, puedes presentar reclamación ante la AEPD (www.aepd.es).
         `
@@ -117,7 +117,7 @@ export default function LegalPage() {
             <main className="min-h-screen bg-slate-50">
                 <FloatingNavbar />
                 <div className="px-6 pt-40 pb-20 text-center">
-                    <h1 className="text-2xl text-ink">Página no encontrada</h1>
+                    <h1 className="text-2xl text-slate-900">Página no encontrada</h1>
                     <Link to="/" className="mt-4 inline-block text-sm font-semibold text-slate-600 underline">Volver al inicio</Link>
                 </div>
                 <Footer />
@@ -130,12 +130,12 @@ export default function LegalPage() {
             <FloatingNavbar />
             <div className="px-6 pt-40 pb-20 sm:px-10 lg:px-16">
                 <div className="mx-auto w-full max-w-3xl">
-                    <Link to="/" className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-500 hover:text-ink">← Volver</Link>
-                    <h1 className="mt-6 text-3xl font-semibold text-ink sm:text-4xl">{page.title}</h1>
+                    <Link to="/" className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-500 hover:text-slate-900">← Volver</Link>
+                    <h1 className="mt-6 text-3xl font-semibold text-slate-900 sm:text-4xl">{page.title}</h1>
                     <div className="mt-8 prose prose-slate prose-sm max-w-none">
                         {page.content.trim().split("\n\n").map((paragraph, i) => {
                             if (paragraph.trim().match(/^[A-ZÁÉÍÓÚÑ¿¡\s]+$/)) {
-                                return <h2 key={i} className="mt-8 mb-3 text-lg font-semibold text-ink">{paragraph.trim()}</h2>;
+                                return <h2 key={i} className="mt-8 mb-3 text-lg font-semibold text-slate-900">{paragraph.trim()}</h2>;
                             }
                             if (paragraph.trim().startsWith("- ")) {
                                 return (

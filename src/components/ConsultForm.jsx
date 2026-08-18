@@ -143,15 +143,15 @@ function ConsultForm() {
         }
     };
 
-    const inputClass = "w-full rounded-xl border border-slate-300 px-4 py-3 text-ink outline-none transition focus:border-slate-500";
-    const selectClass = "w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-ink outline-none transition focus:border-slate-500";
+    const inputClass = "w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-slate-500";
+    const selectClass = "w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-slate-500";
 
     return (
         <section id="consultoria" className="px-6 py-20 sm:px-10 lg:px-16">
             <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
                 <div data-reveal className="fade-in-section">
                     <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">Empieza aquí</p>
-                    <h2 className="mt-4 text-3xl text-ink sm:text-4xl lg:text-5xl">Cuéntanos qué te come las horas y te diremos cómo recuperarlas</h2>
+                    <h2 className="mt-4 text-3xl text-slate-900 sm:text-4xl lg:text-5xl">Cuéntanos qué te come las horas y te diremos cómo recuperarlas</h2>
                     <p className="mt-5 max-w-xl text-slate-600">
                         Sin humo ni promesas genéricas. Nos cuentas tu problema real y te decimos exactamente qué podemos hacer, cuánto cuesta y en cuánto tiempo lo notas. Si prefieres ir directo, WhatsApp.
                     </p>
@@ -161,22 +161,22 @@ function ConsultForm() {
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={() => trackLeadEvent("lead_whatsapp_click", { placement: "consultoria" })}
-                        className="premium-button mt-8 inline-flex items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-semibold text-white"
+                        className="premium-button mt-8 inline-flex items-center justify-center rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white"
                     >
                         Ir al grano por WhatsApp
                     </a>
 
                     <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
-                        <p className="font-semibold text-ink">Sin compromiso</p>
+                        <p className="font-semibold text-slate-900">Sin compromiso</p>
                         <p className="mt-2">Nos cuentas tu situación, te decimos si podemos ayudarte y cuánto. Si no encaja, te lo decimos. Respuesta en menos de 24 horas.</p>
                     </div>
                 </div>
 
-                <form onSubmit={onSubmit} className="fade-in-section rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_14px_45px_rgba(27,30,58,0.08)] sm:p-8" data-reveal>
+                <form onSubmit={onSubmit} className="fade-in-section rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_14px_45px_rgba(15,23,42,0.07)] sm:p-8" data-reveal>
                     <div className="mb-6 flex items-center gap-3">
-                        <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition ${step >= 1 ? "bg-ink text-white" : "border border-slate-300 text-slate-500"}`}>1</div>
-                        <div className={`h-px flex-1 transition ${step >= 2 ? "bg-ink" : "bg-slate-200"}`} />
-                        <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition ${step >= 2 ? "bg-ink text-white" : "border border-slate-300 text-slate-500"}`}>2</div>
+                        <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition ${step >= 1 ? "bg-slate-900 text-white" : "border border-slate-300 text-slate-500"}`}>1</div>
+                        <div className={`h-px flex-1 transition ${step >= 2 ? "bg-slate-900" : "bg-slate-200"}`} />
+                        <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition ${step >= 2 ? "bg-slate-900 text-white" : "border border-slate-300 text-slate-500"}`}>2</div>
                     </div>
 
                     {step === 1 && (
@@ -196,10 +196,13 @@ function ConsultForm() {
                             <div>
                                 <select name="sector" value={formData.sector} onChange={onChange} className={selectClass}>
                                     <option value="">Sector</option>
-                                    <option value="ecommerce">Tienda online / Ecommerce</option>
-                                    <option value="formacion">Escuela / Formación online</option>
-                                    <option value="despacho">Despacho / Gestoría / Asesoría</option>
-                                    <option value="servicios">Otros servicios / B2B</option>
+                                    <option value="gimnasio_centro_deportivo">Gimnasios y centros deportivos</option>
+                                    <option value="servicios_b2b">Servicios a empresas</option>
+                                    <option value="clinica_estetica">Clínicas y estética</option>
+                                    <option value="inmobiliaria">Inmobiliaria</option>
+                                    <option value="ecommerce">Tienda online</option>
+                                    <option value="educacion">Formación y cursos</option>
+                                    <option value="operaciones">Soporte y operaciones</option>
                                     <option value="otro">Otro</option>
                                 </select>
                                 {errors.sector && <p className="mt-1 text-sm text-red-600">{errors.sector}</p>}
@@ -209,7 +212,7 @@ function ConsultForm() {
                                 {errors.mensaje && <p className="mt-1 text-sm text-red-600">{errors.mensaje}</p>}
                             </div>
                             <div className="md:col-span-2">
-                                <button type="button" onClick={goToStep2} className="premium-button mt-2 w-full rounded-full bg-ink px-6 py-3 text-sm font-semibold text-white">
+                                <button type="button" onClick={goToStep2} className="premium-button mt-2 w-full rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white">
                                     Siguiente →
                                 </button>
                             </div>
@@ -221,12 +224,11 @@ function ConsultForm() {
                             <p className="md:col-span-2 text-sm text-slate-600">Estos datos nos ayudan a preparar una respuesta útil para ti.</p>
                             <div>
                                 <select name="objetivo" value={formData.objetivo} onChange={onChange} className={selectClass}>
-                                    <option value="">¿Qué te gustaría resolver?</option>
-                                    <option value="quitar_repetitivo">Quitarme tareas repetitivas de encima</option>
-                                    <option value="menos_errores">Tener menos errores en la operación</option>
-                                    <option value="enterarme_a_tiempo">Enterarme de lo que pasa sin ir a mirar</option>
-                                    <option value="organizar_operacion">Organizar mejor mi operación</option>
-                                    <option value="atender_mejor">Atender mejor a mis clientes</option>
+                                    <option value="">¿Qué necesitas mejorar?</option>
+                                    <option value="captar_mas_leads">Captar más oportunidades</option>
+                                    <option value="cerrar_mas_ventas">Cerrar más ventas</option>
+                                    <option value="mejorar_soporte">Mejorar la atención al cliente</option>
+                                    <option value="optimizar_operaciones">Organizar mejor mi operación</option>
                                 </select>
                                 {errors.objetivo && <p className="mt-1 text-sm text-red-600">{errors.objetivo}</p>}
                             </div>
@@ -253,7 +255,7 @@ function ConsultForm() {
                             </div>
                             <div>
                                 <select name="volumen" value={formData.volumen} onChange={onChange} className={selectClass}>
-                                    <option value="">¿Cuánto volumen mueves al mes? (pedidos, alumnos, clientes…)</option>
+                                    <option value="">¿Cuántas consultas recibes al mes?</option>
                                     <option value="menos_20">Menos de 20</option>
                                     <option value="20_50">Entre 20 y 50</option>
                                     <option value="mas_50">Más de 50</option>
@@ -276,7 +278,7 @@ function ConsultForm() {
                                 <button type="button" onClick={() => setStep(1)} className="mt-2 rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700">
                                     ← Volver
                                 </button>
-                                <button type="submit" disabled={status === "loading"} className="premium-button mt-2 flex-1 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-white disabled:opacity-60">
+                                <button type="submit" disabled={status === "loading"} className="premium-button mt-2 flex-1 rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white disabled:opacity-60">
                                     {status === "loading" ? "Enviando..." : "Enviar solicitud"}
                                 </button>
                             </div>
