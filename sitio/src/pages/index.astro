@@ -191,32 +191,38 @@ const preguntas = [
   <!-- ── Cuánto y cuándo ──────────────────────────────── -->
   <section class="seccion precios-seccion" id="cuanto">
     <div class="contenedor">
-      <p class="rotulo">Cuánto cuesta y cuánto tarda</p>
-      <h2 class="titulo-seccion">Para que no tengas que preguntarlo</h2>
+      <p class="rotulo">En cuánto se nota</p>
+      <h2 class="titulo-seccion">Tres tamaños, según lo que te esté doliendo</h2>
       <p class="parrafo">
-        Cada negocio es distinto, pero no tanto como para no darte un orden de magnitud antes de
-        que cojas el teléfono.
+        No hace falta reorganizar el negocio entero el primer día. Casi siempre se empieza por lo
+        que más molesta y se amplía cuando ya está funcionando.
       </p>
       <div class="tramos">
         <article class="tramo">
           <p class="tramo__plazo cifra">7–10 días</p>
           <h3>Un problema concreto</h3>
           <p class="parrafo">Lo que más te duele ahora mismo, resuelto y funcionando. El aviso nocturno, el descuadre, el seguimiento que no se hace.</p>
-          <p class="tramo__precio cifra">PENDIENTE €</p>
         </article>
         <article class="tramo">
           <p class="tramo__plazo cifra">2–4 semanas</p>
           <h3>Un proceso entero en automático</h3>
           <p class="parrafo">Inventario, renovaciones o atención: el proceso completo, de principio a fin, midiéndose.</p>
-          <p class="tramo__precio cifra">PENDIENTE €</p>
         </article>
         <article class="tramo">
           <p class="tramo__plazo cifra">1–2 meses</p>
           <h3>Tu operativa conectada</h3>
           <p class="parrafo">Varios procesos hablándose entre ellos, con sus números a la vista. Tú decides, los sistemas ejecutan.</p>
-          <p class="tramo__precio cifra">PENDIENTE €</p>
         </article>
       </div>
+      <div class="garantia">
+        <h3>¿Y cuánto cuesta?</h3>
+        <p class="parrafo">
+          Depende de lo que haya que montar, y prefiero darte un número concreto a soltarte un
+          rango que no significa nada. Me cuentas cómo lo hacéis hoy, y en esa misma conversación
+          te digo qué costaría y en cuánto se nota. Sin compromiso y sin insistir después.
+        </p>
+      </div>
+
       <div class="garantia">
         <h3>Y si no funciona</h3>
         <p class="parrafo">
@@ -545,13 +551,7 @@ const preguntas = [
     letter-spacing: 0.04em;
   }
 
-  .tramo__precio {
-    margin-top: auto;
-    padding-top: 1rem;
-    border-top: 1px solid var(--linea);
-    font-size: var(--t-m);
-    font-weight: 700;
-  }
+  .garantia + .garantia { margin-top: 1.75rem; }
 
   .garantia {
     margin-top: 2.5rem;
