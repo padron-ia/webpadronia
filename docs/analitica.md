@@ -32,9 +32,21 @@ contadores del resumen agregan con retraso y pueden marcar 0 aunque esté entran
 
 Verificado el 18-ago: visita + evento `prueba_verificacion` registrados en vivo.
 
+## Google Search Console
+
+Propiedad **`https://padron-ia.es/` verificada el 18-ago-2026** (tipo: prefijo de URL;
+método: fichero HTML `public/google58eac17d1f5dfb06.html`). **No borrar ese fichero**:
+Google revalida cada cierto tiempo y sin él se pierde la verificación.
+
+Sitemap enviado el mismo día: estado `Correcto`, 8 páginas descubiertas.
+
+La propiedad cubre solo `https://padron-ia.es`. Para cubrir también `www` y cualquier
+subdominio de una vez haría falta una propiedad de tipo **Dominio**, que exige un registro
+TXT en el DNS de Hostinger.
+
 ## Pendiente
 
-- **Google Search Console**: dar de alta `padron-ia.es` y enviar el sitemap. Necesita la
-  cuenta de Google de Jesús.
 - Datos estructurados (`Organization`, `FAQPage`) y meta por ruta: la SPA sirve un solo
   `<title>` para todas las páginas.
+- Al publicar el rework: actualizar `sitemap.xml` (fuera gimnasios/entrenadores/restaurantes,
+  dentro `/tienda` y `/escuela`) o Google se encontrará URLs muertas.
