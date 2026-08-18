@@ -7,11 +7,19 @@
 // Cada sistema se identifica por lo que HACE, nunca por de quién es. Los nombres de
 // cliente no salen de aquí.
 
+// Reglas de esta lista:
+//  1. La etiqueta dice lo que el sistema HACE. Nunca de quién es. Los dominios no salen
+//     en la respuesta pública: solo viajan etiqueta, si responde y en cuántos ms.
+//  2. Solo GET, y solo contra páginas o endpoints de salud. Nunca contra algo que ejecute
+//     trabajo: llamar a un cron para "comprobar" es ejecutarlo.
+//  3. Se usan los hosts internos, no los dominios de cara al público, para no meter una
+//     visita por minuto en las analíticas de los clientes.
 const SISTEMAS = [
-    { id: "web", etiqueta: "Este mismo sitio", url: "https://padron-ia.es/", publico: true },
-    { id: "recados", etiqueta: "Recogida de mensajes", url: "https://recados-sandy.vercel.app/api/latido", publico: true }
-    // Los sistemas de cliente se añaden aquí SOLO con el visto bueno de Jesús, y siempre
-    // con la etiqueta anonimizada («Almacén nocturno», «Renovaciones», «Documentación»).
+    { id: "almacen", etiqueta: "Almacén nocturno", url: "https://ofm-ofm-health.pqtiji.easypanel.host/api/shopify/health" },
+    { id: "renovaciones", etiqueta: "Renovaciones", url: "https://escuelacuidarte-gestiondeleads.pqtiji.easypanel.host/" },
+    { id: "despacho", etiqueta: "Documentación del despacho", url: "https://nuevo-crm-torres-olmo.3pkgp0.easypanel.host/" },
+    { id: "web", etiqueta: "Este mismo sitio", url: "https://padron-ia.es/" },
+    { id: "recados", etiqueta: "Recogida de mensajes", url: "https://recados-sandy.vercel.app/api/latido" }
 ];
 
 const TIEMPO_MAXIMO = 6000;
