@@ -41,6 +41,13 @@ Si `hace` pasa de dos días, el cron está muerto y el proyecto va camino de pau
 
 `RESEND_API_KEY` · `RESEND_FROM` · `LEAD_TO` · `SUPABASE_URL` · `SUPABASE_ANON_KEY`.
 
-⚠️ **Pendiente**: sin `RESEND_API_KEY` el correo no sale (el lead sí se guarda, y el
-endpoint lo reporta como `correo:false`). Mientras falte, el aviso del latido tampoco
-puede avisar.
+El código del servicio vive en `servicios/recados/`. Se despliega con
+`npx vercel deploy --prod --yes` desde una copia de esa carpeta.
+
+⚠️ **La clave está guardada en Vercel con el nombre `Resend`**, no `RESEND_API_KEY`: se creó
+así y Vercel no deja renombrar las variables marcadas "Sensitive" ni leer su valor. El código
+acepta los dos nombres. Al rotar la clave: crearla como `RESEND_API_KEY`, borrar la vieja y
+quitar el alias de `api/lead.js` y `api/latido.js`.
+
+**Verificado el 18-ago de extremo a extremo**: formulario en padron-ia.es → servicio → correo
+`Delivered` en la bandeja + fila en `leads`. Las filas de prueba se borraron.
