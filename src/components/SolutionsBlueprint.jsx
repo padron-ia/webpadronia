@@ -30,7 +30,7 @@ const sectorPlaybooks = [
         icon: BriefcaseBusiness,
         focus: "Tu equipo pierde horas al día contestando las mismas preguntas de siempre y persiguiendo documentación que no llega a tiempo.",
         result: "Menos trabajo de secretaría, la documentación entra sola y te queda capacidad para facturar más sin contratar.",
-        kpis: ["-60% consultas repetidas", "Docs a tiempo", "+20% capacidad"]
+        kpis: ["Menos consultas repetidas", "Docs a tiempo", "Capacidad sin contratar"]
     }
 ];
 
