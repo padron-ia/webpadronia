@@ -1,0 +1,204 @@
+---
+// Panel en vivo: enseña los sistemas respondiendo ahora mismo.
+// Se pinta dos veces: en el build (para que funcione sin JavaScript y para que Google lo
+// vea con contenido) y en el navegador, que lo refresca con el dato del momento.
+const ENDPOINT = "https://recados-sandy.vercel.app/api/panel";
+
+let inicial = null;
+try {
+  const respuesta = await fetch(ENDPOINT, { signal: AbortSignal.timeout(8000) });
+  if (respuesta.ok) inicial = await respuesta.json();
+} catch {
+  // Si el panel no responde al construir, la sección se pinta con el aviso honesto
+  // de abajo en lugar de con cifras inventadas.
+}
+
+const formatoHora = (iso) =>
+  iso
+    ? new Date(iso).toLocaleString("es-ES", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })
+    : "—";
+---
+
+<section class="seccion seccion--oscura panel" id="panel">
+  <div class="contenedor">
+    <p class="rotulo">En vivo</p>
+    <h2 class="titulo-seccion">Mis sistemas, respondiendo ahora mismo</h2>
+    <p class="parrafo">
+      Esto no es una captura ni un número que he escrito a mano: se comprueba en el momento en
+      que cargas esta página. Si algo se cae, aquí se ve.
+    </p>
+
+    <div class="panel__caja" data-panel data-endpoint={ENDPOINT}>
+      <ul class="panel__lista" data-lista>
+        {
+          inicial?.sistemas?.map((s) => (
+            <li class="panel__fila">
+              <span class={`punto ${s.responde ? "punto--vivo" : "punto--caido"}`} aria-hidden="true" />
+              <span class="panel__etiqueta">{s.etiqueta}</span>
+              <span class="panel__ms cifra">{s.responde ? `${s.ms} ms` : "sin respuesta"}</span>
+            </li>
+          )) ?? <li class="panel__fila panel__fila--vacia">Comprobando…</li>
+        }
+      </ul>
+
+      <dl class="panel__resumen">
+        <div>
+          <dt>Respondiendo</dt>
+          <dd class="cifra" data-vivos>
+            {inicial ? `${inicial.resumen.vivos}/${inicial.resumen.total}` : "—"}
+          </dd>
+        </div>
+        <div>
+          <dt>Respuesta media</dt>
+          <dd class="cifra" data-media>
+            {inicial?.resumen?.respuesta_media_ms ? `${inicial.resumen.respuesta_media_ms} ms` : "—"}
+          </dd>
+        </div>
+        <div>
+          <dt>Último latido de la base</dt>
+          <dd class="cifra" data-latido>{formatoHora(inicial?.base_de_datos?.ultimo_latido)}</dd>
+        </div>
+      </dl>
+
+      <p class="panel__pie">
+        Comprobado <span data-comprobado>{formatoHora(inicial?.comprobado)}</span>. Se actualiza solo
+        cada minuto.
+      </p>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Refresco en el navegador. Si falla, se queda lo que se pintó en el build:
+  // nunca una cifra en blanco ni una inventada.
+  const caja = document.querySelector("[data-panel]");
+  if (caja) {
+    const endpoint = caja.dataset.endpoint;
+    const hora = (iso) =>
+      iso
+        ? new Date(iso).toLocaleString("es-ES", {
+            day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit"
+          })
+        : "—";
+
+    const pintar = async () => {
+      try {
+        const r = await fetch(endpoint, { cache: "no-store" });
+        if (!r.ok) return;
+        const d = await r.json();
+
+        caja.querySelector("[data-lista]").innerHTML = d.sistemas
+          .map(
+            (s) => `<li class="panel__fila">
+                <span class="punto ${s.responde ? "punto--vivo" : "punto--caido"}" aria-hidden="true"></span>
+                <span class="panel__etiqueta">${s.etiqueta}</span>
+                <span class="panel__ms cifra">${s.responde ? s.ms + " ms" : "sin respuesta"}</span>
+              </li>`
+          )
+          .join("");
+
+        caja.querySelector("[data-vivos]").textContent = `${d.resumen.vivos}/${d.resumen.total}`;
+        caja.querySelector("[data-media]").textContent = d.resumen.respuesta_media_ms
+          ? `${d.resumen.respuesta_media_ms} ms`
+          : "—";
+        caja.querySelector("[data-latido]").textContent = hora(d.base_de_datos?.ultimo_latido);
+        caja.querySelector("[data-comprobado]").textContent = hora(d.comprobado);
+      } catch {
+        /* se queda el último dato bueno */
+      }
+    };
+
+    pintar();
+    setInterval(pintar, 60000);
+  }
+</script>
+
+<style>
+  .panel__caja {
+    margin-top: 2.5rem;
+    border: 1px solid var(--ink-line);
+    border-radius: 20px;
+    background: var(--ink-2);
+    padding: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .panel__lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .panel__fila {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.9rem;
+    padding-block: 0.85rem;
+    border-bottom: 1px solid var(--ink-line);
+  }
+
+  .panel__fila--vacia { color: var(--sobre-oscuro-suave); grid-template-columns: 1fr; }
+
+  .punto {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .punto--vivo {
+    background: #4ADE80;
+    box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.16);
+    animation: latir 2.4s ease-in-out infinite;
+  }
+
+  .punto--caido {
+    background: #F87171;
+    box-shadow: 0 0 0 4px rgba(248, 113, 113, 0.18);
+  }
+
+  @keyframes latir {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.16); }
+    50% { box-shadow: 0 0 0 8px rgba(74, 222, 128, 0.05); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .punto--vivo { animation: none; }
+  }
+
+  .panel__etiqueta { color: var(--sobre-oscuro); }
+  .panel__ms { color: var(--lavender); font-size: var(--t-s); }
+
+  .panel__resumen {
+    margin: 1.75rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem 2.5rem;
+  }
+
+  .panel__resumen dt {
+    font-size: var(--t-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--sobre-oscuro-suave);
+    margin-bottom: 0.25rem;
+  }
+
+  .panel__resumen dd {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--lavender);
+  }
+
+  .panel__pie {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--ink-line);
+    font-family: var(--mono);
+    font-size: var(--t-xs);
+    color: var(--sobre-oscuro-suave);
+  }
+</style>
