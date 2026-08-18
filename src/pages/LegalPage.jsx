@@ -85,9 +85,11 @@ Cookies técnicas (necesarias):
 - Sesión de usuario (autenticación en el portal)
 - Preferencias de navegación
 
-Cookies analíticas:
-- Google Analytics (GA4): para entender cómo se usa la web y mejorarla
-- Facebook Pixel: para medir la efectividad de campañas publicitarias
+Cookies analíticas o publicitarias:
+- Ninguna. Esta web no carga Google Analytics, ni Facebook Pixel, ni ninguna otra
+  herramienta de analítica o publicidad, y no comparte datos con terceros con esos fines.
+  Si en el futuro se incorpora alguna, se informará aquí y se pedirá tu consentimiento antes
+  de activarla.
 
 GESTIÓN DE COOKIES
 
@@ -102,7 +104,7 @@ ACTUALIZACIÓN
 
 Esta política puede actualizarse. La fecha de última modificación aparece al final de este documento.
 
-Última actualización: abril 2026.
+Última actualización: agosto 2026.
         `
     }
 };
