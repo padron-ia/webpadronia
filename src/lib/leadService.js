@@ -1,28 +1,32 @@
 import { isSupabaseConfigured, supabase } from "./supabaseClient";
 
-const saveLocalFallback = (lead) => {
-    const current = JSON.parse(localStorage.getItem("padron_leads") || "[]");
-    localStorage.setItem("padron_leads", JSON.stringify([lead, ...current].slice(0, 100)));
-};
+// El lead sale primero por un servicio que NO depende de esta base de datos
+// (Vercel + Resend): manda el correo y guarda la fila. Así un corte o una pausa
+// de Supabase deja de significar "lead perdido en silencio".
+// Ver clients/_personal/padron-ia/projects/web-rework/ (auditoría 18-ago-2026).
+const ENDPOINT_LEADS =
+    import.meta.env.VITE_LEAD_ENDPOINT || "https://recados-sandy.vercel.app/api/lead";
 
-export const submitLead = async (payload) => {
-    const baseLead = {
-        ...payload,
-        source: "landing",
-        createdAt: new Date().toISOString()
-    };
+const enviarAlServicio = async (payload) => {
+    const respuesta = await fetch(ENDPOINT_LEADS, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    });
 
-    if (!isSupabaseConfigured || !supabase) {
-        saveLocalFallback(baseLead);
-        await new Promise((resolve) => setTimeout(resolve, 400));
-        return { ...baseLead, storage: "local_fallback" };
+    if (!respuesta.ok) {
+        throw new Error(`El servicio de leads respondió ${respuesta.status}`);
     }
 
-    const {
-        data: { user }
-    } = await supabase.auth.getUser();
+    return respuesta.json();
+};
 
-    const dbPayload = {
+// Último recurso: escribir directo en la base. Si el servicio está caído pero la
+// base responde, el lead se guarda igual (aunque no llegue el aviso por correo).
+const guardarDirectoEnBase = async (payload) => {
+    if (!isSupabaseConfigured || !supabase) throw new Error("Supabase no configurado");
+
+    const { error } = await supabase.from("leads").insert({
         name: payload.nombre,
         company: payload.empresa,
         contact: payload.contacto,
@@ -36,20 +40,34 @@ export const submitLead = async (payload) => {
         lead_score: payload.leadScore,
         lead_grade: payload.leadGrade,
         source: "landing",
-        status: "new",
-        created_by: user?.id ?? null
-    };
+        status: "new"
+    });
 
-    const { error } = await supabase.from("leads").insert(dbPayload);
+    if (error) throw new Error(error.message || "No se pudo guardar en Supabase.");
+};
 
-    if (error) {
-        saveLocalFallback(baseLead);
-        const fallbackError = new Error(error.message || "No se pudo guardar en Supabase.");
-        fallbackError.code = "SUPABASE_INSERT_FAILED";
-        fallbackError.fallbackSaved = true;
-        fallbackError.fallbackLead = baseLead;
-        throw fallbackError;
+export const submitLead = async (payload) => {
+    const lead = { ...payload, source: "landing", createdAt: new Date().toISOString() };
+
+    try {
+        const resultado = await enviarAlServicio(lead);
+        return {
+            ...lead,
+            storage: "servicio",
+            aviso: Boolean(resultado?.correo),
+            enBase: Boolean(resultado?.base)
+        };
+    } catch (errorServicio) {
+        try {
+            await guardarDirectoEnBase(lead);
+            return { ...lead, storage: "base_directa", aviso: false, enBase: true };
+        } catch (errorBase) {
+            const fallo = new Error(
+                "No hemos podido registrar tu solicitud. Escríbenos por WhatsApp y la recogemos al momento."
+            );
+            fallo.code = "LEAD_NO_ENTREGADO";
+            fallo.detalles = { servicio: String(errorServicio), base: String(errorBase) };
+            throw fallo;
+        }
     }
-
-    return { ...baseLead, storage: "supabase" };
 };

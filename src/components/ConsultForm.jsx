@@ -121,25 +121,17 @@ function ConsultForm() {
             const result = await submitLead({ ...formData, leadScore: score.points, leadGrade: score.grade });
             trackLeadEvent("lead_form_submit", { channel: "form", lead_grade: score.grade });
 
-            if (result.storage === "supabase") {
-                setStatus("success");
-                setSubmitMessage("Solicitud recibida. Te contactamos en breve.");
-            } else {
-                setStatus("warning");
-                setSubmitMessage("Guardado en modo local. Revisa la conexión con Supabase para no perder leads.");
-            }
+            setStatus("success");
+            setSubmitMessage("Solicitud recibida. Te contactamos en breve.");
 
             setFormData(initialState);
             setErrors({});
             setStep(1);
         } catch (error) {
-            if (error?.fallbackSaved) {
-                setStatus("warning");
-                setSubmitMessage("No se pudo guardar en Supabase. Se guardó en local como respaldo.");
-            } else {
-                setStatus("error");
-                setSubmitMessage(error?.message || "No pudimos enviar el formulario.");
-            }
+            setStatus("error");
+            setSubmitMessage(
+                error?.message || "No hemos podido registrar tu solicitud. Escríbenos por WhatsApp y la recogemos al momento."
+            );
         }
     };
 
@@ -283,25 +275,26 @@ function ConsultForm() {
                                 </button>
                             </div>
 
-                            {status === "success" && (
-                                <p className="md:col-span-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-                                    {submitMessage || "Solicitud recibida."}
-                                    {leadScore?.grade === "A" ? " Priorizamos tu caso para responder rápido." : " Te escribimos con los siguientes pasos según prioridad."}
-                                </p>
-                            )}
-
-                            {status === "warning" && (
-                                <p className="md:col-span-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
-                                    {submitMessage || "Guardado en modo local. Revisa la configuración de Supabase."}
-                                </p>
-                            )}
-
-                            {status === "error" && (
-                                <p className="md:col-span-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
-                                    {submitMessage || "No pudimos enviar el formulario. Usa WhatsApp para contacto inmediato."}
-                                </p>
-                            )}
                         </div>
+                    )}
+
+                    {/* Los avisos viven FUERA del paso 2: al enviar con exito el formulario
+                        vuelve al paso 1, y ahi dentro la confirmacion no se veia nunca. */}
+                    {status === "success" && (
+                        <p className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                            {submitMessage || "Solicitud recibida."}
+                            {leadScore?.grade === "A" ? " Priorizamos tu caso para responder rápido." : " Te escribimos con los siguientes pasos según prioridad."}
+                        </p>
+                    )}
+
+                    {status === "error" && (
+                        <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+                            {submitMessage || "No pudimos enviar el formulario."}{" "}
+                            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="font-semibold underline">
+                                Escríbenos por WhatsApp
+                            </a>{" "}
+                            y lo recogemos al momento.
+                        </p>
                     )}
                 </form>
             </div>
