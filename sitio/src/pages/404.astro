@@ -1,0 +1,28 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base
+  titulo="Esta página no existe · Padrón IA"
+  descripcion="La dirección que buscabas no está aquí."
+  ruta="/404"
+>
+  <section class="seccion perdido">
+    <div class="contenedor">
+      <p class="rotulo">Error 404</p>
+      <h1>Esto no está donde creías.</h1>
+      <p class="parrafo">
+        O la dirección tiene una errata, o esa página ya no existe. Las dos cosas pasan.
+      </p>
+      <p class="perdido__acciones">
+        <a class="boton" href="/">Volver al principio</a>
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .perdido { padding-block: clamp(4rem, 3rem + 8vw, 9rem); }
+  .perdido h1 { margin-block: 1rem 1.2rem; font-size: var(--t-xl); }
+  .perdido__acciones { margin-top: 2rem; }
+</style>

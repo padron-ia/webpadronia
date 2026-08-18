@@ -13,10 +13,28 @@ import PresenterPage from "./pages/PresenterPage";
 import CentroPersonalPage from "./pages/CentroPersonalPage";
 import LegalPage from "./pages/LegalPage";
 
+// Redireccion dura al sitio publico. No usa <Navigate> porque el destino es otro dominio.
+function ExternalRedirect({ to }) {
+    if (typeof window !== "undefined") window.location.replace(to);
+    return null;
+}
+
 function App() {
     return (
         <Routes>
-            <Route path="/" element={<LandingPage />} />
+            {/* Tras el corte del dominio (ago-2026) el sitio publico vive en Astro y esta
+                app solo sirve el portal y /centro, en portal.padron-ia.es. Ahi la raiz
+                no debe enseñar la landing vieja: manda al sitio nuevo.
+                La condicion es por hostname, asi que esto es seguro ANTES y DESPUES del
+                corte: mientras la app siga sirviendo padron-ia.es, la landing se ve igual. */}
+            <Route
+                path="/"
+                element={
+                    typeof window !== "undefined" && window.location.hostname.startsWith("portal.")
+                        ? <ExternalRedirect to="https://padron-ia.es/" />
+                        : <LandingPage />
+                }
+            />
             <Route path="/entrenadores" element={<LandingEntrenadores />} />
             <Route path="/restaurantes" element={<LandingRestaurantes />} />
             <Route path="/gestorias" element={<LandingGestorias />} />
